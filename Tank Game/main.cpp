@@ -6,6 +6,9 @@ int main()
  ALLEGRO_DISPLAY *display = NULL;
  if(!al_init()) return -1;
 
+ al_install_mouse();
+ al_install_keyboard();
+
  display = al_create_display(1024, 720);
  if(!display) return -1;
   
