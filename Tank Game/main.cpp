@@ -8,7 +8,7 @@ int main()
 
  display = al_create_display(1024, 720);
  if(!display) return -1;
-
+  
  al_clear_to_color(al_map_rgb(0, 0, 0));
  
  // render
