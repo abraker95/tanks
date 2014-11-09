@@ -7,11 +7,9 @@ using namespace sf;
 int main()
 {
 	RenderWindow* window = new RenderWindow(VideoMode(1080, 720), "SFML works!");
-	//CircleShape shape(100.f);
-	//shape.setFillColor(Color::Green);
 
-	Object tank(window, "Tank", 1);
-	tank.setPos(0, 0);
+	Object tank("Tank", 1);
+    tank.setPosition(0, 0);
 
 	while(window->isOpen())
 	{
@@ -23,7 +21,7 @@ int main()
 		}
 
 		window->clear();
-		tank.Render();
+		tank.Render(window);
 		window->display();
 	}
 

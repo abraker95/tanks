@@ -4,17 +4,15 @@
 #include "DEBUG.h"
 using namespace sf;
 
-class Object
+class Object: public Sprite
 {
  public:
-	Object(RenderWindow* _window, const char* _filename, int _numframes = 1);
+	Object(const char* _filename, int _numframes = 1);
 	virtual ~Object();
 
-	void Render();
-	void setPos(int _xpos, int _ypos);
+    void Render(RenderWindow* _window);
 
  private:
  	int numFrames, currFrame;
-	Sprite* sprite;
-	RenderWindow* window;
+    Texture* texture;
 };
