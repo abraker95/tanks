@@ -1,12 +1,11 @@
 #include "Object.h"
 
-Object::Object(RenderWindow* _window, const char* _filename, int _numframes)
+Object::Object(const char* _filename, int _numframes)
 {
-	window = _window;
  	numFrames = _numframes;
  	currFrame = 0;
 
-	Texture* texture = new Texture[numFrames];
+	texture = new Texture[numFrames];
 	sprite = new Sprite[numFrames];
 
 	ostringstream convert;
@@ -15,13 +14,16 @@ Object::Object(RenderWindow* _window, const char* _filename, int _numframes)
 		convert<<frame;
 		texture[frame].loadFromFile(string(_filename)+"_"+convert.str()+".png");
      		PRINT_DEBUG(cout<<string(_filename)+"_"+convert.str()+".png"<<endl, HI_DEBUG);
+
+		// only copys the reference, doesn't copy the texture
 		sprite[frame] = Sprite(texture[frame]);
 	}
 }
 
 Object::~Object()
 {
-
+	if(texture) delete[] texture;
+	if(sprite) 	delete[] sprite;
 }
 
 void Object::setPos(int _xpos, int _ypos)
@@ -30,7 +32,7 @@ void Object::setPos(int _xpos, int _ypos)
 		sprite[frame].setPosition(_xpos, _ypos);
 }
 
-void Object::Render()
+void Object::Render(RenderWindow* window)
 {
 	if(++currFrame>=numFrames) currFrame = 0;
 		window->draw(sprite[currFrame]);

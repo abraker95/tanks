@@ -12,9 +12,11 @@ class Object
 
 	void Render();
 	void setPos(int _xpos, int _ypos);
+	int getX();
+	int getY();
 
  private:
  	int numFrames, currFrame;
 	Sprite* sprite;
-	RenderWindow* window;
+	Texture* texture;
 };
