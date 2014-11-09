@@ -1,14 +1,20 @@
 #pragma once
-#include <allegro5/allegro.h>
+#include <SFML/Graphics.hpp>
+#include "utils.h"
+#include "DEBUG.h"
+using namespace sf;
 
 class Object
 {
  public:
-    Object();
+    Object(RenderWindow* _window, char* _filename, int _numframes = 1);
     virtual ~Object();
 
- private: 
-     int xpos, ypos, width, height;
-     ALLEGRO_BITMAP** sprite;
-};
+    void Render();
+    void setPos(int _xpos, int _ypos);
 
+ private:
+     int numFrames, currFrame;
+     Sprite* sprite;
+     RenderWindow* window;
+};

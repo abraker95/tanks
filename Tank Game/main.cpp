@@ -1,24 +1,32 @@
-#include <iostream>
-#include <allegro5/allegro.h>
+#include <SFML/Graphics.hpp>
+#include "Object.h"
+//#include "Keyboard.h"
+
+using namespace sf;
 
 int main()
 {
- ALLEGRO_DISPLAY *display = NULL;
- if(!al_init()) return -1;
+ RenderWindow* window = new RenderWindow(VideoMode(1080, 720), "SFML works!");
+ //CircleShape shape(100.f);
+ //shape.setFillColor(Color::Green);
 
- al_install_mouse();
- al_install_keyboard();
+ Object tank(window, "Tank", 1);
+ tank.setPos(0, 0);
 
- display = al_create_display(1024, 720);
- if(!display) return -1;
-  
- al_clear_to_color(al_map_rgb(0, 0, 0));
- 
- // render
+ while(window->isOpen())
+ {
+  Event event;
+  while(window->pollEvent(event))
+  {
+   if(event.type == Event::Closed)
+      window->close();
+  }
 
- al_flip_display();
- al_rest(10.0);
- al_destroy_display(display);
+  window->clear();
+     tank.Render();
+  window->display();
+ }
 
+ delete window;
  return 0;
 }
