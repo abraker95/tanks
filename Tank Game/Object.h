@@ -7,14 +7,14 @@ using namespace sf;
 class Object
 {
  public:
-    Object(RenderWindow* _window, char* _filename, int _numframes = 1);
-    virtual ~Object();
+	Object(RenderWindow* _window, const char* _filename, int _numframes = 1);
+	virtual ~Object();
 
-    void Render();
-    void setPos(int _xpos, int _ypos);
+	void Render();
+	void setPos(int _xpos, int _ypos);
 
  private:
-     int numFrames, currFrame;
-     Sprite* sprite;
-     RenderWindow* window;
+ 	int numFrames, currFrame;
+	Sprite* sprite;
+	RenderWindow* window;
 };
