@@ -23,7 +23,7 @@ Tank::~Tank()
 
 }
 
-void Tank::Update(const float elapsedTime)
+void Tank::Update(float elapsedTime)
 {
 	const Vector2f& currPos = getPosition();
 	Vector2f nextPos;
