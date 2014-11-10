@@ -5,14 +5,11 @@
 class Tank : public Object
 {
 public:
-	Tank(const char* filename, Vector2f _gunOffset);
+	Tank(const char* filename);
 	virtual ~Tank();
 
 	// just moves the tank, missiles spawing etc is managed at a higher level
 	void Update(float elapsedTime);
-
-	// angle-based rendering
-	void Render(RenderWindow* _window);
 
 	// getters and setters
 	// putting the defintion so that the compiler can inline them
@@ -27,15 +24,8 @@ public:
 
 	void 	setTankSpeed(float _tankSpeed) { tankSpeed = _tankSpeed; }
 	float 	getTankSpeed() const { return tankSpeed; }
-	void 	setTankAngle(float _tankAngle) { tankAngle = _tankAngle; }
-	float 	getTankAngle() const { return tankAngle; }
-	void 	setGunAngle(float _gunAngle) { gunAngle = _gunAngle; }
-	float 	getGunAngle() const { return gunAngle; }
 	void 	setTankAngleSpeed(float _tankAngleSpeed) { tankAngleSpeed = _tankAngleSpeed; }
 	float 	getTankAngleSpeed() const { return tankAngleSpeed; }
-	void 	setGunAngleSpeed(float _gunAngleSpeed) { gunAngleSpeed = _gunAngleSpeed; }
-	float 	getGunAngleSpeed() const { return gunAngleSpeed; }
-
 
 private:
 	int health;
@@ -44,10 +34,5 @@ private:
 	int numWalls;
 
 	float tankSpeed;
-	float gunAngle;
-	float tankAngle;
-	float gunAngleSpeed;
 	float tankAngleSpeed;
-
-	Vector2f gunOffset;
 };
