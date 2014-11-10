@@ -9,7 +9,7 @@ int main()
 {
 	RenderWindow* window = new RenderWindow(VideoMode(1080, 720), "SFML works!");
 
-	Object tank("Tank", 1);
+	Tank tank;
     tank.setPosition(0, 0);
 
 	while(window->isOpen())
@@ -22,7 +22,7 @@ int main()
 		}
 
 		window->clear();
-		tank.Render(window);
+			tank.Update(window, 0.001);
 		window->display();
 	}
 

@@ -66,14 +66,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="DEBUG.h" />
+    <ClInclude Include="Tank.h" />
     <ClInclude Include="utils.h" />
-    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Object.h" />
   </ItemGroup>
   <ItemGroup>

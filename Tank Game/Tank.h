@@ -1,15 +1,18 @@
 #pragma once
+#include <cmath>
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics.hpp>
 #include "Object.h"
+#include "Bullet.h"
 
 class Tank : public Object
 {
 public:
-	Tank(const char* filename);
+	Tank();
 	virtual ~Tank();
 
 	// just moves the tank, missiles spawing etc is managed at a higher level
-	void Update(float elapsedTime);
+	void Update(RenderWindow* _window, float _elapsedTime);
 
 	// getters and setters
 	// putting the defintion so that the compiler can inline them
@@ -35,4 +38,6 @@ private:
 
 	float tankSpeed;
 	float tankAngleSpeed;
+
+	void UpdateUserInput();
 };
