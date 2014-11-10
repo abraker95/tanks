@@ -32,8 +32,6 @@ void Tank::UpdateUserInput()
 
 	//  Ok, now I'm to the point where I need to make the envorinment class to manage all the objects. Also:
 	/// \TODO: Delete the bullets at some point before the game exists
-	/// \TODO: Bullet spawn position to come from tank's cannon. Note: the sprite's dimensions are likely to change later 
-	/// [FIXED] \TODO: Fix the spammng of a million bullets under a tap of a button
 	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()));
 }
 

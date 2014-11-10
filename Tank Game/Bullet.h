@@ -11,8 +11,7 @@ public:
 	void Update(RenderWindow* _window, float _elapsedTime);
 
 private:
-	const float velocity = 100.0;
+	const float velocity = 1000.f;
 	
 	void UpdateUserInput();
 };
-
