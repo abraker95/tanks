@@ -21,26 +21,25 @@ Tank::~Tank()
 
 void Tank::UpdateUserInput()
 {
-	     if(Keyboard::isKeyPressed(Keyboard::Left))		tankAngleSpeed -= 1.0;
-	else if(Keyboard::isKeyPressed(Keyboard::Right))	tankAngleSpeed += 1.0;
-	else												tankAngleSpeed  = 0.0;
+	// constant speed so it doesnt go craz^y when the key is pressed for a long time
+	     if(Keyboard::isKeyPressed(Keyboard::Left))		tankAngleSpeed = 1000.f;
+	else if(Keyboard::isKeyPressed(Keyboard::Right))	tankAngleSpeed = -1000.f;
+	else												tankAngleSpeed = 0.f;
 
-	     if(Keyboard::isKeyPressed(Keyboard::Up))		tankSpeed += 1.0;
-	else if(Keyboard::isKeyPressed(Keyboard::Down))		tankSpeed -= 1.0;
-	else												tankSpeed  = 0.0;
+	     if(Keyboard::isKeyPressed(Keyboard::Up))		tankSpeed = 1000.f;
+	else if(Keyboard::isKeyPressed(Keyboard::Down))		tankSpeed = -1000.f;
+	else												tankSpeed = 0.f;
 
 	//  Ok, now I'm to the point where I need to make the envorinment class to manage all the objects. Also:
 	/// \TODO: Delete the bullets at some point before the game exists
 	/// \TODO: Bullet spawn position to come from tank's cannon. Note: the sprite's dimensions are likely to change later 
-	/// \TODO: Fix the spammng of a million bullets under a tap of a button
+	/// [FIXED] \TODO: Fix the spammng of a million bullets under a tap of a button
 	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()));
 }
 
 // The movement is hilarius. Ok time for some fixing
 void Tank::Update(RenderWindow* _window, float _elapsedTime)
 {
-	UpdateUserInput();
-
 	float currAngle = getRotation();
 	float nextAngle;
 

@@ -12,6 +12,7 @@ int main()
 	Tank tank;
     tank.setPosition(0, 0);
 
+	Clock clock;
 	while(window->isOpen())
 	{
 		Event event;
@@ -19,10 +20,15 @@ int main()
 		{
  			if(event.type == Event::Closed)
 				window->close();
+			if(event.type == Event::KeyPressed || event.type == Event::KeyReleased)
+			{
+				tank.UpdateUserInput();
+			}
 		}
 
 		window->clear();
-			tank.Update(window, 0.001);
+			Time elapsed = clock.restart();
+			tank.Update(window, elapsed.asSeconds());
 		window->display();
 	}
 
