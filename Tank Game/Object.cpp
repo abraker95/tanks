@@ -27,6 +27,6 @@ void Object::Render(RenderWindow* _window)
     PRINT_DEBUG(cout<<"currFrame: "<<currFrame<<endl, HI_DEBUG);
 
      if(texture)
-        this->setTexture(texture[currFrame]);
+        setTexture(texture[currFrame]);
 	_window->draw(*this);
 }

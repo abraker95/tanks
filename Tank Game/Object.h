@@ -10,9 +10,11 @@ class Object: public Sprite
 	Object(const char* _filename, int _numframes = 1);
 	virtual ~Object();
 
-    void Render(RenderWindow* _window);
+    virtual void Render(RenderWindow* _window);
 
  private:
  	int numFrames, currFrame;
+
+ protected:
     Texture* texture;
 };
