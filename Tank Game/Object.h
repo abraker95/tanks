@@ -12,8 +12,14 @@ class Object: public Sprite
 
     virtual void Render(RenderWindow* _window);
 
+	// physics
+	float getDist(Object* _obj) const;
+	bool isCollidingWith(Object* _obj) const;
+	bool isInRadius(Object* _obj, float _radius) const;
+
  private:
  	int numFrames, currFrame;
+	float boundingSphereRadius;
 
  protected:
     Texture* texture;
