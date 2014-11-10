@@ -13,9 +13,10 @@ class Object: public Sprite
     virtual void Render(RenderWindow* _window);
 
 	// physics
-	float getDist(Object* _obj) const;
+	// the 2 suffix means squared
+	float getDist2(Object* _obj) const;
+	bool isInRadius(Object* _obj, float _radius2) const;
 	bool isCollidingWith(Object* _obj) const;
-	bool isInRadius(Object* _obj, float _radius) const;
 
  private:
  	int numFrames, currFrame;

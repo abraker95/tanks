@@ -1,4 +1,3 @@
-#include <cmath>
 #include "Object.h"
 
 Object::Object(const char* _filename, int _numframes): Sprite()
@@ -35,18 +34,19 @@ void Object::Render(RenderWindow* _window)
 	_window->draw(*this);
 }
 
-float Object::getDist(Object* _obj) const
+float Object::getDist2(Object* _obj) const
 {
 	Vector2f delta = _obj->getPosition() - getPosition();
-	return sqrtf(delta.x * delta.x + delta.y * delta.y);
-}
-
-bool Object::isCollidingWith(Object* _obj) const
-{
-	return (getDist(_obj) <= _obj->boundingSphereRadius + boundingSphereRadius);
+	return delta.x * delta.x + delta.y * delta.y;
 }
 
 bool Object::isInRadius(Object* _obj, float _radius) const
 {
-	return (getDist(_obj) <= _obj->boundingSphereRadius + _radius);
+	float minDist = _obj->boundingSphereRadius + _radius;
+	return (getDist2(_obj) <= minDist * minDist);
+}
+
+bool Object::isCollidingWith(Object* _obj) const
+{
+	return isInRadius(_obj, boundingSphereRadius);
 }
