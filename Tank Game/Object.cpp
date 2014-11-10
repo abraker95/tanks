@@ -18,6 +18,9 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
 
 	const Vector2u size = texture[0].getSize();
 	boundingCircleRadius = (float)MIN(size.x, size.y)/2.f;
+
+	// set the origin to the center of the sprite by default
+	setOrigin((float)size.x/2.f, (float)size.y/2.f);
 }
 
 Object::~Object()

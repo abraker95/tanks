@@ -14,6 +14,8 @@ public:
 	// just moves the tank, missiles spawing etc is managed at a higher level
 	void Update(RenderWindow* _window, float _elapsedTime);
 
+	void UpdateUserInput();
+
 	// getters and setters
 	// putting the defintion so that the compiler can inline them
 	void 	setHealth(int _health) { health = _health; }
@@ -38,6 +40,4 @@ private:
 
 	float tankSpeed;
 	float tankAngleSpeed;
-
-	void UpdateUserInput();
 };

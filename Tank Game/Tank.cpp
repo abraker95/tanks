@@ -22,12 +22,12 @@ Tank::~Tank()
 void Tank::UpdateUserInput()
 {
 	// constant speed so it doesnt go craz^y when the key is pressed for a long time
-	     if(Keyboard::isKeyPressed(Keyboard::Left))		tankAngleSpeed = 1000.f;
-	else if(Keyboard::isKeyPressed(Keyboard::Right))	tankAngleSpeed = -1000.f;
+	     if(Keyboard::isKeyPressed(Keyboard::Right))	tankAngleSpeed = 300.f;
+	else if(Keyboard::isKeyPressed(Keyboard::Left))		tankAngleSpeed = -300.f;
 	else												tankAngleSpeed = 0.f;
 
-	     if(Keyboard::isKeyPressed(Keyboard::Up))		tankSpeed = 1000.f;
-	else if(Keyboard::isKeyPressed(Keyboard::Down))		tankSpeed = -1000.f;
+	     if(Keyboard::isKeyPressed(Keyboard::Up))		tankSpeed = 300.f;
+	else if(Keyboard::isKeyPressed(Keyboard::Down))		tankSpeed = -300.f;
 	else												tankSpeed = 0.f;
 
 	//  Ok, now I'm to the point where I need to make the envorinment class to manage all the objects. Also:
@@ -48,8 +48,9 @@ void Tank::Update(RenderWindow* _window, float _elapsedTime)
 
 	nextAngle = currAngle + _elapsedTime * tankAngleSpeed;
 
-	nextPos.x = currPos.x + cosf(nextAngle) * tankSpeed * _elapsedTime;
-	nextPos.y = currPos.y + sinf(nextAngle) * tankSpeed * _elapsedTime;
+	// (+PI/2) because of the sprite orientation
+	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
+	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
 
 
 	setPosition(nextPos);
