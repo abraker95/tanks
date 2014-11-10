@@ -16,25 +16,25 @@ public:
 
 	// getters and setters
 	// putting the defintion so that the compiler can inline them
-	void 	setHealth(const int _health) 			{ health = _health; }
-	int 	getHealth() const 						{ return health; 	}
-	void 	setNumMines(const int _numMines)		{ numMines = _numMines; }
-	int 	getNumMines() const						{ return numMines; 		}
-	void 	setNumMissiles(const int _numMissiles) 	{ numMissiles = _numMissiles; 	}
-	int 	getNumMissiles() const					{ return numMissiles; 			}
-	void 	setNumWalls(const int _numWalls)		{ numWalls = _numWalls;	}
-	int 	getNumWalls() const						{ return numWalls; 		}
+	void 	setHealth(const int _health) { health = _health; }
+	int 	getHealth() const { return health; }
+	void 	setNumMines(const int _numMines) { numMines = _numMines; }
+	int 	getNumMines() const	{ return numMines; }
+	void 	setNumMissiles(const int _numMissiles) { numMissiles = _numMissiles; }
+	int 	getNumMissiles() const { return numMissiles; }
+	void 	setNumWalls(const int _numWalls) { numWalls = _numWalls; }
+	int 	getNumWalls() const { return numWalls; }
 
-	void 	setTankSpeed(float _tankSpeed)				{ tankSpeed = _tankSpeed; 	}
-	float 	getTankSpeed() const						{ return tankSpeed; 		}
-	void 	setTankAngle(float _tankAngle)				{ tankAngle = _tankAngle;	}
-	float 	getTankAngle() const						{ return tankAngle; 		}
-	void 	setGunAngle(float _gunAngle)				{ gunAngle = _gunAngle;	}
-	float 	getGunAngle() const							{ return gunAngle;		}
-	void 	setTankAngleSpeed(float _tankAngleSpeed)	{ tankAngleSpeed = _tankAngleSpeed;	}
-	float 	getTankAngleSpeed() const					{ return tankAngleSpeed; 			}
-	void 	setGunAngleSpeed(float _gunAngleSpeed)		{ gunAngleSpeed = _gunAngleSpeed;	}
-	float 	getGunAngleSpeed() const					{ return gunAngleSpeed;				}
+	void 	setTankSpeed(float _tankSpeed) { tankSpeed = _tankSpeed; }
+	float 	getTankSpeed() const { return tankSpeed; }
+	void 	setTankAngle(float _tankAngle) { tankAngle = _tankAngle; }
+	float 	getTankAngle() const { return tankAngle; }
+	void 	setGunAngle(float _gunAngle) { gunAngle = _gunAngle; }
+	float 	getGunAngle() const { return gunAngle; }
+	void 	setTankAngleSpeed(float _tankAngleSpeed) { tankAngleSpeed = _tankAngleSpeed; }
+	float 	getTankAngleSpeed() const { return tankAngleSpeed; }
+	void 	setGunAngleSpeed(float _gunAngleSpeed) { gunAngleSpeed = _gunAngleSpeed; }
+	float 	getGunAngleSpeed() const { return gunAngleSpeed; }
 
 
 private:

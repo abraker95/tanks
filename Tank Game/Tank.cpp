@@ -44,13 +44,13 @@ void Tank::Render(RenderWindow* _window)
 
 	// renders the body of the tank
 	setRotation(tankAngle);
-    setTexture(texture[0]);
+	setTexture(texture[0]);
 	_window->draw(*this);
 
 	// renders the gun
 	setRotation(gunAngle);
 	setPosition(gunPosition);
-    setTexture(texture[1]);
+	setTexture(texture[1]);
 	_window->draw(*this);
 
 	// reset the bodyPosition
