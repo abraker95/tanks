@@ -12,7 +12,6 @@ Object::Object(const char* _filename, int _numframes): Sprite()
 	{
 		convert<<frame;
 		texture[frame].loadFromFile(string(_filename)+"_"+convert.str()+".png");
-     		PRINT_DEBUG(cout<<string(_filename)+"_"+convert.str()+".png"<<endl, HI_DEBUG);
 	}
 }
 
@@ -24,9 +23,8 @@ Object::~Object()
 void Object::Render(RenderWindow* _window)
 {
 	if(++currFrame>=numFrames) currFrame = 0;
-    PRINT_DEBUG(cout<<"currFrame: "<<currFrame<<endl, HI_DEBUG);
 
-     if(texture)
-        this->setTexture(texture[currFrame]);
+    if(texture)
+       this->setTexture(texture[currFrame]);
 	_window->draw(*this);
 }
