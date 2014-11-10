@@ -32,7 +32,7 @@ void Tank::UpdateUserInput()
 
 	//  Ok, now I'm to the point where I need to make the envorinment class to manage all the objects. Also:
 	/// \TODO: Delete the bullets at some point before the game exists
-	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()));
+	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()+90));
 }
 
 // The movement is hilarius. Ok time for some fixing
@@ -49,7 +49,6 @@ void Tank::Update(RenderWindow* _window, float _elapsedTime)
 	// (+PI/2) because of the sprite orientation
 	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
 	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
-
 
 	setPosition(nextPos);
 	setRotation(nextAngle);
