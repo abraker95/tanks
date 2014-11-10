@@ -20,8 +20,6 @@ void Bullet::Update(RenderWindow* _window, float _elapsedTime)
 			  nextPosY = getPosition().y + sinf(DEG2RAD(getRotation()) + PI/2) * velocity * _elapsedTime;
 	setPosition(nextPosX, nextPosY);
 
-	cout<<_elapsedTime<<endl;
-
 	Render(_window);
 }
 
