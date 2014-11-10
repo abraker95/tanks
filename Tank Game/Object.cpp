@@ -17,7 +17,7 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
 	}
 
 	const Vector2u size = texture[0].getSize();
-	boundingSphereRadius = (float)MIN(size.x, size.y);
+	boundingCircleRadius = (float)MIN(size.x, size.y)/2.f;
 }
 
 Object::~Object()
@@ -43,13 +43,13 @@ float Object::getDist2(Object* _obj) const
 
 bool Object::isInRadius(Object* _obj, float _radius) const
 {
-	float minDist = _obj->boundingSphereRadius + _radius;
+	float minDist = _obj->boundingCircleRadius + _radius;
 	return (getDist2(_obj) <= minDist * minDist);  // squared form
 }
 
 bool Object::isCollidingWith(Object* _obj) const
 {
-	return isInRadius(_obj, boundingSphereRadius);
+	return isInRadius(_obj, boundingCircleRadius);
 }
 
 Object* Object::spawnObject(Object* _obj)

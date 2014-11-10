@@ -24,7 +24,7 @@ class Object: public Sprite
 
  private:
  	int numFrames, currFrame;
-	float boundingSphereRadius;
+	float boundingCircleRadius;
 	vector<Object*> childObjects;
 
  protected:
