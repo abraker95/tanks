@@ -12,9 +12,10 @@ public:
 	virtual ~Tank();
 
 	// just moves the tank, missiles spawing etc is managed at a higher level
-	void Update(RenderWindow* _window, float _elapsedTime);
+	void Update(float _elapsedTime);
+	void Render(RenderWindow* _window);
 
-	bool Fire(float _cooldown);
+	bool Fire();
 	void UpdateUserInput();
 
 	// getters and setters
@@ -41,4 +42,7 @@ private:
 
 	float tankSpeed;
 	float tankAngleSpeed;
+
+	const float fireCooldown = 0.1f;
+	Clock fireClock;
 };

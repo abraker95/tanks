@@ -13,7 +13,8 @@ class Object: public Sprite
 	Object(const char* _filename, int _numFrames = 1);
 	virtual ~Object();
 
-	virtual void Update(RenderWindow* _window, float _elapsedTime) = 0;
+	virtual void Update(float _elapsedTime) = 0;
+	virtual void Render(RenderWindow* _window) = 0;
 
 	// physics
 	// the 2 suffix means squared
@@ -29,5 +30,4 @@ class Object: public Sprite
     Texture* texture;
 
 	virtual void UpdateUserInput() = 0;
-	virtual void Render(RenderWindow* _window);
 };

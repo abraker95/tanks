@@ -21,6 +21,9 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
 
 	// set the origin to the center of the sprite by default
 	setOrigin((float)size.x/2.f, (float)size.y/2.f);
+
+	// FIXME: put this in an update function
+	setTexture(texture[currFrame]);
 }
 
 Object::~Object()
@@ -30,12 +33,15 @@ Object::~Object()
 
 void Object::Render(RenderWindow* _window)
 {
+	/*
 	if(++currFrame>=numFrames) currFrame = 0;
     PRINT_DEBUG(cout<<"currFrame: "<<currFrame<<endl, HI_DEBUG);
 
      if(texture)
         setTexture(texture[currFrame]);
-	_window->draw(*this);
+	
+		_window->draw(*this); <-- doesn't work with multiple inheritance
+	*/
 }
 
 float Object::getDist2(Object* _obj) const

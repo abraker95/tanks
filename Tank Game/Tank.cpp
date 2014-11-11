@@ -19,6 +19,7 @@ Tank::~Tank()
 
 }
 
+// FIXME: put this in the environment class, this way we can support multi
 void Tank::UpdateUserInput()
 {
 	// constant speed so it doesnt go craz^y when the key is pressed for a long time
@@ -34,21 +35,18 @@ void Tank::UpdateUserInput()
 	/// \TODO: Delete the bullets at some point before the game exists
 }
 
-bool Tank::Fire(float _cooldown)
+bool Tank::Fire()
 {
-	static Clock clock;
-
-	if(clock.getElapsedTime().asSeconds() < _cooldown)
+	if(fireClock.getElapsedTime().asSeconds() > fireCooldown)
 	{
-		clock.restart();
+		fireClock.restart();
 		return true;
 	}
 
-	return true;
+	return false;
 }
 
-// The movement is hilarius. Ok time for some fixing
-void Tank::Update(RenderWindow* _window, float _elapsedTime)
+void Tank::Update(float _elapsedTime)
 {
 	float currAngle = getRotation();
 	float nextAngle;
@@ -61,9 +59,12 @@ void Tank::Update(RenderWindow* _window, float _elapsedTime)
 	// (+PI/2) because of the sprite orientation
 	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
 	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
-
+	
 	setPosition(nextPos);
 	setRotation(nextAngle);
+}
 
+void Tank::Render(RenderWindow* _window)
+{
 	Render(_window);
 }
