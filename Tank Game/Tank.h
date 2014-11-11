@@ -14,6 +14,7 @@ public:
 	// just moves the tank, missiles spawing etc is managed at a higher level
 	void Update(RenderWindow* _window, float _elapsedTime);
 
+	bool Fire(float _cooldown);
 	void UpdateUserInput();
 
 	// getters and setters

@@ -54,17 +54,3 @@ bool Object::isCollidingWith(Object* _obj) const
 {
 	return isInRadius(_obj, boundingCircleRadius);
 }
-
-Object* Object::spawnObject(Object* _obj)
-{
-	childObjects.push_back(_obj);
-	return childObjects[childObjects.size()-1];
-}
-
-	
-void Object::UpdateChildObjs(RenderWindow* _window, float _elapsedTime)
-{
-	for(int i = 0; i<childObjects.size(); i++)
-		if(childObjects[i]!=nullptr)
-			childObjects[i]->Update(_window, _elapsedTime);
-}

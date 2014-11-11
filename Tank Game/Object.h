@@ -20,17 +20,14 @@ class Object: public Sprite
 	float getDist2(Object* _obj) const;
 	bool isInRadius(Object* _obj, float _radius2) const;
 	bool isCollidingWith(Object* _obj) const;
-	Object* spawnObject(Object* _obj); // location is relative to parent object's position
 
  private:
  	int numFrames, currFrame;
 	float boundingCircleRadius;
-	vector<Object*> childObjects;
 
  protected:
     Texture* texture;
 
 	virtual void UpdateUserInput() = 0;
 	virtual void Render(RenderWindow* _window);
-	void UpdateChildObjs(RenderWindow* _window, float _elapsedTime);
 };

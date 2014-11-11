@@ -32,7 +32,19 @@ void Tank::UpdateUserInput()
 
 	//  Ok, now I'm to the point where I need to make the envorinment class to manage all the objects. Also:
 	/// \TODO: Delete the bullets at some point before the game exists
-	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()+90));
+}
+
+bool Tank::Fire(float _cooldown)
+{
+	static Clock clock;
+
+	if(clock.getElapsedTime().asSeconds() < _cooldown)
+	{
+		clock.restart();
+		return true;
+	}
+
+	return true;
 }
 
 // The movement is hilarius. Ok time for some fixing
@@ -53,6 +65,5 @@ void Tank::Update(RenderWindow* _window, float _elapsedTime)
 	setPosition(nextPos);
 	setRotation(nextAngle);
 
-	UpdateChildObjs(_window, _elapsedTime);
 	Render(_window);
 }
