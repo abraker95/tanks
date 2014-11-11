@@ -59,7 +59,10 @@ void Environment::Update(float _elapsedTime)
 	{
 		bullets[bulletIndex]->Update(_elapsedTime);
 		if(bullets[bulletIndex]->isDead())
+		{
+			delete bullets[bulletIndex];
 			bullets.erase(bullets.begin() + bulletIndex);
+		}
 		else 
 			bulletIndex++;
 	}
