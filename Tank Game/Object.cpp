@@ -61,7 +61,6 @@ Object* Object::spawnObject(Object* _obj)
 	return childObjects[childObjects.size()-1];
 }
 
-	
 void Object::UpdateChildObjs(RenderWindow* _window, float _elapsedTime)
 {
 	for(int i = 0; i<childObjects.size(); i++)

@@ -21,7 +21,7 @@ Tank::~Tank()
 
 void Tank::UpdateUserInput()
 {
-	// constant speed so it doesnt go craz^y when the key is pressed for a long time
+	// constant speed so it doesnt go crazy when the key is pressed for a long time
 	     if(Keyboard::isKeyPressed(Keyboard::Right))	tankAngleSpeed = 300.f;
 	else if(Keyboard::isKeyPressed(Keyboard::Left))		tankAngleSpeed = -300.f;
 	else												tankAngleSpeed = 0.f;
@@ -35,7 +35,6 @@ void Tank::UpdateUserInput()
 	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()+90));
 }
 
-// The movement is hilarius. Ok time for some fixing
 void Tank::Update(RenderWindow* _window, float _elapsedTime)
 {
 	float currAngle = getRotation();

@@ -22,6 +22,7 @@ int main()
 				window->close();
 			if(event.type == Event::KeyPressed || event.type == Event::KeyReleased)
 			{
+				/// \TODO: Move this to the Environment class
 				tank.UpdateUserInput();
 			}
 		}
