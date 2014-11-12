@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Object.h"
+#include "GameObject.h"
 
 /** \NOTE: Bullet Game Object
 	Spawn Case: 
@@ -9,7 +9,7 @@
 		3 seconds lifetime
 		\TODO: collision with a solid object
 */
-class Bullet : public Object
+class Bullet : public GameObject
 {
 public:
 	Bullet(Vector2f _pos, float _rot);

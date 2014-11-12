@@ -2,7 +2,7 @@
 #include <cmath>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics.hpp>
-#include "Object.h"
+#include "GameObject.h"
 #include "Bullet.h"
 #include "Environment.h"
 
@@ -14,13 +14,13 @@
 		env: Environment destruction
 		\TODO: gameplay cases
 */
-class Tank : public Object
+class Tank : public GameObject
 {
 public:
 	Tank();
 	virtual ~Tank();
 
-	struct Inputmap
+	/*struct Inputmap
 	{
 		Inputmap() {};
 		Inputmap(const Keyboard::Key _turnRight, 
@@ -39,7 +39,7 @@ public:
 					   goForward = Keyboard::Unknown,
 					  goBackward = Keyboard::Unknown,
 							fire = Keyboard::Unknown;
-	};
+	};*/
 
 	// just moves the tank, missiles spawing etc is managed at a higher level
 	void Update(float _elapsedTime);
@@ -56,12 +56,12 @@ public:
 	void 	setNumWalls(int _numWalls) { numWalls = _numWalls; }
 	int 	getNumWalls() const { return numWalls; }
 
-	void 	setTankSpeed(float _tankSpeed) { tankSpeed = _tankSpeed; }
+	/*void 	setTankSpeed(float _tankSpeed) { tankSpeed = _tankSpeed; }
 	float 	getTankSpeed() const { return tankSpeed; }
 	void 	setTankAngleSpeed(float _tankAngleSpeed) { tankAngleSpeed = _tankAngleSpeed; }
 	float 	getTankAngleSpeed() const { return tankAngleSpeed; }
 
-	void    setInput(Inputmap _imap) { imap = _imap; }
+	void    setInput(Inputmap _imap) { imap = _imap; }*/
 
 private:
 	int health;
@@ -69,12 +69,22 @@ private:
 	int numMines;
 	int numWalls;
 
-	float tankSpeed;
-	float tankAngleSpeed;
+	enum KeyMap
+	{
+		Turn_Right = 0,
+		Turn_Left,
+		Go_Forward,
+		Go_Backward,
+		Fire_Bullet
+	};
+
+
+	/*float tankSpeed;
+	float tankAngleSpeed;*/
 
 	const float fireCooldown = 0.1f;
 	Clock fireClock;
-	Inputmap imap;
+	//Inputmap imap;
 
 	void UpdateUserInput();
 	bool Fire();

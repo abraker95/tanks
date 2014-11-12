@@ -13,27 +13,28 @@ using namespace std;
 class Object: public Sprite
 {
  public:
-	Object(bool _hasPhysics, const char* _filename, int _numFrames = 1);
+	Object(const char* _filename, int _numFrames = 1);
 	virtual ~Object();
 
 	virtual void Update(float _elapsedTime) = 0;
 	virtual void Render(RenderWindow* _window) = 0;
 
-	// physics
-	// the 2 suffix means squared
-	float getDist2(Object* _obj) const;
-	bool isInRadius(Object* _obj, float _radius2) const;
-	bool isCollidingWith(Object* _obj) const;
 	bool isDestroy() const;
+	float getBoundingCircleRadius() const;
+
+	bool isSolid() const;
 	void collisionFeedback(Object* _obj);
-
- private:
- 	int numFrames, currFrame;
-	float boundingCircleRadius;
-	bool hasPhysics;
-
+	Vector2f getVelocityVector();
+ 
  protected:
 	bool destroy;
-    Texture* texture;
+	Texture* texture;
+	float boundingCircleRadius;
+
+
 	virtual void UpdateUserInput() = 0;
+
+ private:
+	 /// \TODO: implemnt velocity vectors
+ 	int numFrames, currFrame;
 };

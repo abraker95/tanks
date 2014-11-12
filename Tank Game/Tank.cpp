@@ -1,7 +1,7 @@
 #include "Tank.h"
 
 Tank::Tank()
-	: Object(true, "Tank", 1)
+	: GameObject(true, "Tank", 1)
 {
 	// tank stats filled with the default values
 	setHealth(100);
@@ -10,8 +10,8 @@ Tank::Tank()
 	setNumWalls(0);
 
 	// tank special states
-	setTankSpeed(0.f);
-	setTankAngleSpeed(0.f);
+	setSpeed(0.f);
+	setSpeed(0.f);
 }
 
 Tank::~Tank()
@@ -23,15 +23,15 @@ Tank::~Tank()
 void Tank::UpdateUserInput()
 {
 	//PRINT_DEBUG
-		 if(Keyboard::isKeyPressed(imap.turnRight))		tankAngleSpeed = 300.f;
-	else if(Keyboard::isKeyPressed(imap.turnLeft))		tankAngleSpeed = -300.f;
-	else												tankAngleSpeed = 0.f;
+		 if(Keyboard::isKeyPressed(imap.kmap[Turn_Right]))		angleSpeed = 300.f;
+	else if(Keyboard::isKeyPressed(imap.kmap[Turn_Left]))		angleSpeed = -300.f;
+	else														angleSpeed = 0.f;
 
-	     if(Keyboard::isKeyPressed(imap.goForward))		tankSpeed = 300.f;
-	else if(Keyboard::isKeyPressed(imap.goBackward))	tankSpeed = -300.f;
-	else												tankSpeed = 0.f;
+	     if(Keyboard::isKeyPressed(imap.kmap[Go_Forward]))		speed = 300.f;
+	else if(Keyboard::isKeyPressed(imap.kmap[Go_Backward]))		speed = -300.f;
+	else														speed = 0.f;
 
-	if(Keyboard::isKeyPressed(imap.fire)&&Fire())
+	if(Keyboard::isKeyPressed(imap.kmap[Fire_Bullet]) && Fire())
 		Environment::getSingleton()->addObject(new Bullet(getPosition(), getRotation()+90));
 }
 
@@ -56,11 +56,11 @@ void Tank::Update(float _elapsedTime)
 	const Vector2f& currPos = getPosition();
 	Vector2f nextPos;
 
-	nextAngle = currAngle + _elapsedTime * tankAngleSpeed;
+	nextAngle = currAngle + _elapsedTime * angleSpeed;
 
 	// (+PI/2) because of the sprite orientation
-	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
-	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
+	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;
+	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;
 	
 	setPosition(nextPos);
 	setRotation(nextAngle);

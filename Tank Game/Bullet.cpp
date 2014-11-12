@@ -1,8 +1,7 @@
 #include "Bullet.h"
 
-
 Bullet::Bullet(Vector2f _pos, float _rot)
-	: Object(false, "Bullet", 1)
+	: GameObject(false, "Bullet", 1)
 {
 	setPosition(_pos);
 	setRotation(_rot);

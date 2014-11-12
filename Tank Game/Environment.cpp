@@ -113,8 +113,8 @@ void Environment::Render(RenderWindow* _window)
 	}
 }
 
-// TODO: optimise collision detection
-void Environment::checkCollisions(Object* _obj)
+// TODO: optimize collision detection
+void Environment::checkCollisions(GameObject* _obj)
 {
 	// May be buggy when multiple objects are colliding with obj
 	for(int i=0;i<objects.size();i++)
