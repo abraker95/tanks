@@ -22,4 +22,7 @@ private:
 	//std::vector<Bullet*> bullets;
 	std::vector<Object*> objects;
 	static Environment* singleton;
+
+
+	void checkCollisions(Object* _obj);
 };

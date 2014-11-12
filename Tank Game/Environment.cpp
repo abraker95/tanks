@@ -73,6 +73,8 @@ void Environment::Update(float _elapsedTime)
 				objects.erase(objects.begin()+i);
 				erased = true;
 			}
+			
+			checkCollisions(objects[i]);
 		}
 		else
 		{
@@ -110,3 +112,17 @@ void Environment::Render(RenderWindow* _window)
 			i++;
 	}
 }
+
+// TODO: optimise collision detection
+void Environment::checkCollisions(Object* _obj)
+{
+	// May be buggy when multiple objects are colliding with obj
+	for(int i=0;i<objects.size();i++)
+	{
+		if(objects[i] != _obj && _obj->isCollidingWith(objects[i]))
+		{
+			_obj->collisionFeedback(objects[i]);
+		}
+	}
+}
+

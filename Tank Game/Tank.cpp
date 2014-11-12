@@ -1,7 +1,7 @@
 #include "Tank.h"
 
 Tank::Tank()
-	: Object("Tank", 1) /// \NOTE: 1 frame for now
+	: Object(true, "Tank", 1)
 {
 	// tank stats filled with the default values
 	setHealth(100);

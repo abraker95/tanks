@@ -2,7 +2,7 @@
 
 
 Bullet::Bullet(Vector2f _pos, float _rot)
-	: Object("Bullet", 1)
+	: Object(false, "Bullet", 1)
 {
 	setPosition(_pos);
 	setRotation(_rot);

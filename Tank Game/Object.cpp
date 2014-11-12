@@ -1,6 +1,7 @@
+#include <cmath>
 #include "Object.h"
 
-Object::Object(const char* _filename, int _numFrames): Sprite()
+Object::Object(bool _hasPhysics, const char* _filename, int _numFrames): Sprite()
 {
  	numFrames = _numFrames;
  	currFrame = 0;
@@ -25,6 +26,8 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
 
 	/// \TODO: put this in an update function
 	setTexture(texture[currFrame]); 
+
+	hasPhysics = _hasPhysics;
 }
 
 Object::~Object()
@@ -59,10 +62,32 @@ float Object::getDist2(Object* _obj) const
 bool Object::isInRadius(Object* _obj, float _radius) const
 {
 	float minDist = _obj->boundingCircleRadius + _radius;
-	return (getDist2(_obj) <= minDist * minDist);  // squared form
+	return (getDist2(_obj) < minDist * minDist);  // squared form
 }
 
 bool Object::isCollidingWith(Object* _obj) const
 {
-	return isInRadius(_obj, boundingCircleRadius);
+	if(hasPhysics && _obj->hasPhysics)
+		return isInRadius(_obj, boundingCircleRadius);
+	return false;
+}
+
+void Object::collisionFeedback(Object* _obj)
+{
+	if(hasPhysics && _obj->hasPhysics)
+	{
+		Vector2f delta = getPosition() - _obj->getPosition();
+		float delta_length = sqrtf(delta.x * delta.x + delta.y * delta.y);
+
+		// normalize delta
+		delta.x /= delta_length;
+		delta.y /= delta_length;
+
+		// scale it to the minimum allowed distance
+		delta.x *= (boundingCircleRadius + _obj->boundingCircleRadius);
+		delta.y *= (boundingCircleRadius + _obj->boundingCircleRadius);
+
+		Vector2f nextPos = _obj->getPosition() + delta;
+		setPosition(nextPos);
+	}
 }

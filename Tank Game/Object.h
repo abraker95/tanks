@@ -13,7 +13,7 @@ using namespace std;
 class Object: public Sprite
 {
  public:
-	Object(const char* _filename, int _numFrames = 1);
+	Object(bool _hasPhysics, const char* _filename, int _numFrames = 1);
 	virtual ~Object();
 
 	virtual void Update(float _elapsedTime) = 0;
@@ -25,10 +25,12 @@ class Object: public Sprite
 	bool isInRadius(Object* _obj, float _radius2) const;
 	bool isCollidingWith(Object* _obj) const;
 	bool isDestroy() const;
+	void collisionFeedback(Object* _obj);
 
  private:
  	int numFrames, currFrame;
 	float boundingCircleRadius;
+	bool hasPhysics;
 
  protected:
 	bool destroy;
