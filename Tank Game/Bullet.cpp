@@ -1,8 +1,8 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(Vector2f _pos, float _rot)
-	: Object(_func, "Bullet", 1)
+Bullet::Bullet(std::vector<Object*>* _objs, Vector2f _pos, float _rot)
+	: Object(_objs, "Bullet", 1)
 {
 	setPosition(_pos);
 	setRotation(_rot);

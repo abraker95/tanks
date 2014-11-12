@@ -16,7 +16,7 @@
 class Tank : public Object
 {
 public:
-	Tank();
+	Tank(std::vector<Object*>* _objs);
 	virtual ~Tank();
 
 	struct Inputmap
@@ -25,16 +25,19 @@ public:
 		Inputmap(const Keyboard::Key _turnRight, 
 				 const Keyboard::Key _turnLeft, 
 				 const Keyboard::Key _goForward, 
-				 const Keyboard::Key _goBackward) 
+				 const Keyboard::Key _goBackward,
+				 const Keyboard::Key _fire)
 			: turnLeft(_turnLeft), 
 			  turnRight(_turnRight), 
 			  goForward(_goForward), 
-			  goBackward(_goBackward) {}
+			  goBackward(_goBackward),
+			  fire(_fire){}
 		
 		Keyboard::Key  turnRight = Keyboard::Unknown,
 					    turnLeft = Keyboard::Unknown,
 					   goForward = Keyboard::Unknown,
-					  goBackward = Keyboard::Unknown;
+					  goBackward = Keyboard::Unknown,
+							fire = Keyboard::Unknown;
 	};
 
 	// just moves the tank, missiles spawing etc is managed at a higher level

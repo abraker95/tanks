@@ -11,11 +11,11 @@
 
 Environment::Environment()
 {
-	player1 = new Tank(); /// \TODO: game objects will be part of another class
+	player1 = new Tank(&objects); /// \TODO: game objects will be part of another class
 
-	Tank::Inputmap imap{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down};
+	Tank::Inputmap imap{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down, Keyboard::Space};
 	player1->setInput(imap);
-	objects.push_back(player1);
+	//objects.push_back(player1);
 }
 
 Environment::~Environment()
@@ -24,16 +24,10 @@ Environment::~Environment()
 		if(objects[i] != nullptr)
 			delete objects[i];
 	objects.clear();
-	/*for(int i=0;i<bullets.size();i++)
-		delete bullets[i];
-	bullets.clear();*/
-	//delete player1;
 }
 
 void Environment::Loop(RenderWindow* _window)
 {
-    //player1->setPosition(0, 0);
-
 	Clock clock;
 	while(_window->isOpen())
 	{
@@ -62,7 +56,7 @@ void Environment::Update(float _elapsedTime)
 			objects[i]->Update(_elapsedTime);
 			if(objects[i]->isDestroy())
 			{
-				delete objects[i];
+				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
 				objects.erase(objects.begin()+i);
 			}
 		}
@@ -72,26 +66,6 @@ void Environment::Update(float _elapsedTime)
 			objects.erase(objects.begin() + i);
 		}
 	}
-
-	// update tank ( player1 ) states
-	/*player1->UpdateUserInput();
-	player1->Update(_elapsedTime);
-	if(Keyboard::isKeyPressed(Keyboard::Space) && player1->Fire())
-		bullets.push_back(new Bullet(player1->getPosition(), player1->getRotation() + 90));
-
-	// update bullets states
-	int bulletIndex = 0;
-	while(bulletIndex < bullets.size())
-	{
-		bullets[bulletIndex]->Update(_elapsedTime);
-		if(bullets[bulletIndex]->isDead())
-		{
-			delete bullets[bulletIndex];
-			bullets.erase(bullets.begin() + bulletIndex);
-		}
-		else 
-			bulletIndex++;
-	}*/
 }
 
 void Environment::Render(RenderWindow* _window)
@@ -99,17 +73,15 @@ void Environment::Render(RenderWindow* _window)
 	for(signed int i = 0; i<objects.size(); i++)
 	{
 		if(objects[i] != nullptr)
-			_window->draw(*(objects[i]));
+		{
+			//PRINT_DEBUG(cout<<"i: "<<i<<"  object list size: "<<objects.size()<<"  Object: "<<objects[i]<<endl, HI_DEBUG);
+			_window->draw(*objects[i]);
+		}
+			
 		else
 		{
 			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
 			objects.erase(objects.begin() + i);
 		}
 	}
-	/*// render bullets
-	for(int i=0;i<bullets.size();i++)
-		_window->draw(*(bullets[i]));
-
-	// render the tank ( player1 )
-	_window->draw(*player1);*/
 }
