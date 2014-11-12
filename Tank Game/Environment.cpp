@@ -13,9 +13,14 @@ Environment::Environment()
 {
 	player1 = new Tank(&objects); /// \TODO: game objects will be part of another class
 
-	Tank::Inputmap imap{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down, Keyboard::Space};
-	player1->setInput(imap);
-	//objects.push_back(player1);
+	Tank::Inputmap imapPlayer1{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down, Keyboard::Space};
+	player1->setInput(imapPlayer1);
+
+	player2 = new Tank(&objects);
+
+	Tank::Inputmap imapPlayer2{Keyboard::D, Keyboard::A, Keyboard::W, Keyboard::S, Keyboard::F};
+	player2->setInput(imapPlayer2);
+	player2->setPosition(200, 200);
 }
 
 Environment::~Environment()
@@ -57,6 +62,7 @@ void Environment::Update(float _elapsedTime)
 			if(objects[i]->isDestroy())
 			{
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
+				delete objects[i];
 				objects.erase(objects.begin()+i);
 			}
 		}

@@ -17,7 +17,7 @@ public:
 	void addObject(Object* _obj) { objects.push_back(_obj); }
 
 private:
-	Tank* player1;
+	Tank* player1, *player2;
 	//std::vector<Bullet*> bullets;
 	std::vector<Object*> objects;
 };
