@@ -58,58 +58,44 @@ void Environment::Loop(RenderWindow* _window)
 
 void Environment::Update(float _elapsedTime)
 {
-	signed int i = 0;
-	while(i < objects.size())
+	for(int i = 0; i<objects.size(); i++)
 	{
-		bool erased = false;
-
 		if(objects[i] != nullptr)
 		{
-			objects[i]->Update(_elapsedTime);
 			if(objects[i]->isDestroy())
 			{
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
-				delete objects[i];
 				objects.erase(objects.begin()+i);
-				erased = true;
+
 			}
-			
-			checkCollisions(objects[i]);
+			else
+			{
+				objects[i]->Update(_elapsedTime);
+				checkCollisions(objects[i]);
+			}
 		}
 		else
 		{
 			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
-			delete objects[i];
 			objects.erase(objects.begin() + i);
-			erased = true;
 		}
-
-		if(!erased)
-			i++;
 	}
 }
 
 void Environment::Render(RenderWindow* _window)
 {
-	signed int i = 0;
-	while(i < objects.size())
+	for(int i = 0; i<objects.size(); i++)
 	{
-		bool erased = false;
+		//bool erased = false;
 		if(objects[i] != nullptr)
 		{
-			//PRINT_DEBUG(cout<<"i: "<<i<<"  object list size: "<<objects.size()<<"  Object: "<<objects[i]<<endl, HI_DEBUG);
 			_window->draw(*objects[i]);
-		}
-			
+		}	
 		else
 		{
 			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
 			objects.erase(objects.begin() + i);
-			erased = true;
 		}
-
-		if(!erased)
-			i++;
 	}
 }
 
@@ -117,7 +103,7 @@ void Environment::Render(RenderWindow* _window)
 void Environment::checkCollisions(GameObject* _obj)
 {
 	// May be buggy when multiple objects are colliding with obj
-	for(int i=0;i<objects.size();i++)
+	for(int i=0; i<objects.size(); i++)
 	{
 		if(objects[i] != _obj && _obj->isCollidingWith(objects[i]))
 		{
