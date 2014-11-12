@@ -5,16 +5,41 @@
 #include "Object.h"
 #include "Bullet.h"
 
+/** \NOTE: Tank Game Object
+	Spawn Case:
+		env: Environment Creation.
+		\TODO: gameplay cases
+	Destroy Case:
+		env: Environment destruction
+		\TODO: gameplay cases
+*/
 class Tank : public Object
 {
 public:
 	Tank();
 	virtual ~Tank();
 
-	// just moves the tank, missiles spawing etc is managed at a higher level
-	void Update(RenderWindow* _window, float _elapsedTime);
+	struct Inputmap
+	{
+		Inputmap() {};
+		Inputmap(const Keyboard::Key _turnRight, 
+				 const Keyboard::Key _turnLeft, 
+				 const Keyboard::Key _goForward, 
+				 const Keyboard::Key _goBackward) 
+			: turnLeft(_turnLeft), 
+			  turnRight(_turnRight), 
+			  goForward(_goForward), 
+			  goBackward(_goBackward) {}
+		
+		Keyboard::Key  turnRight = Keyboard::Unknown,
+					    turnLeft = Keyboard::Unknown,
+					   goForward = Keyboard::Unknown,
+					  goBackward = Keyboard::Unknown;
+	};
 
-	void UpdateUserInput();
+	// just moves the tank, missiles spawing etc is managed at a higher level
+	void Update(float _elapsedTime);
+	void Render(RenderWindow* _window);
 
 	// getters and setters
 	// putting the defintion so that the compiler can inline them
@@ -32,6 +57,8 @@ public:
 	void 	setTankAngleSpeed(float _tankAngleSpeed) { tankAngleSpeed = _tankAngleSpeed; }
 	float 	getTankAngleSpeed() const { return tankAngleSpeed; }
 
+	void    setInput(Inputmap _imap) { imap = _imap; }
+
 private:
 	int health;
 	int numMissiles;
@@ -40,4 +67,11 @@ private:
 
 	float tankSpeed;
 	float tankAngleSpeed;
+
+	const float fireCooldown = 0.1f;
+	Clock fireClock;
+	Inputmap imap;
+
+	void UpdateUserInput();
+	bool Fire();
 };

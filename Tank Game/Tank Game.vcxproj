@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Environment.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Tank.cpp" />
@@ -74,6 +75,7 @@
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="DEBUG.h" />
+    <ClInclude Include="Environment.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Object.h" />

@@ -1,7 +1,7 @@
 #include "Tank.h"
 
 Tank::Tank()
-	: Object("Tank", 1) /// \NOTE: 1 frame for now
+	: Object(_func, "Tank", 1) /// \NOTE: 1 frame for now
 {
 	// tank stats filled with the default values
 	setHealth(100);
@@ -19,24 +19,48 @@ Tank::~Tank()
 
 }
 
+
+
+/// \TODO: put this in the environment class, this way we can support multi
 void Tank::UpdateUserInput()
 {
-	// constant speed so it doesnt go crazy when the key is pressed for a long time
+	//PRINT_DEBUG
+		 if(Keyboard::isKeyPressed(imap.turnRight))		tankAngleSpeed = 300.f;
+	else if(Keyboard::isKeyPressed(imap.turnLeft))		tankAngleSpeed = -300.f;
+	else												tankAngleSpeed = 0.f;
+
+	     if(Keyboard::isKeyPressed(imap.goForward))		tankSpeed = 300.f;
+	else if(Keyboard::isKeyPressed(imap.goBackward))	tankSpeed = -300.f;
+	else												tankSpeed = 0.f;
+
+	//if(Keyboard::isKeyPressed(Keyboard::Space) && Fire())
+	//	new Bullet(getPosition(), getRotation()+90);
+
+/*	// constant speed so it doesnt go craz^y when the key is pressed for a long time
 	     if(Keyboard::isKeyPressed(Keyboard::Right))	tankAngleSpeed = 300.f;
 	else if(Keyboard::isKeyPressed(Keyboard::Left))		tankAngleSpeed = -300.f;
 	else												tankAngleSpeed = 0.f;
 
 	     if(Keyboard::isKeyPressed(Keyboard::Up))		tankSpeed = 300.f;
 	else if(Keyboard::isKeyPressed(Keyboard::Down))		tankSpeed = -300.f;
-	else												tankSpeed = 0.f;
-
-	//  Ok, now I'm to the point where I need to make the envorinment class to manage all the objects. Also:
-	/// \TODO: Delete the bullets at some point before the game exists
-	if(Keyboard::isKeyPressed(Keyboard::Space)) spawnObject(new Bullet(getPosition(), getRotation()+90));
+	else												tankSpeed = 0.f;*/
 }
 
-void Tank::Update(RenderWindow* _window, float _elapsedTime)
+bool Tank::Fire()
 {
+	if(fireClock.getElapsedTime().asSeconds() > fireCooldown)
+	{
+		fireClock.restart();
+		return true;
+	}
+
+	return false;
+}
+
+void Tank::Update(float _elapsedTime)
+{
+	UpdateUserInput();
+
 	float currAngle = getRotation();
 	float nextAngle;
 
@@ -48,10 +72,12 @@ void Tank::Update(RenderWindow* _window, float _elapsedTime)
 	// (+PI/2) because of the sprite orientation
 	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
 	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * tankSpeed * _elapsedTime;
-
+	
 	setPosition(nextPos);
 	setRotation(nextAngle);
+}
 
-	UpdateChildObjs(_window, _elapsedTime);
+void Tank::Render(RenderWindow* _window)
+{
 	Render(_window);
 }

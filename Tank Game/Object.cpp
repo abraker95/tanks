@@ -1,9 +1,11 @@
 #include "Object.h"
 
+
 Object::Object(const char* _filename, int _numFrames): Sprite()
 {
  	numFrames = _numFrames;
  	currFrame = 0;
+	destroy = false;
 
 	texture = new Texture[numFrames];
 
@@ -21,6 +23,12 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
 
 	// set the origin to the center of the sprite by default
 	setOrigin((float)size.x/2.f, (float)size.y/2.f);
+
+	/// \TODO: put this in an update function
+	setTexture(texture[currFrame]); 
+
+	/// I spend 5 hours with no progress trying to figure out how to make this work
+	env->addObject(this);
 }
 
 Object::~Object()
@@ -28,14 +36,22 @@ Object::~Object()
     if(texture) delete[] texture;
 }
 
+bool Object::isDestroy() const
+{
+	return destroy;
+}
+
 void Object::Render(RenderWindow* _window)
 {
+	/*
 	if(++currFrame>=numFrames) currFrame = 0;
     PRINT_DEBUG(cout<<"currFrame: "<<currFrame<<endl, HI_DEBUG);
 
      if(texture)
         setTexture(texture[currFrame]);
-	_window->draw(*this);
+	
+		_window->draw(*this); <-- doesn't work with multiple inheritance
+	*/
 }
 
 float Object::getDist2(Object* _obj) const
@@ -53,17 +69,4 @@ bool Object::isInRadius(Object* _obj, float _radius) const
 bool Object::isCollidingWith(Object* _obj) const
 {
 	return isInRadius(_obj, boundingCircleRadius);
-}
-
-Object* Object::spawnObject(Object* _obj)
-{
-	childObjects.push_back(_obj);
-	return childObjects[childObjects.size()-1];
-}
-
-void Object::UpdateChildObjs(RenderWindow* _window, float _elapsedTime)
-{
-	for(int i = 0; i<childObjects.size(); i++)
-		if(childObjects[i]!=nullptr)
-			childObjects[i]->Update(_window, _elapsedTime);
 }
