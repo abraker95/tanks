@@ -1,7 +1,7 @@
 #include "Tank.h"
 
-Tank::Tank(std::vector<Object*>* _objs)
-	: Object(_objs, "Tank", 1) /// \NOTE: 1 frame for now
+Tank::Tank()
+	: Object("Tank", 1) /// \NOTE: 1 frame for now
 {
 	// tank stats filled with the default values
 	setHealth(100);
@@ -31,8 +31,8 @@ void Tank::UpdateUserInput()
 	else if(Keyboard::isKeyPressed(imap.goBackward))	tankSpeed = -300.f;
 	else												tankSpeed = 0.f;
 
-	if(Keyboard::isKeyPressed(Keyboard::Space)&&Fire())
-		addChildObject(new Bullet(getObjectList(), getPosition(), getRotation()+90));
+	if(Keyboard::isKeyPressed(imap.fire)&&Fire())
+		Environment::getSingleton()->addObject(new Bullet(getPosition(), getRotation()+90));
 }
 
 bool Tank::Fire()

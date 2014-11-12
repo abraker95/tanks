@@ -1,11 +1,10 @@
 #include "Object.h"
 
-Object::Object(std::vector<Object*>* _objs, const char* _filename, int _numFrames): Sprite()
+Object::Object(const char* _filename, int _numFrames): Sprite()
 {
  	numFrames = _numFrames;
  	currFrame = 0;
 	destroy = false;
-	objs = _objs;
 
 	texture = new Texture[numFrames];
 
@@ -26,9 +25,6 @@ Object::Object(std::vector<Object*>* _objs, const char* _filename, int _numFrame
 
 	/// \TODO: put this in an update function
 	setTexture(texture[currFrame]); 
-
-	/// I spend 5 hours with no progress trying to figure out how to make this work
-	objs->push_back(this);
 }
 
 Object::~Object()
@@ -39,16 +35,6 @@ Object::~Object()
 bool Object::isDestroy() const
 {
 	return destroy;
-}
-
-void Object::addChildObject(Object* _obj)
-{
-	objs->push_back(_obj);
-}
-
-std::vector<Object*>* Object::getObjectList() const
-{
-	return objs;
 }
 
 void Object::Render(RenderWindow* _window)

@@ -3,7 +3,6 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <vector>
 #include "object.h"
-#include "Tank.h"
 
 class Environment
 {
@@ -15,9 +14,12 @@ public:
 	void Update(float _elapsedTime);
 	void Render(RenderWindow* _window);
 	void addObject(Object* _obj) { objects.push_back(_obj); }
+	static Environment* getSingleton() { return singleton; }
+	static void initSingleton();
+	static void deinitSingleton();
 
 private:
-	Tank* player1, *player2;
 	//std::vector<Bullet*> bullets;
 	std::vector<Object*> objects;
+	static Environment* singleton;
 };

@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Object.h"
 #include "Bullet.h"
+#include "Environment.h"
 
 /** \NOTE: Tank Game Object
 	Spawn Case:
@@ -16,7 +17,7 @@
 class Tank : public Object
 {
 public:
-	Tank(std::vector<Object*>* _objs);
+	Tank();
 	virtual ~Tank();
 
 	struct Inputmap

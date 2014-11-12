@@ -12,7 +12,7 @@
 class Bullet : public Object
 {
 public:
-	Bullet(std::vector<Object*>* _objs, Vector2f _pos, float _rot);
+	Bullet(Vector2f _pos, float _rot);
 	virtual ~Bullet();
 
 	void Update(float _elapsedTime);

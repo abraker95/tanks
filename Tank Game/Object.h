@@ -13,7 +13,7 @@ using namespace std;
 class Object: public Sprite
 {
  public:
-	Object(std::vector<Object*>* _objs, const char* _filename, int _numFrames = 1);
+	Object(const char* _filename, int _numFrames = 1);
 	virtual ~Object();
 
 	virtual void Update(float _elapsedTime) = 0;
@@ -26,11 +26,7 @@ class Object: public Sprite
 	bool isCollidingWith(Object* _obj) const;
 	bool isDestroy() const;
 
-	void addChildObject(Object* _obj);
-	std::vector<Object*>* getObjectList() const;
-
  private:
-	std::vector<Object*>* objs;
  	int numFrames, currFrame;
 	float boundingCircleRadius;
 

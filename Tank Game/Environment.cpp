@@ -9,18 +9,11 @@
 //-------------------------------------------------------------
 #include "Environment.h"
 
+Environment* Environment::singleton = nullptr;
+
 Environment::Environment()
 {
-	player1 = new Tank(&objects); /// \TODO: game objects will be part of another class
-
-	Tank::Inputmap imapPlayer1{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down, Keyboard::Space};
-	player1->setInput(imapPlayer1);
-
-	player2 = new Tank(&objects);
-
-	Tank::Inputmap imapPlayer2{Keyboard::D, Keyboard::A, Keyboard::W, Keyboard::S, Keyboard::F};
-	player2->setInput(imapPlayer2);
-	player2->setPosition(200, 200);
+	
 }
 
 Environment::~Environment()
@@ -30,6 +23,17 @@ Environment::~Environment()
 			delete objects[i];
 	objects.clear();
 }
+
+void Environment::initSingleton()
+{
+	singleton = new Environment;
+}
+
+void Environment::deinitSingleton()
+{
+	if(singleton) delete singleton;
+}
+
 
 void Environment::Loop(RenderWindow* _window)
 {
@@ -54,8 +58,11 @@ void Environment::Loop(RenderWindow* _window)
 
 void Environment::Update(float _elapsedTime)
 {
-	for(signed int i = 0; i<objects.size(); i++)
+	signed int i = 0;
+	while(i < objects.size())
 	{
+		bool erased = false;
+
 		if(objects[i] != nullptr)
 		{
 			objects[i]->Update(_elapsedTime);
@@ -64,20 +71,28 @@ void Environment::Update(float _elapsedTime)
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
 				delete objects[i];
 				objects.erase(objects.begin()+i);
+				erased = true;
 			}
 		}
 		else
 		{
 			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
+			delete objects[i];
 			objects.erase(objects.begin() + i);
+			erased = true;
 		}
+
+		if(!erased)
+			i++;
 	}
 }
 
 void Environment::Render(RenderWindow* _window)
 {
-	for(signed int i = 0; i<objects.size(); i++)
+	signed int i = 0;
+	while(i < objects.size())
 	{
+		bool erased = false;
 		if(objects[i] != nullptr)
 		{
 			//PRINT_DEBUG(cout<<"i: "<<i<<"  object list size: "<<objects.size()<<"  Object: "<<objects[i]<<endl, HI_DEBUG);
@@ -88,6 +103,10 @@ void Environment::Render(RenderWindow* _window)
 		{
 			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
 			objects.erase(objects.begin() + i);
+			erased = true;
 		}
+
+		if(!erased)
+			i++;
 	}
 }
