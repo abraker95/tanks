@@ -23,23 +23,26 @@ class GameObject: public Object
 
 			~Inputmap()
 			{
-				//if(kmap) delete kmap;
-				//if(mmap) delete mmap;
+				// if(kmap) delete kmap;
+				// if(mmap) delete mmap;
 			}
 
 			Keyboard::Key* kmap;
 			Mouse::Button* mmap;
 		};
 
-		void 	setSpeed(float _tankSpeed) { speed = _tankSpeed; }
-		float 	getSpeed() const { return speed; }
-		void 	setAngleSpeed(float _tankAngleSpeed) { speed = _tankAngleSpeed; }
-		float 	getAngleSpeed() const { return speed; }
-		void    setInput(Inputmap _imap) { imap = _imap; }
-		
-		
+		void setInput(Inputmap _imap) { imap = _imap; }
+
+		void addHealth(int _health) { health += _health; }
+		bool hasHealth() const { return health > 0; }
+		int  getHealth() const { return health; }
+		void resetHealth() { health = maxHealth; }
+		int getMaxHealth() const { return maxHealth; }
+
 	protected:
 		float speed, angleSpeed;
+		int health;
+		int maxHealth;
 		Inputmap imap;
 
 		void UpdateUserInput() = 0;

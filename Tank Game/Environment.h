@@ -14,6 +14,7 @@ public:
 	void Update(float _elapsedTime);
 	void Render(RenderWindow* _window);
 	void addObject(GameObject* _obj) { objects.push_back(_obj); }
+	const std::vector<GameObject*>& getObjects() const { return objects; } // read only
 	static Environment* getSingleton() { return singleton; }
 	static void initSingleton();
 	static void deinitSingleton();

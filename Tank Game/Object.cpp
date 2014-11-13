@@ -6,7 +6,7 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
  	numFrames = _numFrames;
 	//solid = _hasPhysics;
  	currFrame = 0;
-	destroy = false;
+	destroyed = false;
 
 	texture = new Texture[numFrames];
 
@@ -34,9 +34,14 @@ Object::~Object()
     if(texture) delete[] texture;
 }
 
+void Object::destroy()
+{
+	destroyed = true;
+}
+
 bool Object::isDestroy() const
 {
-	return destroy;
+	return destroyed;
 }
 
 float Object::getBoundingCircleRadius() const

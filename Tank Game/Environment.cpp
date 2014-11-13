@@ -18,7 +18,7 @@ Environment::Environment()
 
 Environment::~Environment()
 {
-	for(signed int i = 0; i<objects.size(); i++)
+	for(size_t i = 0; i<objects.size(); i++)
 		if(objects[i] != nullptr)
 			delete objects[i];
 	objects.clear();
@@ -33,7 +33,6 @@ void Environment::deinitSingleton()
 {
 	if(singleton) delete singleton;
 }
-
 
 void Environment::Loop(RenderWindow* _window)
 {
@@ -58,7 +57,7 @@ void Environment::Loop(RenderWindow* _window)
 
 void Environment::Update(float _elapsedTime)
 {
-	for(int i = 0; i<objects.size(); i++)
+	for(size_t i = 0; i<objects.size(); i++)
 	{
 		if(objects[i] != nullptr)
 		{
@@ -85,7 +84,7 @@ void Environment::Update(float _elapsedTime)
 
 void Environment::Render(RenderWindow* _window)
 {
-	for(int i = 0; i<objects.size(); i++)
+	for(size_t i = 0; i<objects.size(); i++)
 	{
 		//bool erased = false;
 		if(objects[i] != nullptr)
@@ -104,11 +103,14 @@ void Environment::Render(RenderWindow* _window)
 void Environment::checkCollisions(GameObject* _obj)
 {
 	// May be buggy when multiple objects are colliding with obj
-	for(int i=0; i<objects.size(); i++)
+	for(size_t i=0; i<objects.size(); i++)
 	{
-		if(objects[i] != _obj && _obj->isCollidingWith(objects[i]))
+		if(_obj->isSolid() && objects[i]->isSolid())
 		{
-			_obj->collisionFeedback(objects[i]);
+			if(objects[i] != _obj && _obj->isCollidingWith(objects[i]))
+			{
+				_obj->collisionFeedback(objects[i]);
+			}
 		}
 	}
 }

@@ -4,14 +4,14 @@ Tank::Tank()
 	: GameObject(true, "Tank", 1)
 {
 	// tank stats filled with the default values
-	setHealth(100);
-	setNumMines(0);
-	setNumMissiles(0);
-	setNumWalls(0);
+	health = 100;
+	maxHealth = 100;
+	numMines = 0;
+	numMissiles = 0;
+	numWalls = 0;
 
 	// tank special states
-	setSpeed(0.f);
-	setSpeed(0.f);
+	speed = 0.f;
 }
 
 Tank::~Tank()
@@ -32,7 +32,7 @@ void Tank::UpdateUserInput()
 	else														speed = 0.f;
 
 	if(Keyboard::isKeyPressed(imap.kmap[Fire_Bullet]) && Fire())
-		Environment::getSingleton()->addObject(new Bullet(getPosition(), getRotation()+90));
+		Environment::getSingleton()->addObject(new Bullet(getPosition(), getRotation()+90, this));
 }
 
 bool Tank::Fire()
