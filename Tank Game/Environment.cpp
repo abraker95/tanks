@@ -65,6 +65,7 @@ void Environment::Update(float _elapsedTime)
 			if(objects[i]->isDestroy())
 			{
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
+				delete objects[i];
 				objects.erase(objects.begin()+i);
 
 			}
@@ -76,7 +77,7 @@ void Environment::Update(float _elapsedTime)
 		}
 		else
 		{
-			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
+			PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
 			objects.erase(objects.begin() + i);
 		}
 	}
@@ -93,7 +94,7 @@ void Environment::Render(RenderWindow* _window)
 		}	
 		else
 		{
-			PRINT_DEBUG(cout<<"[ENV]: Found undeleted object!", MED_DEBUG);
+			PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
 			objects.erase(objects.begin() + i);
 		}
 	}
