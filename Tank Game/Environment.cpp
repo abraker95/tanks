@@ -84,6 +84,11 @@ void Environment::Update(float _elapsedTime)
 
 void Environment::Render(RenderWindow* _window)
 {
+	// render the tilemap
+	tilemap->setScale(1.f, 1.f);
+	_window->draw(*tilemap);
+
+	// render the game objects
 	for(size_t i = 0; i<objects.size(); i++)
 	{
 		//bool erased = false;

@@ -6,7 +6,7 @@
 class Tilemap : public sf::Drawable, public sf::Transformable
 {
 public:
-	bool Load(const char* _tileSheet, sf::Vector2u _tileSize, const int* _tiles, unsigned int _width, unsigned int _height);
+	bool load(const char* _tileSheet, sf::Vector2u _tileSize, const int* _tiles, unsigned int _width, unsigned int _height);
 
 private:
 	virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;

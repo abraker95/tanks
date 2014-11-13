@@ -1,7 +1,6 @@
 #include "Tilemap.h"
 
-
-bool Tilemap::Load(const char* _tileSheet, sf::Vector2u _tileSize, const int* _tiles, unsigned int _width, unsigned int _height) 
+bool Tilemap::load(const char* _tileSheet, sf::Vector2u _tileSize, const int* _tiles, unsigned int _width, unsigned int _height) 
 {
 	if(!tileset.loadFromFile(_tileSheet))
 		return false;
