@@ -4,6 +4,8 @@
 
 class GameObject: public Object
 {
+	friend class Environment;
+
 	public:
 		GameObject(bool _solid, const char* _filename, int _numFrames = 1);
 		virtual ~GameObject();
@@ -36,6 +38,13 @@ class GameObject: public Object
 		float 	getAngleSpeed() const { return speed; }
 		void    setInput(Inputmap _imap) { imap = _imap; }
 		
+		
+	protected:
+		float speed, angleSpeed;
+		Inputmap imap;
+
+		void UpdateUserInput() = 0;
+		
 		// physics
 		// the 2 suffix means squared
 		float getDist2(GameObject* _obj) const;
@@ -44,11 +53,6 @@ class GameObject: public Object
 		bool isCollidingWith(GameObject* _obj) const;
 		void collisionFeedback(GameObject* _obj);
 		//Vector2f getVelocityVector();
-	protected:
-		float speed, angleSpeed;
-		Inputmap imap;
-
-		void UpdateUserInput() = 0;
 	private:
 		bool solid;
 };
