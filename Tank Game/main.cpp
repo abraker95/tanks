@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include "Environment.h"
 #include "Tank.h"
+#include "Mine.h"
+#include "Environment.h"
 
 using namespace sf;
 
@@ -15,11 +16,12 @@ int main()
 	Tank* player1, *player2;
 
 	player1 = new Tank; /// \TODO: game objects will be part of another class
-		Tank::Inputmap imapPlayer1(new Keyboard::Key[]{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down, Keyboard::Space}, {});
+		Tank::Inputmap imapPlayer1(new Keyboard::Key[5]{Keyboard::Right, Keyboard::Left, Keyboard::Up, Keyboard::Down, Keyboard::Space}, {});
 		player1->setInput(imapPlayer1);
 
 	player2 = new Tank;
-		Tank::Inputmap imapPlayer2(new Keyboard::Key[] { Keyboard::D, Keyboard::A, Keyboard::W, Keyboard::S, Keyboard::F }, {});
+		Tank::Inputmap imapPlayer2(new Keyboard::Key[5] { Keyboard::D, Keyboard::A, Keyboard::W, Keyboard::S, Keyboard::F }, {});
+
 		player2->setInput(imapPlayer2);
 		player2->setPosition(200, 200);
 
