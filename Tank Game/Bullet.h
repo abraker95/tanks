@@ -16,7 +16,6 @@ public:
 	virtual ~Bullet();
 
 	void Update(float _elapsedTime);
-	void Render(RenderWindow* _window);
 	bool isDead() const;
 
 private:

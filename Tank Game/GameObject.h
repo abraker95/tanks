@@ -11,7 +11,6 @@ class GameObject: public Object
 		virtual ~GameObject();
 
 		void Update(float _elapsedTime) = 0;
-		void Render(RenderWindow* _window) = 0;
 
 		struct Inputmap
 		{

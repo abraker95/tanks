@@ -15,7 +15,6 @@ class Object: public Sprite
 	virtual ~Object();
 
 	virtual void Update(float _elapsedTime) = 0;
-	virtual void Render(RenderWindow* _window) = 0;
 
 	bool isDestroy() const;
 	float getBoundingCircleRadius() const;

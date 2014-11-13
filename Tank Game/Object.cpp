@@ -39,19 +39,6 @@ bool Object::isDestroy() const
 	return destroy;
 }
 
-void Object::Render(RenderWindow* _window)
-{
-	/*
-	if(++currFrame>=numFrames) currFrame = 0;
-    PRINT_DEBUG(cout<<"currFrame: "<<currFrame<<endl, HI_DEBUG);
-
-     if(texture)
-        setTexture(texture[currFrame]);
-	
-		_window->draw(*this); <-- doesn't work with multiple inheritance
-	*/
-}
-
 float Object::getBoundingCircleRadius() const
 {
 	return boundingCircleRadius;

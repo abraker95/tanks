@@ -65,8 +65,3 @@ void Tank::Update(float _elapsedTime)
 	setPosition(nextPos);
 	setRotation(nextAngle);
 }
-
-void Tank::Render(RenderWindow* _window)
-{
-	Render(_window);
-}

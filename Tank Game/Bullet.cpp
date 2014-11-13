@@ -27,11 +27,6 @@ void Bullet::Update(float _elapsedTime)
 		destroy = true;
 }
 
-void Bullet::Render(RenderWindow* _window)
-{
-	Render(_window);
-}
-
 bool Bullet::isDead() const
 {
 	return (lifetime <= 0.f);
