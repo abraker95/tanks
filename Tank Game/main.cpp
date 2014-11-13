@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Tank.h"
+#include "Mine.h"
 #include "Environment.h"
 
 using namespace sf;
