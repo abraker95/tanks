@@ -68,6 +68,10 @@ void Environment::Update(float _elapsedTime)
 		{
 			if(objects[i]->isDestroy())
 			{
+				// remove object from view
+				for(size_t j=0;j<cameras.size();j++)
+					cameras[j]->removeFocused(objects[i]);
+
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
 				delete objects[i];
 				objects.erase(objects.begin()+i);

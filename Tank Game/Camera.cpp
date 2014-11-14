@@ -23,6 +23,18 @@ void Camera::addFocused(GameObject* _obj)
 	focusedObjects.push_back(_obj);
 }
 
+void Camera::removeFocused(GameObject* _obj)
+{
+	for(size_t i=0;i<focusedObjects.size();i++)
+	{
+		if(focusedObjects[i] == _obj)
+		{
+			focusedObjects.erase(focusedObjects.begin() + i);
+			break;
+		}
+	}
+}
+
 void Camera::Update()
 {
 	if(focusedObjects.size() == 0)

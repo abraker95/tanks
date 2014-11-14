@@ -10,6 +10,7 @@ public:
 	virtual ~Camera();
 
 	void addFocused(GameObject* _obj);
+	void removeFocused(GameObject* _obj);
 	void Update();
 
 private:
