@@ -108,8 +108,5 @@ bool GameObject::isCollision(GameObject* _obj, float _elapsedTime)
 		float xIntersection = (Bobj2VelVec-Bobj1VelVec)/(slopeobj1VelVec-slopeobj2VelVec),
 			  yIntersection = slopeobj1VelVec*xIntersection+Bobj1VelVec;
 	}
-}
-
-	// intersection between surface tangent vectors
-
+	return false;  // \TODO: WIP
 }
