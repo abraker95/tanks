@@ -23,6 +23,7 @@ class Object: public Sprite
 	bool isSolid() const;
 	void collisionFeedback(Object* _obj);
 	Vector2f getVelocityVector();
+	Vector2f getSize() const;
  
  protected:
 	bool destroyed;

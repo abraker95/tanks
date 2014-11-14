@@ -22,6 +22,11 @@ Environment::~Environment()
 		if(objects[i] != nullptr)
 			delete objects[i];
 	objects.clear();
+
+	for(size_t i = 0; i<cameras.size(); i++)
+		if(cameras[i] != nullptr)
+			delete cameras[i];
+	cameras.clear();
 }
 
 void Environment::initSingleton()
@@ -84,22 +89,28 @@ void Environment::Update(float _elapsedTime)
 
 void Environment::Render(RenderWindow* _window)
 {
-	// render the tilemap
-	tilemap->setScale(1.f, 1.f);
-	_window->draw(*tilemap);
-
-	// render the game objects
-	for(size_t i = 0; i<objects.size(); i++)
+	for(size_t i=0;i<cameras.size();i++)
 	{
-		//bool erased = false;
-		if(objects[i] != nullptr)
+		cameras[i]->Update();
+		_window->setView(*cameras[i]);
+
+		// render the tilemap
+		tilemap->setScale(1.f, 1.f);
+		_window->draw(*tilemap);
+
+		// render the game objects
+		for(size_t i = 0; i<objects.size(); i++)
 		{
-			_window->draw(*objects[i]);
-		}	
-		else
-		{
-			PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
-			objects.erase(objects.begin() + i);
+			//bool erased = false;
+			if(objects[i] != nullptr)
+			{
+				_window->draw(*objects[i]);
+			}	
+			else
+			{
+				PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
+				objects.erase(objects.begin() + i);
+			}
 		}
 	}
 }
