@@ -50,19 +50,20 @@ void Tank::Update(float _elapsedTime)
 {
 	UpdateUserInput();
 
-	float currAngle = getRotation();
-	float nextAngle;
+	//float currAngle = getRotation();
+	float nextAngle = getRotation() + _elapsedTime * angleSpeed;
 
-	const Vector2f& currPos = getPosition();
+	/*const Vector2f& currPos = getPosition();
 	Vector2f nextPos;
 
-	nextAngle = currAngle + _elapsedTime * angleSpeed;
+	float nextAngle = currAngle+_elapsedTime * angleSpeed;
+	nextAngle ;
 
 	// (+PI/2) because of the sprite orientation
 	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;
-	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;
+	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;*/
 	
-	setPosition(nextPos);
+	setPosition(getPosition() + getVelocityVector(_elapsedTime));
 	setRotation(nextAngle);
 }
 

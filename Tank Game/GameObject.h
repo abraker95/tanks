@@ -43,7 +43,14 @@ class GameObject: public Object
 		bool isSolid() const;
 		bool isCollidingWith(GameObject* _obj) const;
 		void collisionFeedback(GameObject* _obj);
-		//Vector2f getVelocityVector();
+
+		/// \TODO: function to get the perpendicular vector
+		/// \TODO: function to get normal of a vector
+		/// \TODO: function to find the solution of a system of 2 vectors
+		Vector2f getVelocityVector(float _elapsedTime);
+		Vector2f getSurfaceTangentVector(float _elapsedTime);
+		bool isCollision(GameObject* _obj, float _elapsedTime);
+
 	protected:
 		float speed, angleSpeed;
 		Inputmap imap;
