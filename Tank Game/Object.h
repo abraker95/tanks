@@ -15,8 +15,8 @@ class Object: public Sprite
 	virtual ~Object();
 
 	virtual void Update(float _elapsedTime) = 0;
-	virtual void Render(RenderWindow* _window) = 0;
 
+	void destroy();
 	bool isDestroy() const;
 	float getBoundingCircleRadius() const;
 
@@ -25,10 +25,9 @@ class Object: public Sprite
 	Vector2f getVelocityVector();
  
  protected:
-	bool destroy;
+	bool destroyed;
 	Texture* texture;
 	float boundingCircleRadius;
-
 
 	virtual void UpdateUserInput() = 0;
 

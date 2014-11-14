@@ -6,7 +6,7 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
  	numFrames = _numFrames;
 	//solid = _hasPhysics;
  	currFrame = 0;
-	destroy = false;
+	destroyed = false;
 
 	texture = new Texture[numFrames];
 
@@ -34,22 +34,14 @@ Object::~Object()
     if(texture) delete[] texture;
 }
 
-bool Object::isDestroy() const
+void Object::destroy()
 {
-	return destroy;
+	destroyed = true;
 }
 
-void Object::Render(RenderWindow* _window)
+bool Object::isDestroy() const
 {
-	/*
-	if(++currFrame>=numFrames) currFrame = 0;
-    PRINT_DEBUG(cout<<"currFrame: "<<currFrame<<endl, HI_DEBUG);
-
-     if(texture)
-        setTexture(texture[currFrame]);
-	
-		_window->draw(*this); <-- doesn't work with multiple inheritance
-	*/
+	return destroyed;
 }
 
 float Object::getBoundingCircleRadius() const

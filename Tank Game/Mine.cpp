@@ -23,7 +23,7 @@ void Mine::Update(float _elapsedTime)
 	{
 		if(explosionProgress > 1.f)
 		{
-			destroy = true;
+			destroy();
 		}
 
 		else

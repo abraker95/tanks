@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
+#include "Environment.h"
 
 /** \NOTE: Bullet Game Object
 	Spawn Case: 
@@ -12,11 +13,10 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(Vector2f _pos, float _rot);
+	Bullet(Vector2f _pos, float _rot, GameObject* _parent);
 	virtual ~Bullet();
 
 	void Update(float _elapsedTime);
-	void Render(RenderWindow* _window);
 	bool isDead() const;
 
 private:
@@ -24,4 +24,5 @@ private:
 	float lifetime;
 	
 	void UpdateUserInput();
+	GameObject* parent;
 };
