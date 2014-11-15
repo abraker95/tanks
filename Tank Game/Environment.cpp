@@ -16,7 +16,7 @@ Environment::Environment()
 	objBounds.left = 0;
 	objBounds.width = 0;
 	objBounds.top = 0;
-	objBounds.height = 0;
+	objBounds.height = 0; 
 }
 
 Environment::~Environment()
