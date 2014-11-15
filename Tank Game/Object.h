@@ -18,10 +18,12 @@ class Object: public Sprite
 
 	virtual void Update(float _elapsedTime) = 0;
 
+	int camNumFocus;
+
 	void destroy();
 	bool isDestroy() const;
 	float getBoundingCircleRadius() const;
-
+	Vector2f getSize() const;
 	void collisionFeedback(Object* _obj);
 
  protected:

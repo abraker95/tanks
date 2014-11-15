@@ -7,6 +7,7 @@ Object::Object(const char* _filename, int _numFrames): Sprite()
 	currFrame = 0;
 	destroyed = false;
 	elapsedTime = -1;
+	camNumFocus = -1;
 
 	texture = new Texture[numFrames];
 

@@ -13,10 +13,7 @@ Environment* Environment::singleton = nullptr;
 
 Environment::Environment()
 {
-	objBounds.left = 0;
-	objBounds.width = 0;
-	objBounds.top = 0;
-	objBounds.height = 0; 
+ cameras.push_back(new Camera(Vector2f(200, 200), Vector2f(200, 200), Vector2f(2000, 2000)));
 }
 
 Environment::~Environment()
@@ -25,6 +22,11 @@ Environment::~Environment()
 		if(objects[i] != nullptr)
 			delete objects[i];
 	objects.clear();
+
+	for(size_t i = 0; i<cameras.size(); i++)
+		if(cameras[i]!=nullptr)
+			delete cameras[i];
+	cameras.clear();
 }
 
 void Environment::initSingleton()
@@ -35,6 +37,16 @@ void Environment::initSingleton()
 void Environment::deinitSingleton()
 {
 	if(singleton) delete singleton;
+}
+
+void Environment::addObject(GameObject* _obj, bool _focused, int _camera)
+{ 
+ objects.push_back(_obj); 
+
+ if(_focused == true)
+	 if(cameras.size() > _camera)
+		 if(cameras[_camera]!=nullptr)
+			 cameras[_camera]->addFocused(_obj);
 }
 
 void Environment::Loop(RenderWindow* _window)
@@ -58,24 +70,18 @@ void Environment::Loop(RenderWindow* _window)
 	}
 }
 
-void Environment::UpdateObjectBounds(FloatRect& objBounds, GameObject* _obj)
-{
-	objBounds.left   = MIN(objBounds.left,  _obj->getPosition().x);
-	objBounds.top    = MIN(objBounds.top,   _obj->getPosition().y);
-	objBounds.width  = MAX(objBounds.width, _obj->getPosition().x+2*_obj->getBoundingCircleRadius());
-	objBounds.height = MAX(objBounds.height,  _obj->getPosition().y+2*_obj->getBoundingCircleRadius());
-}
-
 void Environment::Update(float _elapsedTime)
 {
-	FloatRect newObjBounds(0, 0, 0, 0);
-
 	for(size_t i = 0; i<objects.size(); i++)
 	{
 		if(objects[i] != nullptr)
 		{
 			if(objects[i]->isDestroy())
 			{
+				// remove object from view
+				for(size_t j = 0; j<cameras.size(); j++)
+					cameras[j]->removeFocused(objects[i]);
+
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
 				delete objects[i];
 				objects.erase(objects.begin()+i);
@@ -83,9 +89,6 @@ void Environment::Update(float _elapsedTime)
 			else
 			{
 				objects[i]->Update(_elapsedTime);
-				UpdateObjectBounds(newObjBounds, objects[i]);
-
-				/// Here Debugging purposes
 				checkCollisions(objects[i]);
 			}
 		}
@@ -95,17 +98,12 @@ void Environment::Update(float _elapsedTime)
 			objects.erase(objects.begin() + i);
 		}
 	}
-
-	objBounds = newObjBounds;
 }
 
 void Environment::Render(RenderWindow* _window)
-{
-	// Prepare camera
-	_window->setView(view);
-	view.setViewport(FloatRect(0.f, 0.f, 1.f, 1.f));
-	view.setCenter((objBounds.width+objBounds.left-50)/2, (objBounds.height+objBounds.top-50)/2);
-	view.setSize(MAX(objBounds.width-objBounds.left, objBounds.height-objBounds.top)+50, MAX(objBounds.width-objBounds.left, objBounds.height-objBounds.top)+50);
+{	// Update cameras
+	for(size_t i = 0; i<cameras.size(); i++)
+		cameras[0]->Update(_window);
 
 	// render the tilemap
 	tilemap->setScale(1.f, 1.f);
@@ -116,9 +114,11 @@ void Environment::Render(RenderWindow* _window)
 	{
 		if(objects[i] != nullptr)
 		{
-			
-			_window->draw(*objects[i]);
-			objects[i]->isCollision(objects[i]);
+			if(objects[i]->camNumFocus==-1) // render objects that aren't being focused
+			{
+				_window->draw(*objects[i]);
+			}
+			//objects[i]->isCollision(objects[i]);  // for debugging purposes
 		}	
 		else
 		{
@@ -126,7 +126,6 @@ void Environment::Render(RenderWindow* _window)
 			objects.erase(objects.begin() + i);
 		}
 	}
-	_window->setView(_window->getDefaultView()); // return to previous camera
 }
 
 // TODO: optimize collision detection

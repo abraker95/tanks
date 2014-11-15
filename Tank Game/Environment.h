@@ -16,15 +16,12 @@ public:
 	void Update(float _elapsedTime);
 	void Render(RenderWindow* _window);
 	void setTilemap(Tilemap* _tilemap) { tilemap = _tilemap; }
-	void addObject(GameObject* _obj) { objects.push_back(_obj); }
+	void addObject(GameObject* _obj, bool _focused = true, int _camera = 0);
 	void addCamera(Camera* _cam) { cameras.push_back(_cam); }
 	const std::vector<GameObject*>& getObjects() const { return objects; } // read only
 	static Environment* getSingleton() { return singleton; }
 	static void initSingleton();
 	static void deinitSingleton();
-
-protected:
-	void UpdateObjectBounds(FloatRect& objBounds, GameObject* _obj);
 
 private:
 	std::vector<GameObject*> objects;
