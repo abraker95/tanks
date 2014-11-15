@@ -53,56 +53,103 @@ void GameObject::collisionFeedback(GameObject* _obj)
 		setPosition(nextPos);
 }
 
-Vector2f GameObject::getVelocityVector(float _elapsedTime)
+float GameObject::getNextAngle()
 {
-	float nextAngle = getRotation() + _elapsedTime * angleSpeed;
-
-	Vector2f nextPos(cosf(DEG2RAD(nextAngle)+PI/2) * speed * _elapsedTime,
-					 sinf(DEG2RAD(nextAngle)+PI/2) * speed * _elapsedTime);
-
-	return nextPos;
+	return getRotation() + elapsedTime*angleSpeed;
 }
 
-Vector2f GameObject::getSurfaceTangentVector(float _elapsedTime)
+VectorLN GameObject::getVelocityVector()
 {
-	float nextAngle = getRotation()+_elapsedTime * angleSpeed,
-			radians = DEG2RAD(nextAngle)+PI/2;
-
-	Vector2f surfaceNormal = Vector2f(boundingCircleRadius*cosf(radians),
-									  boundingCircleRadius*sinf(radians)),
-		// take the perpendicular result
-			 surfaceTangent = Vector2f(surfaceNormal.x*cos(radians)-surfaceNormal.y*sin(radians),
-									   surfaceNormal.x*sin(radians)+surfaceNormal.y*cos(radians));
-
-	return surfaceTangent;
+	return VectorLN(cosf(DEG2RAD(getNextAngle())+PI/2) * speed * elapsedTime,
+			        sinf(DEG2RAD(getNextAngle())+PI/2) * speed * elapsedTime);
 }
 
-bool GameObject::isCollision(GameObject* _obj, float _elapsedTime)
+VectorLN GameObject::getSurfaceNormalVector()
 {
-	Vector2f obj1SurfaceTangent, obj2SurfaceTangent,
+	return VectorLN(boundingCircleRadius * getVelocityVector().Normalize().x,
+					boundingCircleRadius * getVelocityVector().Normalize().y);
+
+}
+
+VectorLN GameObject::getSurfaceTangentVector()
+{
+	return VectorLN(2*boundingCircleRadius*cosf(DEG2RAD(getNextAngle())+PI/2), 
+		            2*boundingCircleRadius*sinf(DEG2RAD(getNextAngle())+PI/2)).getPerpendicular();
+}
+
+bool GameObject::isCollision(GameObject* _obj)
+{
+	VectorLN obj1SurfaceTangent, obj2SurfaceTangent,
 			 obj1VelocityVector, obj2VelocityVector;
 
-	obj1VelocityVector = getVelocityVector(_elapsedTime);
-	obj1SurfaceTangent = getSurfaceTangentVector(_elapsedTime);
-	obj2SurfaceTangent = _obj->getSurfaceTangentVector(_elapsedTime);
+	VectorLN surfaceNormal = VectorLN(boundingCircleRadius * getVelocityVector().Normalize().x,
+									  boundingCircleRadius * getVelocityVector().Normalize().y);
+
+	obj1VelocityVector = getVelocityVector();
+	obj1SurfaceTangent = getSurfaceTangentVector();
+	obj2SurfaceTangent = _obj->getSurfaceTangentVector();
 
 	// intersection between the Volocity vectors
-	Vector2f lnSegobj1VelVec[2] = {getPosition(), getPosition()+getVelocityVector(_elapsedTime)},
-		     lnSegobj2VelVec[2] = {_obj->getPosition(), _obj->getPosition()+_obj->getVelocityVector(_elapsedTime)};
+	VectorLN lnSegobj1VelVec[2] = {VectorLN(getPosition().x, getPosition().y), 
+			   				       VectorLN(getPosition().x, getPosition().y)+getVelocityVector()},
+			 lnSegobj2VelVec[2] = {VectorLN(_obj->getPosition().x, _obj->getPosition().y),
+								   VectorLN(_obj->getPosition().x, _obj->getPosition().y)+_obj->getVelocityVector()};
 
-	float slopeobj1VelVec = (lnSegobj1VelVec[0].y-lnSegobj1VelVec[1].y) / (lnSegobj1VelVec[0].x-lnSegobj1VelVec[1].x),
-	      slopeobj2VelVec = (lnSegobj2VelVec[0].y-lnSegobj2VelVec[1].y) / (lnSegobj2VelVec[0].x-lnSegobj2VelVec[1].x),
-		  Bobj1VelVec = slopeobj1VelVec*lnSegobj1VelVec[0].x+lnSegobj1VelVec[0].y,
-		  Bobj2VelVec = slopeobj2VelVec*lnSegobj2VelVec[0].x+lnSegobj2VelVec[0].y;
+// debug -------------------------------------------------------------------------------------------
+	sf::Vertex line[] =
+	{
+		sf::Vertex(VectorLN(getPosition())+surfaceNormal),
+		sf::Vertex(VectorLN(getPosition())+surfaceNormal+getVelocityVector())
+	};
 
-	if(slopeobj1VelVec == slopeobj2VelVec) // they are parallel
+	sf::Vertex line1[] =
 	{
-		// are they colinear?
-	}
-	else
+		sf::Vertex(VectorLN(getPosition())),
+		sf::Vertex(VectorLN(getPosition())+getSurfaceTangentVector())
+		//sf::Vertex(VectorLN(getPosition())+VectorLN(boundingCircleRadius*cosf(DEG2RAD(getNextAngle())+PI/2), boundingCircleRadius*sinf(DEG2RAD(getNextAngle())+PI/2)).getPerpendicular()+surfaceNormal),
+		//sf::Vertex(VectorLN(getPosition())-VectorLN(boundingCircleRadius*cosf(DEG2RAD(getNextAngle())+PI/2), boundingCircleRadius*sinf(DEG2RAD(getNextAngle())+PI/2)).getPerpendicular()+surfaceNormal)
+	};
+	
+	extern RenderWindow* window;
+	window->draw(line, 2, sf::Lines);
+	window->draw(line1, 2, sf::Lines);
+
+	CircleShape shape(boundingCircleRadius);
+	shape.setOutlineThickness(2);
+	shape.setFillColor(Color(0, 0, 0,0));
+	shape.setOutlineColor(Color(150, 50, 250));
+	shape.setPosition(Vector2f(getPosition().x-boundingCircleRadius, getPosition().y-boundingCircleRadius));
+	window->draw(shape);
+
+// debug end-----------------------------------------------------------------------------------------------------------------------
+
+	float slopeobj1VelVec = lnSegobj1VelVec[1].getSlope(),
+		  slopeobj2VelVec = lnSegobj2VelVec[1].getSlope();
+
+	if(lnSegobj1VelVec[1].isParallel(lnSegobj2VelVec[1])) // are they are parallel?
 	{
-		float xIntersection = (Bobj2VelVec-Bobj1VelVec)/(slopeobj1VelVec-slopeobj2VelVec),
-			  yIntersection = slopeobj1VelVec*xIntersection+Bobj1VelVec;
+		// are the objects going to overlap?
+		if(BTWN(-getBoundingCircleRadius()+lnSegobj1VelVec[1].x, -getBoundingCircleRadius()+lnSegobj2VelVec[1].x, getBoundingCircleRadius()+lnSegobj1VelVec[1].x)
+		&& BTWN(-getBoundingCircleRadius()+lnSegobj1VelVec[1].y, -getBoundingCircleRadius()+lnSegobj2VelVec[1].y, getBoundingCircleRadius()+lnSegobj1VelVec[1].y))
+			return true;
+		else
+			return false;
 	}
-	return false;  // \TODO: WIP
+	/**else 
+	{
+		/// \TODO: To be implement in the vector class
+
+		 // calculates the point of collision
+		/// \TODO: Take care of collisions that are far enough for data type overflow
+		float xIntersection = (lnSegobj1VelVec[0].y - lnSegobj2VelVec[0].y + slopeobj1VelVec*lnSegobj1VelVec[0].x - slopeobj2VelVec*lnSegobj2VelVec[0].x) / (slopeobj1VelVec-slopeobj2VelVec),
+			  yIntersection = slopeobj1VelVec*(xIntersection-lnSegobj1VelVec[0].x)+lnSegobj1VelVec[0].y;
+
+		 // checks to make sure the collision is within scope
+		if(BTWN(MIN(lnSegobj1VelVec[0].x, lnSegobj2VelVec[0].x), xIntersection, MAX(lnSegobj1VelVec[1].x, lnSegobj2VelVec[1].x))
+		&& BTWN(MIN(lnSegobj1VelVec[0].y, lnSegobj2VelVec[0].y), yIntersection, MAX(lnSegobj1VelVec[1].y, lnSegobj2VelVec[1].y)))
+		{
+		 // \TODO: Retrurn point of collison
+		}
+	}*/
+	return true; // if not parallel, then according to 2D geometry, they will intersect at some point
 }

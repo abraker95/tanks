@@ -21,10 +21,15 @@ public:
 	static void initSingleton();
 	static void deinitSingleton();
 
+protected:
+	void UpdateObjectBounds(FloatRect& objBounds, GameObject* _obj);
+
 private:
 	std::vector<GameObject*> objects;
 	Tilemap* tilemap;
 	static Environment* singleton;
+	View view;
+	FloatRect objBounds;
 
 	void checkCollisions(GameObject* _obj);
 };

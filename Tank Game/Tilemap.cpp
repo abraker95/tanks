@@ -19,15 +19,15 @@ bool Tilemap::load(const char* _tileSheet, sf::Vector2u _tileSize, const int* _t
 
 			sf::Vertex* quad = &vertices[(j * _width + i) * 4];
 
-			quad[0].position = sf::Vector2f(i * _tileSize.x, j * _tileSize.y);
-			quad[1].position = sf::Vector2f((i + 1) * _tileSize.x, j * _tileSize.y);
+			quad[0].position = sf::Vector2f(i       * _tileSize.x, j	   * _tileSize.y);
+			quad[1].position = sf::Vector2f((i + 1) * _tileSize.x, j	   * _tileSize.y);
 			quad[2].position = sf::Vector2f((i + 1) * _tileSize.x, (j + 1) * _tileSize.y);
-			quad[3].position = sf::Vector2f(i * _tileSize.x, (j + 1) * _tileSize.y);
+			quad[3].position = sf::Vector2f(i		* _tileSize.x, (j + 1) * _tileSize.y);
 
-			quad[0].texCoords = sf::Vector2f(tu * _tileSize.x, tv * _tileSize.y);
-			quad[1].texCoords = sf::Vector2f((tu + 1) * _tileSize.x, tv * _tileSize.y);
+			quad[0].texCoords = sf::Vector2f(tu		  * _tileSize.x, tv		  * _tileSize.y);
+			quad[1].texCoords = sf::Vector2f((tu + 1) * _tileSize.x, tv		  * _tileSize.y);
 			quad[2].texCoords = sf::Vector2f((tu + 1) * _tileSize.x, (tv + 1) * _tileSize.y);
-			quad[3].texCoords = sf::Vector2f(tu * _tileSize.x, (tv + 1) * _tileSize.y);
+			quad[3].texCoords = sf::Vector2f(tu		  * _tileSize.x, (tv + 1) * _tileSize.y);
 		}
 	}
 

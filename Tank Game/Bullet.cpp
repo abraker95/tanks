@@ -19,6 +19,8 @@ Bullet::~Bullet()
 
 void Bullet::Update(float _elapsedTime)
 {
+	elapsedTime = _elapsedTime;
+
 	const float nextPosX = getPosition().x + cosf(DEG2RAD(getRotation())) * velocity * _elapsedTime,
 			  	nextPosY = getPosition().y + sinf(DEG2RAD(getRotation())) * velocity * _elapsedTime;
 	setPosition(nextPosX, nextPosY);

@@ -4,9 +4,9 @@
 Object::Object(const char* _filename, int _numFrames): Sprite()
 {
  	numFrames = _numFrames;
-	//solid = _hasPhysics;
- 	currFrame = 0;
+	currFrame = 0;
 	destroyed = false;
+	elapsedTime = -1;
 
 	texture = new Texture[numFrames];
 

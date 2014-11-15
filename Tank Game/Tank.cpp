@@ -48,10 +48,12 @@ bool Tank::Fire()
 
 void Tank::Update(float _elapsedTime)
 {
+	elapsedTime = _elapsedTime;
+
 	UpdateUserInput();
 
 	//float currAngle = getRotation();
-	float nextAngle = getRotation() + _elapsedTime * angleSpeed;
+	float nextAngle = getRotation() + elapsedTime * angleSpeed;
 
 	/*const Vector2f& currPos = getPosition();
 	Vector2f nextPos;
@@ -63,6 +65,6 @@ void Tank::Update(float _elapsedTime)
 	nextPos.x = currPos.x + cosf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;
 	nextPos.y = currPos.y + sinf(DEG2RAD(nextAngle) + PI/2) * speed * _elapsedTime;*/
 	
-	setPosition(getPosition() + getVelocityVector(_elapsedTime));
+	setPosition(getPosition() + (Vector2f)getVelocityVector());
 	setRotation(nextAngle);
 }

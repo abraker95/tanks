@@ -69,20 +69,24 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Tilemap.cpp" />
+    <ClCompile Include="VectorLN.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="DEBUG.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Tilemap.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="VectorLN.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Tank_0.png" />

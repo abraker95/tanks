@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <string>
+#include <sstream>
 #include "utils.h"
 #include "DEBUG.h"
 
@@ -20,18 +22,16 @@ class Object: public Sprite
 	bool isDestroy() const;
 	float getBoundingCircleRadius() const;
 
-	bool isSolid() const;
 	void collisionFeedback(Object* _obj);
-	Vector2f getVelocityVector();
- 
+
  protected:
 	bool destroyed;
 	Texture* texture;
-	float boundingCircleRadius;
+	float boundingCircleRadius,
+		  elapsedTime;
 
 	virtual void UpdateUserInput() = 0;
 
  private:
-	 /// \TODO: implemnt velocity vectors
  	int numFrames, currFrame;
 };
