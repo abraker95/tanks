@@ -14,7 +14,7 @@ RenderWindow* window;
 int main()
 {
 	
-	window = new RenderWindow(VideoMode(1080, 720), "Tank Game");
+	window = new RenderWindow(VideoMode(1080, 420), "Tank Game");
 
 	Environment::initSingleton();
 	Environment* env = Environment::getSingleton();

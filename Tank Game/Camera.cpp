@@ -2,7 +2,7 @@
 #include "utils.h"
 #include "Camera.h"
 
-Camera::Camera(Vector2f _borders, Vector2f _minView, Vector2f _maxView, FloatRect _viewport, float _ratio)
+Camera::Camera(Vector2f _borders, Vector2f _minView, Vector2f _maxView, FloatRect _viewport)
 	: View(sf::FloatRect(0, 0, 300, 300)) // default view
 {
 	setViewport(_viewport);
@@ -10,8 +10,6 @@ Camera::Camera(Vector2f _borders, Vector2f _minView, Vector2f _maxView, FloatRec
 	
 	minView = _minView;
 	maxView = _maxView;
-
-	ratio = _ratio;
 
 	deltaViewSize = Vector2f(0, 0);
 	currViewSize = Vector2f(0, 0);
@@ -69,7 +67,7 @@ void Camera::Update(RenderWindow* _window)
 		  bottomView = MIN(objBounds.height, maxView.y);
 
 	// Viewsize code
-	Vector2f viewSize;
+	Vector2f viewSize = Vector2f(0, 0);
 		/// \NOTE: While this contains the viewing field within the veiwing area limits, it ruins the aspect ratio correction
 		//viewSize.x = LIMIT(2*borders.x, MAX(DELTA(leftView, rightView), DELTA(topView, bottomView)), DELTA(minView.x, maxView.x));
 		//viewSize.y = LIMIT(2*borders.y, MAX(DELTA(leftView, rightView), DELTA(topView, bottomView)), DELTA(minView.y, maxView.y));
@@ -78,9 +76,15 @@ void Camera::Update(RenderWindow* _window)
 		viewSize.x = MAX(DELTA(leftView, rightView), DELTA(topView, bottomView));
 		viewSize.y = MAX(DELTA(leftView, rightView), DELTA(topView, bottomView));
 	
+		// normalize window dimentions
+		VectorLN winDim((Vector2f)_window->getSize());
+		winDim = winDim.Normalize();
+
 		// fix aspect ratio
-		viewSize.x *= DELTA(getViewport().width, getViewport().left);
-		viewSize.y *= DELTA(getViewport().height, getViewport().top);
+		Vector2f newRatio = Vector2f(winDim.x*DELTA(getViewport().width, getViewport().left),
+									 winDim.y*DELTA(getViewport().height, getViewport().top));
+		viewSize.x *= newRatio.x;
+		viewSize.y *= newRatio.y;
 
 	// viewcenter code
 	float viewCenterX, viewCenterY;
@@ -103,8 +107,19 @@ void Camera::Update(RenderWindow* _window)
 	deltaViewCenter = viewCenter-currViewCenter;
 	currViewCenter += Vector2f(deltaViewCenter.x/500.0, deltaViewCenter.y/500.0);
 	
+	
 	deltaViewSize = viewSize-currViewSize;
-	currViewSize += Vector2f(deltaViewSize.x/1000.0, deltaViewSize.y/1000.0);
+	
+	// if the window size has changed, skip applying the effect to the viewsize and jut set it
+	if(ratio!=newRatio)
+	{
+		ratio = newRatio;
+		currViewSize = viewSize;
+	}
+	else
+	{
+		currViewSize += Vector2f(deltaViewSize.x/1000.0, deltaViewSize.y/1000.0);
+	}
 
 	// update the center and size
 	setCenter(currViewCenter);

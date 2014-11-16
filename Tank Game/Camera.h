@@ -6,7 +6,7 @@
 class Camera : public View
 {
 public:
-	Camera(Vector2f _borders, Vector2f _minView = Vector2f(0, 0), Vector2f _maxView = Vector2f(0, 0), FloatRect _viewport = FloatRect(0.f, 0.f, 1.f, 1.f), float _ratio = 1.0);
+	Camera(Vector2f _borders, Vector2f _minView = Vector2f(0, 0), Vector2f _maxView = Vector2f(0, 0), FloatRect _viewport = FloatRect(0.f, 0.f, 1.f, 1.f));
 	virtual ~Camera();
 
 	void addFocused(GameObject* _obj);
@@ -19,7 +19,7 @@ private:
 	FloatRect objBounds;
 	Vector2f minView, maxView,
 			 borders;
-	float ratio;
+	Vector2f ratio;
 
 	// for a nice smooth effect
 	Vector2f deltaViewSize, currViewSize,
