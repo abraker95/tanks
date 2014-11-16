@@ -16,7 +16,7 @@ public:
 	void Update(float _elapsedTime);
 	void Render(RenderWindow* _window);
 	void setTilemap(Tilemap* _tilemap) { tilemap = _tilemap; }
-	void addObject(GameObject* _obj, bool _focused = true, int _camera = 0);
+	void addObject(GameObject* _obj);
 	void addCamera(Camera* _cam) { cameras.push_back(_cam); }
 	const std::vector<GameObject*>& getObjects() const { return objects; } // read only
 	static Environment* getSingleton() { return singleton; }

@@ -2,23 +2,59 @@
 #include "utils.h"
 #include "Camera.h"
 
-Camera::Camera(Vector2f _borders, Vector2f _minView, Vector2f _maxView, FloatRect _viewport)
+Camera::Camera(const FloatRect& _borders, const FloatRect& _viewport, float _ratio, float _minWidth, float _maxWidth, float _margin)
 	: View(sf::FloatRect(0, 0, 300, 300)) // default view
 {
 	setViewport(_viewport);
 	borders = _borders;
 	
-	minView = _minView;
-	maxView = _maxView;
+	minWidth = _minWidth;
+	maxWidth = _maxWidth;
 
-	deltaViewSize = Vector2f(0, 0);
-	currViewSize = Vector2f(0, 0);
-	deltaViewCenter = Vector2f(0, 0);
-	currViewCenter = Vector2f(0, 0);
+	ratio = _ratio;
+	cameraCooldown = 0.2f;
+
+	prevViewSize = Vector2f(minWidth, minWidth / ratio);
+	prevViewCenter = Vector2f(0.f, 0.f);
+
+	prevInit = false;
+
+	margin = _margin;
 }
 
 Camera::~Camera()
 {
+}
+
+void Camera::Update(float _elapsedTime)
+{
+	if(focusedObjects.size() == 0)
+	{
+		PRINT_DEBUG(cout<<"[CAMERA]: No focused objects!", MED_DEBUG);
+		return;
+	}
+
+	Vector2f viewSize, viewCenter;
+
+	getMinimalView(viewCenter, viewSize);
+
+	if(focusedObjects.size() == 1)
+	{
+		viewSize = Vector2f(minWidth, minWidth / ratio);
+	}
+
+	else // more than one focused objects
+	{
+		correctAspectRatio(viewSize);
+		viewSizeInRange(viewSize);	
+	}
+
+	viewInBorders(viewCenter, viewSize);
+	smoothMovement(viewCenter, viewSize, _elapsedTime);
+	
+	// set the new view coordinates and size
+	setCenter(viewCenter);
+	setSize(viewSize);
 }
 
 void Camera::addFocused(GameObject* _obj)
@@ -38,99 +74,105 @@ void Camera::removeFocused(GameObject* _obj)
 	}
 }
 
-void Camera::UpdateObjectBounds(FloatRect& _objBounds, GameObject* _obj)
+void Camera::getMinimalView(Vector2f& _viewCenter, Vector2f& _viewSize)
 {
-	// taking account the borders
-	_objBounds.left   = MIN(objBounds.left,   _obj->getPosition().x-_obj->getSize().x/2-borders.x);
-	_objBounds.top	  = MIN(objBounds.top,    _obj->getPosition().y-_obj->getSize().y/2-borders.y);
-	_objBounds.width  = MAX(objBounds.width,  _obj->getPosition().x+_obj->getSize().x/2+borders.x);
-	_objBounds.height = MAX(objBounds.height, _obj->getPosition().y+_obj->getSize().y/2+borders.y);
+	Vector2f min(focusedObjects[0]->getPosition().x, focusedObjects[0]->getPosition().y);
+	Vector2f max = min;
+
+	// compute the "average" point
+	_viewCenter = Vector2f(0.f, 0.f);
+	for(size_t i=0;i<focusedObjects.size();i++)
+	{
+		const Vector2f& pos = focusedObjects[i]->getPosition();
+		_viewCenter.x += pos.x;
+		_viewCenter.y += pos.y;
+
+		if(min.x > pos.x) min.x = pos.x;
+		if(min.y > pos.y) min.y = pos.y;
+		if(max.x < pos.x) max.x = pos.x;
+		if(max.y < pos.y) max.y = pos.y;
+	}
+
+	_viewCenter.x /= (float)focusedObjects.size();
+	_viewCenter.y /= (float)focusedObjects.size();
+
+	_viewSize.x = max.x - min.x; 
+	_viewSize.y = max.y - min.y;
 }
 
-void Camera::Update(RenderWindow* _window)
+void Camera::correctAspectRatio(Vector2f& _viewSize)
 {
-	if(focusedObjects.size()==0)
-	{
-		PRINT_DEBUG(cout<<"[CAMERA]: No focused objects!", MED_DEBUG);
-		return;
-	}
+	// sides of viewSize should be at least one
+	_viewSize.x = _viewSize.x == 0.f ? 1.f : _viewSize.x;
+	_viewSize.y = _viewSize.y == 0.f ? 1.f : _viewSize.y;
 
-	// Find the max boundaries at which objects exist
-	objBounds = FloatRect(INFINITY, INFINITY, -INFINITY, -INFINITY);
-	for(size_t i = 0; i<focusedObjects.size(); i++)
-		UpdateObjectBounds(objBounds, focusedObjects[i]);
+	// scale a bit to add margin
+	_viewSize.x *= (1.f + margin);
+	_viewSize.y *= (1.f + margin);
 
-	// construct the rectangular bound perimeter
-	float leftView   = MAX(objBounds.left,   minView.x),
-		  topView    = MAX(objBounds.top,    minView.y),
-		  rightView  = MIN(objBounds.width,  maxView.x),
-		  bottomView = MIN(objBounds.height, maxView.y);
+	float currRatio = _viewSize.x / _viewSize.y;
 
-	// Viewsize code
-	Vector2f viewSize = Vector2f(0, 0);
-		/// \NOTE: While this contains the viewing field within the veiwing area limits, it ruins the aspect ratio correction
-		//viewSize.x = LIMIT(2*borders.x, MAX(DELTA(leftView, rightView), DELTA(topView, bottomView)), DELTA(minView.x, maxView.x));
-		//viewSize.y = LIMIT(2*borders.y, MAX(DELTA(leftView, rightView), DELTA(topView, bottomView)), DELTA(minView.y, maxView.y));
-
-		// set the viewing area to complement a 1:1 aspect ratio while keeping all focused objects in view 
-		viewSize.x = MAX(DELTA(leftView, rightView), DELTA(topView, bottomView));
-		viewSize.y = MAX(DELTA(leftView, rightView), DELTA(topView, bottomView));
-	
-		// normalize window dimentions
-		VectorLN winDim((Vector2f)_window->getSize());
-		winDim = winDim.Normalize();
-
-		// fix aspect ratio
-		Vector2f newRatio = Vector2f(winDim.x*DELTA(getViewport().width, getViewport().left),
-									 winDim.y*DELTA(getViewport().height, getViewport().top));
-		viewSize.x *= newRatio.x;
-		viewSize.y *= newRatio.y;
-
-	// viewcenter code
-	float viewCenterX, viewCenterY;
-		if(maxView.x-minView.x < viewSize.x)        // if the viewing area limits are less than the viewing size
-			viewCenterX = (maxView.x+minView.x)/2;  // set to the middle of the game area 
-		else 
-			viewCenterX = LIMIT(minView.x+viewSize.x/2, (leftView+rightView)/2, maxView.x-viewSize.x/2);
-
-		if(maxView.y-minView.y < viewSize.y)       // if the viewing area limits are less than the viewing size
-			viewCenterY = (maxView.y+minView.y)/2; // set to the middle of the game area 
-		else
-			viewCenterY = LIMIT(minView.y+viewSize.y/2, (topView+bottomView)/2, maxView.y-viewSize.y/2);
-
-		Vector2f viewCenter(viewCenterX, viewCenterY);
-
-	// Apply the smooth movement effect to camera
-	/// \TODO: apply elapsetime to the devisors
-
-	/// \TODO: These devisors have to be adjusted to follow objects better. Consider making a setMaxCameraSpeed funtion.
-	deltaViewCenter = viewCenter-currViewCenter;
-	currViewCenter += Vector2f(deltaViewCenter.x/200.0, deltaViewCenter.y/200.0);
-	
-	
-	deltaViewSize = viewSize-currViewSize;
-	
-	// if the window size has changed, skip applying the effect to the viewsize and just set it
-	if(ratio!=newRatio)
-	{
-		ratio = newRatio;
-		currViewSize = viewSize;
-	}
+	// correct width or height to have the
+	// same ratio as the viewport
+	if(currRatio > ratio)
+		_viewSize.y = _viewSize.x / ratio;
 	else
+		_viewSize.x = _viewSize.y * ratio;
+	
+	
+}
+
+void Camera::viewSizeInRange(Vector2f& _viewSize)
+{
+	// check if width is in range
+	if(_viewSize.x < minWidth || _viewSize.x > maxWidth)
 	{
-		currViewSize += Vector2f(deltaViewSize.x/500.0, deltaViewSize.y/500.0);
+		_viewSize.x = _viewSize.x < minWidth ? minWidth : maxWidth;
+		_viewSize.y = _viewSize.x / ratio;
+	}
+}
+
+void Camera::viewInBorders(Vector2f& _viewCenter, Vector2f& _viewSize)
+{
+	if(_viewSize.x > borders.width) 
+	{
+		_viewSize.x = borders.width;
+		_viewSize.y = _viewSize.x / ratio;
 	}
 
-	// update the center and size
-	setCenter(currViewCenter);
-	setSize(currViewSize);
+	if(_viewSize.y > borders.height) 
+	{
+		_viewSize.y = borders.height;
+		_viewSize.x = _viewSize.y * ratio;
+	}
 
-	/// \NOTE: For camera debugging, use this
-	//setCenter(viewCenter);
-	//setSize(viewSize);
-
-	// render
-	_window->setView(*this);
-	for(size_t i = 0; i<focusedObjects.size(); i++)
-		_window->draw(*focusedObjects[i]);
+	if(_viewCenter.x - _viewSize.x/2.f < borders.left) 
+		_viewCenter.x += borders.left - (_viewCenter.x - _viewSize.x/2.f);
+	if(_viewCenter.x + _viewSize.x/2.f > borders.left + borders.width) 
+		_viewCenter.x += borders.left + borders.width - (_viewCenter.x + _viewSize.x/2.f);
+	if(_viewCenter.y - _viewSize.y/2.f < borders.top) 
+		_viewCenter.y += borders.top - (_viewCenter.y - _viewSize.y/2.f);
+	if(_viewCenter.y + _viewSize.y/2.f > borders.top + borders.height) 
+		_viewCenter.y += borders.top + borders.height - (_viewCenter.y + _viewSize.y/2.f);
 }
+
+void Camera::smoothMovement(Vector2f& _viewCenter, Vector2f& _viewSize, float _elapsedTime)
+{
+	if(prevInit)
+	{
+		Vector2f deltaViewSize, deltaViewCenter;
+		deltaViewSize = _viewSize - prevViewSize;
+		deltaViewCenter = _viewCenter - prevViewCenter;
+
+		_viewSize = prevViewSize + deltaViewSize * (_elapsedTime/cameraCooldown);
+		_viewCenter = prevViewCenter + deltaViewCenter * (_elapsedTime/cameraCooldown);
+	}
+
+	else
+		prevInit = true;
+
+	prevViewSize = _viewSize;
+	prevViewCenter = _viewCenter;
+}
+
+

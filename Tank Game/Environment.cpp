@@ -13,7 +13,6 @@ Environment* Environment::singleton = nullptr;
 
 Environment::Environment()
 {
-	cameras.push_back(new Camera(Vector2f(200, 200), Vector2f(0, 0), Vector2f(1275, 700), FloatRect(0.f, 0.f, 1.0f, 1.f)));
 }
 
 Environment::~Environment()
@@ -39,14 +38,9 @@ void Environment::deinitSingleton()
 	if(singleton) delete singleton;
 }
 
-void Environment::addObject(GameObject* _obj, bool _focused, int _camera)
+void Environment::addObject(GameObject* _obj)
 { 
- objects.push_back(_obj); 
-
- if(_focused == true)
-	 if(cameras.size() > _camera)
-		 if(cameras[_camera]!=nullptr)
-			 cameras[_camera]->addFocused(_obj);
+	objects.push_back(_obj); 
 }
 
 void Environment::Loop(RenderWindow* _window)
@@ -98,32 +92,36 @@ void Environment::Update(float _elapsedTime)
 			objects.erase(objects.begin() + i);
 		}
 	}
+
+	// Update the cameras framing
+	for(size_t i=0;i<cameras.size();i++)
+		cameras[i]->Update(_elapsedTime);
 }
 
 void Environment::Render(RenderWindow* _window)
-{	// Update cameras
-	for(size_t i = 0; i<cameras.size(); i++)
-		cameras[0]->Update(_window);
-
-	// render the tilemap
-	tilemap->setScale(1.f, 1.f);
-	_window->draw(*tilemap);
-
-	// render the game objects
-	for(size_t i = 0; i<objects.size(); i++)
+{	
+	for(size_t i=0;i<cameras.size();i++)
 	{
-		if(objects[i] != nullptr)
+		_window->setView(*cameras[i]);
+
+		// render the tilemap
+		tilemap->setScale(1.f, 1.f);
+		_window->draw(*tilemap);
+
+		// render the game objects
+		for(size_t i = 0; i<objects.size(); i++)
 		{
-			if(objects[i]->camNumFocus==-1) // render objects that aren't being focused
+			//bool erased = false;
+			if(objects[i] != nullptr)
 			{
 				_window->draw(*objects[i]);
+				//objects[i]->isCollision(objects[i]);  // for debugging purposes
+			}	
+			else
+			{
+				PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
+				objects.erase(objects.begin() + i);
 			}
-			//objects[i]->isCollision(objects[i]);  // for debugging purposes
-		}	
-		else
-		{
-			PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
-			objects.erase(objects.begin() + i);
 		}
 	}
 }
@@ -143,4 +141,3 @@ void Environment::checkCollisions(GameObject* _obj)
 		}
 	}
 }
-

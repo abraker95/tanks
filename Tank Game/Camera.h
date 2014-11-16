@@ -6,22 +6,37 @@
 class Camera : public View
 {
 public:
-	Camera(Vector2f _borders, Vector2f _minView = Vector2f(0, 0), Vector2f _maxView = Vector2f(0, 0), FloatRect _viewport = FloatRect(0.f, 0.f, 1.f, 1.f));
+	Camera(const FloatRect& _borders, const FloatRect& _viewport, float _ratio, float _minWidth, float _maxWidth, float _margin);
 	virtual ~Camera();
 
 	void addFocused(GameObject* _obj);
 	void removeFocused(GameObject* _obj);
-	void UpdateObjectBounds(FloatRect& objBounds, GameObject* _obj);
-	void Update(RenderWindow* _window);
+	void Update(float _elapsedTime);
 
 private:
-	std::vector<GameObject*> focusedObjects;
-	FloatRect objBounds;
-	Vector2f minView, maxView,
-			 borders;
-	Vector2f ratio;
+	// the minimal view square where every objects fits
+	// no aspect ratio correction, no minWidth, maxWidth correction
+	void getMinimalView(Vector2f& _viewCenter, Vector2f& _viewSize);
 
-	// for a nice smooth effect
-	Vector2f deltaViewSize, currViewSize,
-			 deltaViewCenter, currViewCenter;
+	// only use this when there is more than one focused object
+	void correctAspectRatio(Vector2f& _viewSize);
+
+	// check if the viewSize is not too big or too small ( according to minWidth and maxWidth )
+	// corrects if needed
+	void viewSizeInRange(Vector2f& _viewSize);
+
+	// corrects if out of borders
+	void viewInBorders(Vector2f& _viewCenter, Vector2f& _viewSize);
+
+	// interpolate according to cameraCooldown
+	void smoothMovement(Vector2f& _viewCenter, Vector2f& _viewSize, float _elapsedTime);
+
+	std::vector<GameObject*> focusedObjects;
+	float minWidth, maxWidth;
+	FloatRect borders;
+	float ratio;
+	float cameraCooldown;
+	float margin;
+	Vector2f prevViewSize, prevViewCenter; // previous view center and view size
+	bool prevInit;
 };
