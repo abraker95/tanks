@@ -43,10 +43,10 @@ void Camera::removeFocused(GameObject* _obj)
 void Camera::UpdateObjectBounds(FloatRect& _objBounds, GameObject* _obj)
 {
 	// taking account the borders
-	_objBounds.left   = MIN(objBounds.left,   _obj->getPosition().x-borders.x);
-	_objBounds.top    = MIN(objBounds.top,    _obj->getPosition().y-borders.y);
-	_objBounds.width  = MAX(objBounds.width,  _obj->getPosition().x+_obj->getSize().x+borders.x);
-	_objBounds.height = MAX(objBounds.height, _obj->getPosition().y+_obj->getSize().y+borders.y);
+	_objBounds.left   = MIN(objBounds.left,   _obj->getPosition().x-_obj->getSize().x/2-borders.x);
+	_objBounds.top	  = MIN(objBounds.top,    _obj->getPosition().y-_obj->getSize().y/2-borders.y);
+	_objBounds.width  = MAX(objBounds.width,  _obj->getPosition().x+_obj->getSize().x/2+borders.x);
+	_objBounds.height = MAX(objBounds.height, _obj->getPosition().y+_obj->getSize().y/2+borders.y);
 }
 
 void Camera::Update(RenderWindow* _window)
@@ -58,45 +58,61 @@ void Camera::Update(RenderWindow* _window)
 	}
 
 	// Find the max boundaries at which objects exist
-	objBounds = FloatRect(0, 0, 0, 0);
+	objBounds = FloatRect(INFINITY, INFINITY, -INFINITY, -INFINITY);
 	for(size_t i = 0; i<focusedObjects.size(); i++)
 		UpdateObjectBounds(objBounds, focusedObjects[i]);
+
+	// construct the rectangular bound perimeter
+	float leftView   = MAX(objBounds.left,   minView.x),
+		  topView    = MAX(objBounds.top,    minView.y),
+		  rightView  = MIN(objBounds.width,  maxView.x),
+		  bottomView = MIN(objBounds.height, maxView.y);
+
+	// Viewsize code
+	Vector2f viewSize;
+		/// \NOTE: While this contains the viewing field within the veiwing area limits, it ruins the aspect ratio correction
+		//viewSize.x = LIMIT(2*borders.x, MAX(DELTA(leftView, rightView), DELTA(topView, bottomView)), DELTA(minView.x, maxView.x));
+		//viewSize.y = LIMIT(2*borders.y, MAX(DELTA(leftView, rightView), DELTA(topView, bottomView)), DELTA(minView.y, maxView.y));
+
+		// set the viewing area to complement a 1:1 aspect ratio while keeping all focused objects in view 
+		viewSize.x = MAX(DELTA(leftView, rightView), DELTA(topView, bottomView));
+		viewSize.y = MAX(DELTA(leftView, rightView), DELTA(topView, bottomView));
 	
-	// apply the boundaries to the View size
-	Vector2f viewSize(MAX(objBounds.width-objBounds.left, objBounds.height-objBounds.top),
-		              MAX(objBounds.width-objBounds.left, objBounds.height-objBounds.top));
+		// fix aspect ratio
+		viewSize.x *= DELTA(getViewport().width, getViewport().left);
+		viewSize.y *= DELTA(getViewport().height, getViewport().top);
 
-	// If the minview = maxView, then zoom can be indefinite, otherwise apply the limits
-	if(minView.x!=maxView.x)
-	{
-		if(!BTWN(minView.x, viewSize.x, maxView.x))
-		{
-			if(viewSize.x<minView.x) viewSize.x = minView.x;
-			if(viewSize.x>maxView.x) viewSize.x = maxView.x;
-		}
-	}
+	// viewcenter code
+	float viewCenterX, viewCenterY;
+		if(maxView.x-minView.x < viewSize.x)        // if the viewing area limits are less than the viewing size
+			viewCenterX = (maxView.x+minView.x)/2;  // set to the middle of the game area 
+		else 
+			viewCenterX = LIMIT(minView.x+viewSize.x/2, (leftView+rightView)/2, maxView.x-viewSize.x/2);
 
-	if(minView.y!=maxView.y)
-	{
-		if(!BTWN(minView.y, viewSize.y, maxView.y))
-		{
-			if(viewSize.y<minView.y) viewSize.y = minView.y;
-			if(viewSize.y>maxView.y) viewSize.y = maxView.y;
-		}
-	}
+		if(maxView.y-minView.y < viewSize.y)       // if the viewing area limits are less than the viewing size
+			viewCenterY = (maxView.y+minView.y)/2; // set to the middle of the game area 
+		else
+			viewCenterY = LIMIT(minView.y+viewSize.y/2, (topView+bottomView)/2, maxView.y-viewSize.y/2);
 
+		Vector2f viewCenter(viewCenterX, viewCenterY);
+
+	// Apply the smooth movement effect to camera
 	/// \TODO: apply elapsetime to the devisors
+
+	/// \TODO: These devisors have to be adjusted to follow objects better. Consider making a setMaxCameraSpeed funtion.
+	deltaViewCenter = viewCenter-currViewCenter;
+	currViewCenter += Vector2f(deltaViewCenter.x/500.0, deltaViewCenter.y/500.0);
+	
 	deltaViewSize = viewSize-currViewSize;
 	currViewSize += Vector2f(deltaViewSize.x/1000.0, deltaViewSize.y/1000.0);
-
-	// View center code
-	Vector2f viewCenter((objBounds.width+objBounds.left-50)/2, (objBounds.height+objBounds.top-50)/2); // basically the midpoint of the viewSize
-	deltaViewCenter = viewCenter-currViewCenter;
-	currViewCenter += Vector2f(deltaViewCenter.x/1000.0, deltaViewCenter.y/1000.0);
 
 	// update the center and size
 	setCenter(currViewCenter);
 	setSize(currViewSize);
+
+	/// \NOTE: For camera debugging, use this
+	//setCenter(viewCenter);
+	//setSize(viewSize);
 
 	// render
 	_window->setView(*this);
