@@ -105,12 +105,12 @@ void Camera::Update(RenderWindow* _window)
 
 	/// \TODO: These devisors have to be adjusted to follow objects better. Consider making a setMaxCameraSpeed funtion.
 	deltaViewCenter = viewCenter-currViewCenter;
-	currViewCenter += Vector2f(deltaViewCenter.x/500.0, deltaViewCenter.y/500.0);
+	currViewCenter += Vector2f(deltaViewCenter.x/200.0, deltaViewCenter.y/200.0);
 	
 	
 	deltaViewSize = viewSize-currViewSize;
 	
-	// if the window size has changed, skip applying the effect to the viewsize and jut set it
+	// if the window size has changed, skip applying the effect to the viewsize and just set it
 	if(ratio!=newRatio)
 	{
 		ratio = newRatio;
@@ -118,7 +118,7 @@ void Camera::Update(RenderWindow* _window)
 	}
 	else
 	{
-		currViewSize += Vector2f(deltaViewSize.x/1000.0, deltaViewSize.y/1000.0);
+		currViewSize += Vector2f(deltaViewSize.x/500.0, deltaViewSize.y/500.0);
 	}
 
 	// update the center and size

@@ -61,7 +61,7 @@ int main()
 		Tank::Inputmap imapPlayer2(new Keyboard::Key[5] { Keyboard::D, Keyboard::A, Keyboard::W, Keyboard::S, Keyboard::F }, {});
 
 		player2->setInput(imapPlayer2);
-		player2->setPosition(200, 100);
+		player2->setPosition(200, 300);
 
 	env->addObject(player1, true);
 	env->addObject(player2, true);
