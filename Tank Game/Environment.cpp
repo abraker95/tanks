@@ -13,7 +13,7 @@ Environment* Environment::singleton = nullptr;
 
 Environment::Environment()
 {
-	cameras.push_back(new Camera(Vector2f(200, 200), Vector2f(0, 0), Vector2f(1275, 700), FloatRect(0.f, 0.f, 1.0f, 1.f)));
+	cameras.push_back(new Camera(Vector2f(200, 200), Vector2f(0, 0), Vector2f(1275, 700), FloatRect(0.f, 0.f, 1.0f, .5f)));
 }
 
 Environment::~Environment()

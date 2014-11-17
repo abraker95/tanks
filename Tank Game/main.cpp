@@ -14,7 +14,7 @@ RenderWindow* window;
 int main()
 {
 	
-	window = new RenderWindow(VideoMode(1080, 420), "Tank Game");
+	window = new RenderWindow(VideoMode(1080, 720), "Tank Game");
 
 	Environment::initSingleton();
 	Environment* env = Environment::getSingleton();
@@ -61,7 +61,7 @@ int main()
 		Tank::Inputmap imapPlayer2(new Keyboard::Key[5] { Keyboard::D, Keyboard::A, Keyboard::W, Keyboard::S, Keyboard::F }, {});
 
 		player2->setInput(imapPlayer2);
-		player2->setPosition(200, 300);
+		player2->setPosition(200,100); 
 
 	env->addObject(player1, true);
 	env->addObject(player2, true);
