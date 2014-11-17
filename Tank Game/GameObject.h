@@ -66,6 +66,15 @@ class GameObject: public Object
 		VectorLN getSurfaceNormalVector();
 		float getNextAngle();
 		bool isCollision(GameObject* _obj);
+	
+	private:
+		// Note: Put these functions in a physics management class if we ever make one
+		static bool intersectCircleRect(GameObject* _obj1, GameObject* _obj2);
+		static bool intersectCircleCircle(GameObject* _obj1, GameObject* _obj2);
+		static bool intersectCirclePoint(GameObject* _obj1, const Vector2f& _pt);
+		static bool intersectCircleLine(GameObject* _obj1, const Vector2f& _l1, const Vector2f& _l2);
+		static bool intersectRectRect(GameObject* _obj1, GameObject* _obj2);
+		static bool intersectRectPoint(GameObject* _obj1, const Vector2f& _pt);
 
 	protected:
 		float speed, angleSpeed;

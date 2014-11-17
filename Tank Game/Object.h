@@ -23,7 +23,7 @@ class Object: public Sprite
 	void destroy();
 	bool isDestroy() const;
 	float getBoundingCircleRadius() const;
-	Vector2f getSize() const;
+	const Vector2f getSize() const;
 	void collisionFeedback(Object* _obj);
 
  protected:

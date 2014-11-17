@@ -1,6 +1,5 @@
 #include "GameObject.h"
 
-
 GameObject::GameObject(bool _solid, const char* _filename, int _numFrames): Object(_filename, _numFrames)
 {
 	solid = _solid;
@@ -32,25 +31,98 @@ bool GameObject::isSolid() const
 
 bool GameObject::isCollidingWith(GameObject* _obj) const
 {
-		return isInRadius(_obj, boundingCircleRadius);
+	return isInRadius(_obj, boundingCircleRadius);
 }
 
 // This funtion just return the position next to the to be collided oject
 void GameObject::collisionFeedback(GameObject* _obj)
 {
-		Vector2f delta = getPosition()-_obj->getPosition();
-		float delta_length = sqrtf(delta.x*delta.x + delta.y*delta.y);
+	Vector2f delta = getPosition()-_obj->getPosition();
+	float delta_length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
-		// normalize delta
-		delta.x /= delta_length;
-		delta.y /= delta_length;
+	// normalize delta
+	delta.x /= delta_length;
+	delta.y /= delta_length;
 
-		// scale it to the minimum allowed distance
-		delta.x *= (boundingCircleRadius+_obj->boundingCircleRadius);
-		delta.y *= (boundingCircleRadius+_obj->boundingCircleRadius);
+	// scale it to the minimum allowed distance
+	delta.x *= (boundingCircleRadius+_obj->boundingCircleRadius);
+	delta.y *= (boundingCircleRadius+_obj->boundingCircleRadius);
 
-		Vector2f nextPos = _obj->getPosition()+delta;
-		setPosition(nextPos);
+	Vector2f nextPos = _obj->getPosition()+delta;
+	setPosition(nextPos);
+}
+
+bool GameObject::intersectRectRect(GameObject* _obj1, GameObject* _obj2)
+{
+	const Vector2f& pos1 = _obj1->getPosition();
+	const Vector2f& pos2 = _obj2->getPosition();
+	const Vector2f  size1 = _obj1->getSize();
+	const Vector2f  size2 = _obj2->getSize();
+
+	// x axis overlap ?
+	if(pos1.x + size1.x/2.f < pos2.x - size2.x/2.f || pos2.x + size2.x/2.f < pos1.x - size1.x/2.f)
+		return false;
+	// x axis overlap ?
+	if(pos1.y + size1.y/2.f < pos2.y - size2.y/2.f || pos2.y + size2.y/2.f < pos1.y - size1.y/2.f)
+		return false;
+	
+	return true;
+}
+
+bool GameObject::intersectCircleCircle(GameObject* _obj1, GameObject* _obj2)
+{
+	return _obj1->isInRadius(_obj2, _obj2->boundingCircleRadius);
+}
+
+bool GameObject::intersectCircleRect(GameObject* _obj1, GameObject* _obj2)
+{
+	if(intersectRectPoint(_obj2, _obj1->getPosition()))
+		return true;
+
+	// _obj2 is the rect
+	const Vector2f& pos2 = _obj1->getPosition();
+	const Vector2f  size2 = _obj2->getSize();
+
+	// the four corners
+	Vector2f c1(pos2.x - size2.x/2, pos2.y - size2.y/2);
+	Vector2f c2(pos2.x + size2.x/2, pos2.y - size2.y/2);
+	Vector2f c3(pos2.x + size2.x/2, pos2.y + size2.y/2);
+	Vector2f c4(pos2.x - size2.x/2, pos2.y + size2.y/2);
+
+	return (intersectCircleLine(_obj1, c1, c2)
+		|| intersectCircleLine(_obj1, c2, c3)
+		|| intersectCircleLine(_obj1, c3, c4)
+		|| intersectCircleLine(_obj1, c4, c1));
+}
+
+bool GameObject::intersectCirclePoint(GameObject* _obj1, const Vector2f& _pt)
+{
+	Vector2f delta = _pt - _obj1->getPosition();
+	return delta.x * delta.x + delta.y * delta.y < _obj1->boundingCircleRadius * _obj1->boundingCircleRadius;
+}
+
+bool GameObject::intersectCircleLine(GameObject* _obj1, const Vector2f& _l1, const Vector2f& _l2)
+{
+	// project the center of the circle onto the line
+	Vector2f lineDir = _l2 - _l1, unit, cl = _obj1->getPosition() - _l1;
+	float length = sqrtf(lineDir.x * lineDir.x + lineDir.y * lineDir.y);
+
+	unit.x = lineDir.x / length;
+	unit.y = lineDir.y / length;
+
+	float projDist = cl.x * unit.x + cl.y * cl.y;
+	Vector2f proj = projDist * unit + _l1;
+
+	return (projDist >= 0.f && projDist <= length && intersectCirclePoint(_obj1, proj));
+}
+
+bool GameObject::intersectRectPoint(GameObject* _obj1, const Vector2f& _pt)
+{
+	const Vector2f& pos1 = _obj1->getPosition();
+	const Vector2f size1 = _obj1->getSize();
+
+	return ((_pt.x >= pos1.x - size1.x/2 &&  _pt.x <= pos1.x + size1.x/2) ||
+		(_pt.y >= pos1.y - size1.y/2 &&  _pt.y <= pos1.y + size1.y/2));
 }
 
 float GameObject::getNextAngle()
