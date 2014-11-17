@@ -6,12 +6,13 @@ Camera::Camera(const FloatRect& _borders, const FloatRect& _viewport, float _rat
 	: View(sf::FloatRect(0, 0, 300, 300)) // default view
 {
 	setViewport(_viewport);
+	viewport = _viewport;
 	borders = _borders;
 	
 	minWidth = _minWidth;
 	maxWidth = _maxWidth;
 
-	ratio = _ratio;
+	ratio = _ratio * _viewport.width/_viewport.height;
 	cameraCooldown = 0.2f;
 
 	prevViewSize = Vector2f(minWidth, minWidth / ratio);
@@ -55,6 +56,12 @@ void Camera::Update(float _elapsedTime)
 	// set the new view coordinates and size
 	setCenter(viewCenter);
 	setSize(viewSize);
+}
+
+void Camera::setRatio(float _ratio)
+{
+	ratio = _ratio * viewport.width/viewport.height;
+	prevInit = false;
 }
 
 void Camera::addFocused(GameObject* _obj)

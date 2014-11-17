@@ -53,6 +53,13 @@ void Environment::Loop(RenderWindow* _window)
 		{
  			if(event.type == Event::Closed)
 				_window->close();
+			if(event.type == Event::Resized)
+			{
+				float newRatio = (float)_window->getSize().x/(float)_window->getSize().y;
+				for(size_t i=0;i<cameras.size();i++)
+					cameras[i]->setRatio(newRatio);
+
+			}
 		}
 	
 		Time elapsed = clock.restart();
