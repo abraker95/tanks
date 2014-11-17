@@ -29,6 +29,8 @@ class Object: public Sprite
  protected:
 	bool destroyed;
 	Texture* texture;
+
+	bool boundingCircle;
 	float boundingCircleRadius,
 		  elapsedTime;
 

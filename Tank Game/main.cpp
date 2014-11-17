@@ -63,21 +63,21 @@ int main()
 		player2->setInput(imapPlayer2);
 		player2->setPosition(200,100); 
 
-	env->addObject(player1, true);
-	env->addObject(player2, true);
+	env->addObject(player1);
+	env->addObject(player2);
 
 	//--------------------------------------------------------
 	// Views
 	//--------------------------------------------------------
-	//sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f,  64.f * 12.f);
-	//sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	//float ratio = (float)window->getSize().x/(float)window->getSize().y;
-	//Camera cam(borders, viewport, ratio, 800.f, 1200.f);
+	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f,  64.f * 12.f);
+	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
+	float ratio = (float)window->getSize().x/(float)window->getSize().y;
+	Camera cam(borders, viewport, ratio, 400.f, 1200.f, 0.4f);
 
-	//cam.addFocused(player1);
-	//cam.addFocused(player2);
+	cam.addFocused(player1);
+	cam.addFocused(player2);
 
-	//env->addCamera(&cam);
+	env->addCamera(&cam);
 
 	env->Loop(window);
 
