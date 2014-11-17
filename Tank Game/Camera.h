@@ -13,6 +13,8 @@ public:
 	void removeFocused(GameObject* _obj);
 	void Update(float _elapsedTime);
 
+	void setRatio(float _ratio);
+
 private:
 	// the minimal view square where every objects fits
 	// no aspect ratio correction, no minWidth, maxWidth correction
@@ -34,6 +36,7 @@ private:
 	std::vector<GameObject*> focusedObjects;
 	float minWidth, maxWidth;
 	FloatRect borders;
+	FloatRect viewport;
 	float ratio;
 	float cameraCooldown;
 	float margin;
