@@ -50,7 +50,7 @@ float Object::getBoundingCircleRadius() const
 	return boundingCircleRadius;
 }
 
-Vector2f Object::getSize() const
+const Vector2f Object::getSize() const
 {
 	Vector2u size = texture[0].getSize();
 	return Vector2f((float)size.x, (float)size.y);
