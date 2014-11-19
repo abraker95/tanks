@@ -125,6 +125,47 @@ bool GameObject::intersectRectPoint(GameObject* _obj1, const Vector2f& _pt)
 		(_pt.y >= pos1.y - size1.y/2 &&  _pt.y <= pos1.y + size1.y/2));
 }
 
+Vector2f GameObject::responseCircleRect(GameObject* _obj1, GameObject* _obj2)
+{
+	const Vector2f& c1 = _obj1->getPosition();
+	float r = _obj1->boundingCircleRadius;
+	const Vector2f& c2 = _obj2->getPosition();
+	const Vector2f s = _obj2->getSize();
+
+	Vector2f delta;
+
+	float dx1 = (c1.x + r) - (c2.x - s.x/2.f);
+	float dx2 = (c2.x + s.x/2.f) - (c1.x - r);
+
+	delta.x = MIN(dx1, dx2);	
+
+	float dy1 = (c1.y + r) - (c2.y - s.y/2.f);
+	float dy2 = (c2.y + s.y/2.f) - (c1.y - r);
+
+	delta.y = MIN(dy1, dy2);	
+	
+	if(delta.x < delta.y) delta.y = 0.f;
+	else delta.x = 0.f;
+	
+	return delta;
+}
+
+Vector2f GameObject::responseCircleCircle(GameObject* _obj1, GameObject* _obj2)
+{
+	Vector2f delta = _obj1->getPosition() - _obj2->getPosition();
+	float delta_length = sqrtf(delta.x*delta.x + delta.y*delta.y);
+
+	// normalize delta
+	delta.x /= delta_length;
+	delta.y /= delta_length;
+
+	// scale it to the minimum allowed distance
+	delta.x *= (_obj1->boundingCircleRadius + _obj2->boundingCircleRadius);
+	delta.y *= (_obj2->boundingCircleRadius + _obj2->boundingCircleRadius);
+
+	return delta;
+}
+
 float GameObject::getNextAngle()
 {
 	return getRotation() + elapsedTime*angleSpeed;

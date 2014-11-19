@@ -77,6 +77,9 @@ class GameObject: public Object
 		static bool intersectRectRect(GameObject* _obj1, GameObject* _obj2);
 		static bool intersectRectPoint(GameObject* _obj1, const Vector2f& _pt);
 
+		static Vector2f responseCircleRect(GameObject* _obj1, GameObject* _obj2);
+		static Vector2f responseCircleCircle(GameObject* _obj1, GameObject* _obj2);
+
 	protected:
 		float speed, angleSpeed;
 		Inputmap imap;

@@ -8,6 +8,8 @@
 #include "Camera.h"
 #include "EventMsgr.h"
 
+class GameScene;
+
 class Environment
 {
 public:
