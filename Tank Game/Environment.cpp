@@ -72,6 +72,19 @@ void Environment::Loop(RenderWindow* _window)
 
 void Environment::Update(float _elapsedTime)
 {
+	EventMsgr::Event_Type type = EventMsgr::Event_Type::OBJ_CREATE;
+	EventMsgr::AbstVar<GameObject*>* obj = nullptr;
+
+	// add objects that need to be added
+	do
+	{
+		obj = event.getEvent<GameObject*>(type);
+		if(obj!=nullptr)
+			if(obj->type==typeid(GameObject))
+				addObject((GameObject*)obj->var);
+	} while(obj!=nullptr);
+
+
 	for(size_t i = 0; i<gameScene->objects.size(); i++)
 	{
 		if(gameScene->objects[i]!=nullptr)

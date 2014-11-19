@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
 #include "Bullet.h"
+#include "EventMsgr.h"
 //#include "Environment.h"
 
 /** \NOTE: Tank Game Object

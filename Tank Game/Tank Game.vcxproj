@@ -69,6 +69,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="EventMsgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="main.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DEBUG.h" />
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="EventMsgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Tank.h" />

@@ -6,6 +6,7 @@
 #include "VectorLN.h"
 #include "Tilemap.h"
 #include "Camera.h"
+#include "EventMsgr.h"
 
 class Environment
 {

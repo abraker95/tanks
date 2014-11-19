@@ -31,8 +31,9 @@ void Tank::UpdateUserInput()
 	else if(Keyboard::isKeyPressed(imap.kmap[Go_Backward]))		speed = -300.f;
 	else														speed = 0.f;
 
-	if(Keyboard::isKeyPressed(imap.kmap[Fire_Bullet]) && Fire())
-		Environment::getSingleton()->addObject(new Bullet(getPosition(), getRotation()+90, this));
+	if(Keyboard::isKeyPressed(imap.kmap[Fire_Bullet])&&Fire())
+		event.createEvent(EventMsgr::Event_Type::OBJ_CREATE, new Bullet(getPosition(), getRotation()+90, this));
+		//Environment::getSingleton()->addObject(new Bullet(getPosition(), getRotation()+90, this));
 }
 
 bool Tank::Fire()
