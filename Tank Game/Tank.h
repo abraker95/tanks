@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
 #include "Bullet.h"
-#include "Environment.h"
+//#include "Environment.h"
 
 /** \NOTE: Tank Game Object
 	Spawn Case:

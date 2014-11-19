@@ -1,10 +1,11 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include "GameObject.h"
-#include "Camera.h"
+#include "VectorLN.h"
 #include "Tilemap.h"
+#include "Camera.h"
 
 class Environment
 {
@@ -15,21 +16,15 @@ public:
 	void Loop(RenderWindow* _window);
 	void Update(float _elapsedTime);
 	void Render(RenderWindow* _window);
-	void setTilemap(Tilemap* _tilemap) { tilemap = _tilemap; }
 	void addObject(GameObject* _obj);
-	void addCamera(Camera* _cam) { cameras.push_back(_cam); }
-	const std::vector<GameObject*>& getObjects() const { return objects; } // read only
+	const std::vector<GameObject*>& getObjects() const; // read only
 	static Environment* getSingleton() { return singleton; }
 	static void initSingleton();
 	static void deinitSingleton();
 
 private:
-	std::vector<GameObject*> objects;
-	std::vector<Camera*> cameras;
-	Tilemap* tilemap;
 	static Environment* singleton;
-	View view;
-	FloatRect objBounds;
+	GameScene* gameScene;
 
 	void checkCollisions(GameObject* _obj);
 };

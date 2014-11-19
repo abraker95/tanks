@@ -8,24 +8,23 @@
 // 		- reusability of code
 //-------------------------------------------------------------
 #include "Environment.h"
+#include "GameScene.h"
 
 Environment* Environment::singleton = nullptr;
 
-Environment::Environment()
+const std::vector<GameObject*>& Environment::getObjects() const
 {
+	return gameScene->objects;
+}
+
+Environment::Environment()
+{ 
+	gameScene = new GameScene();
 }
 
 Environment::~Environment()
 {
-	for(size_t i = 0; i<objects.size(); i++)
-		if(objects[i] != nullptr)
-			delete objects[i];
-	objects.clear();
-
-	for(size_t i = 0; i<cameras.size(); i++)
-		if(cameras[i]!=nullptr)
-			delete cameras[i];
-	cameras.clear();
+	delete gameScene;
 }
 
 void Environment::initSingleton()
@@ -40,7 +39,7 @@ void Environment::deinitSingleton()
 
 void Environment::addObject(GameObject* _obj)
 { 
-	objects.push_back(_obj); 
+	gameScene->objects.push_back(_obj); 
 }
 
 void Environment::Loop(RenderWindow* _window)
@@ -56,8 +55,8 @@ void Environment::Loop(RenderWindow* _window)
 			if(event.type == Event::Resized)
 			{
 				float newRatio = (float)_window->getSize().x/(float)_window->getSize().y;
-				for(size_t i=0;i<cameras.size();i++)
-					cameras[i]->setRatio(newRatio);
+				for(size_t i=0;i<gameScene->cameras.size();i++)
+					gameScene->cameras[i]->setRatio(newRatio);
 
 			}
 		}
@@ -73,61 +72,60 @@ void Environment::Loop(RenderWindow* _window)
 
 void Environment::Update(float _elapsedTime)
 {
-	for(size_t i = 0; i<objects.size(); i++)
+	for(size_t i = 0; i<gameScene->objects.size(); i++)
 	{
-		if(objects[i] != nullptr)
+		if(gameScene->objects[i]!=nullptr)
 		{
-			if(objects[i]->isDestroy())
+			if(gameScene->objects[i]->isDestroy())
 			{
 				// remove object from view
-				for(size_t j = 0; j<cameras.size(); j++)
-					cameras[j]->removeFocused(objects[i]);
+				for(size_t j = 0; j<gameScene->cameras.size(); j++)
+					gameScene->cameras[j]->removeFocused(gameScene->objects[i]);
 
 				//PRINT_DEBUG(cout<<"Destroying object: "<<i<<endl, MED_DEBUG);
-				delete objects[i];
-				objects.erase(objects.begin()+i);
+				delete gameScene->objects[i];
+				gameScene->objects.erase(gameScene->objects.begin()+i);
 			}
 			else
 			{
-				objects[i]->Update(_elapsedTime);
-				checkCollisions(objects[i]);
+				gameScene->objects[i]->Update(_elapsedTime);
+				checkCollisions(gameScene->objects[i]);
 			}
 		}
 		else
 		{
 			PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
-			objects.erase(objects.begin() + i);
+			gameScene->objects.erase(gameScene->objects.begin()+i);
 		}
 	}
 
 	// Update the cameras framing
-	for(size_t i=0;i<cameras.size();i++)
-		cameras[i]->Update(_elapsedTime);
+	for(size_t i = 0; i<gameScene->cameras.size(); i++)
+		gameScene->cameras[i]->Update(_elapsedTime);
 }
 
 void Environment::Render(RenderWindow* _window)
 {	
-	for(size_t i=0;i<cameras.size();i++)
+	for(size_t i = 0; i<gameScene->cameras.size(); i++)
 	{
-		_window->setView(*cameras[i]);
+		_window->setView(*gameScene->cameras[i]);
 
 		// render the tilemap
-		tilemap->setScale(1.f, 1.f);
-		_window->draw(*tilemap);
+		_window->draw(gameScene->tilemap);
 
 		// render the game objects
-		for(size_t i = 0; i<objects.size(); i++)
+		for(size_t i = 0; i<gameScene->objects.size(); i++)
 		{
 			//bool erased = false;
-			if(objects[i] != nullptr)
+			if(gameScene->objects[i] != nullptr)
 			{
-				_window->draw(*objects[i]);
+				_window->draw(*gameScene->objects[i]);
 				//objects[i]->isCollision(objects[i]);  // for debugging purposes
 			}	
 			else
 			{
 				PRINT_DEBUG(cout<<"[ENV]: Found deleted object in object pool!", MED_DEBUG);
-				objects.erase(objects.begin() + i);
+				gameScene->objects.erase(gameScene->objects.begin() + i);
 			}
 		}
 	}
@@ -137,13 +135,13 @@ void Environment::Render(RenderWindow* _window)
 void Environment::checkCollisions(GameObject* _obj)
 {
 	// May be buggy when multiple objects are colliding with obj
-	for(size_t i=0; i<objects.size(); i++)
+	for(size_t i=0; i<gameScene->objects.size(); i++)
 	{
-		if(_obj->isSolid() && objects[i]->isSolid())
+		if(_obj->isSolid() && gameScene->objects[i]->isSolid())
 		{
-			if(objects[i] != _obj && _obj->isCollidingWith(objects[i]))
+			if(gameScene->objects[i] != _obj && _obj->isCollidingWith(gameScene->objects[i]))
 			{
-				_obj->collisionFeedback(objects[i]);
+				_obj->collisionFeedback(gameScene->objects[i]);
 			}
 		}
 	}

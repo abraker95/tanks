@@ -9,7 +9,8 @@
 
 class GameObject: public Object
 {
-	friend class Environment;
+	friend class Environment;  /// \TODO: Move to the Object class
+	friend class GameScene;
 
 	public:
 		GameObject(bool _solid, const char* _filename, int _numFrames = 1);

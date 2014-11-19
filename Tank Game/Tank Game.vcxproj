@@ -70,8 +70,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Tilemap.cpp" />
     <ClCompile Include="VectorLN.cpp" />
@@ -82,6 +84,7 @@
     <ClInclude Include="DEBUG.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Tilemap.h" />
     <ClInclude Include="utils.h" />
