@@ -7,6 +7,8 @@
 #include "Tilemap.h"
 #include "Camera.h"
 
+class GameScene;
+
 class Environment
 {
 public:
