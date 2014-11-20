@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include "Tank.h"
-#include "Mine.h"
-#include "Camera.h"
-#include "Tilemap.h"
+//#include "Tank.h"
+//#include "Mine.h"
+//#include "Camera.h"
+//#include "Tilemap.h"
 #include "Environment.h"
 #include "GameScene.h"
 using namespace sf;

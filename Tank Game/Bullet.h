@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
-#include "Environment.h"
+//#include "Environment.h"
 
 /** \NOTE: Bullet Game Object
 	Spawn Case: 

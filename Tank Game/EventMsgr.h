@@ -16,33 +16,32 @@ class EventMsgr
 	 struct AbstVar
 	 {
 		 AbstVar<T>();
-		 const type_info type;
+		 const type_info* type;
 		 Event_Type eventType;
-		 T* var;
+		 T var;
 	 };
 
-	 static std::vector<AbstVar<void*>*> vars;
+	std::vector<AbstVar<void*>*> vars;
 
 
 	EventMsgr();
 	virtual ~EventMsgr();
 
-	template<class T> static void createEvent(Event_Type _event, T _var)
+	template<class T> void createEvent<T>(Event_Type _event, T _var)
 	{
-		AbstVar<void*>* abstrVar = new AbstVar<void*>;
-		abstrVar->eventType = _event;
-		abstrVar->var = (void*)_var;
-		abstrVar->type = typeid(_var);
-	
-		vars.push_back(abstrVar);
+		/*vars.push_back(new AbstVar<void*>);
+			vars[vars.size()-1]->eventType = _event;
+			vars[vars.size()-1]->var	   = (void*)_var;
+			vars[vars.size()-1]->type	   = &typeid(_var);*/
 	}
 
-	template<class T> static AbstVar<T>* getEvent(Event_Type _event)
+	/// \TODO: AbstVar returned never gets deleted
+	template<class T> AbstVar<T>* getEvent(Event_Type _event)
 	{
 		AbstVar<T>* varRet;
 		for(int i = 0; i<vars.size(); i++)
 		{
-			if(_event==OBJ_CREATE && vars[i]->type==typeid(Object))
+			if(_event==OBJ_CREATE && vars[i]->type==&typeid(Object))
 			{
 				varRet = (AbstVar<T>*)vars[i];
 				vars.erase(vars.begin()+i);

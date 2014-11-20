@@ -31,6 +31,8 @@ void Bullet::Update(float _elapsedTime)
 		destroy();
 
 	// check bullet collision with other objects
+	/// \TODO: Event.create(REQ_VAR, Object, Environment);
+	// Event.SelectEvent(REQ_VAR); // sets the pointer to the Object request from environment function
 	const std::vector<GameObject*>& objects = Environment::getSingleton()->getObjects();
 	for(size_t i=0;i<objects.size();i++)
 	{

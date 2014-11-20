@@ -8,7 +8,7 @@
 // 		- reusability of code
 //-------------------------------------------------------------
 #include "Environment.h"
-#include "GameScene.h"
+//#include "GameScene.h"
 
 Environment* Environment::singleton = nullptr;
 
@@ -80,7 +80,7 @@ void Environment::Update(float _elapsedTime)
 	{
 		obj = event.getEvent<GameObject*>(type);
 		if(obj!=nullptr)
-			if(obj->type==typeid(GameObject))
+			if(obj->type == &typeid(GameObject))
 				addObject((GameObject*)obj->var);
 	} while(obj!=nullptr);
 

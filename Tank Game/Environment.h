@@ -6,7 +6,8 @@
 #include "VectorLN.h"
 #include "Tilemap.h"
 #include "Camera.h"
-#include "EventMsgr.h"
+#include "GameScene.h"
+//#include "EventMsgr.h"
 
 class GameScene;
 
