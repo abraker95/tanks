@@ -2,6 +2,7 @@
 
 struct BoundingCircle
 {
-	BoundingCircle(float radius) : radius(radius) {}
+	BoundingCircle();
+	BoundingCircle(float radius);
 	float radius;
 };

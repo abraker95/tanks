@@ -1,57 +1,103 @@
 #pragma once
-#define MAX_COMPONENTS_TYPE 128
 
 #include <cstdlib>
+#include <tuple>
+#include <bitset>
 
-template<typename T>
-struct ComponentEntry 
+template<typename... Ts>
+struct Entity
 {
-	int entity_id;		
-	T data;
-	static int handle;
+public:
+	std::bitset<sizeof...(Ts)> mask; 
 };
 
-template<typename T>
-int ComponentEntry<T>::handle;
-
-class Memory
+template<size_t size, typename... Ts>
+class Environment
 {
-	
 public:
-	Memory() : num_components(1) { }
-	~Memory()
+	Environment() {}
+	~Environment() {}
+
+	template<typename T>
+	T* get()
 	{
-		for(int i=0;i<num_components;i++)
-			free(component_tables[i]);
+		return &std::get<ComponentIndexByType<T, std::tuple<Ts...>>::value>(components)[0];
 	}
 
-	template<class T>
-	int alloc(int num_entries)
+	template<typename T>
+	std::bitset<sizeof...(Ts)> getMask()
 	{
-		void* table = malloc(sizeof(ComponentEntry<T>) * num_entries);
-		component_tables[num_components] = table;
-		ComponentEntry<T>::handle = num_components;
-
-		for(int i=0;i<num_entries;i++)
-			((ComponentEntry<T>*)table)->entity_id = -1;
-
-		return num_components++;
-	}
-	
-	template<class T>
-	ComponentEntry<T>* access(int id)
-	{
-		return (ComponentEntry<T>*)component_tables[id];
+		std::bitset<sizeof...(Ts)> mask;
+		mask.set(ComponentIndexByType<T, std::tuple<Ts...>>::value);
+		return mask;
 	}
 
-	void buildLookupTable(int num_entries)
+	template<typename T, typename... Rest>
+	std::bitset<sizeof...(Ts)> getMask()
 	{
-		size_t entry_size = sizeof(int) + sizeof(bool) * num_components;
-		component_tables[0] = malloc(entry_size * num_entries);
+		std::bitset<sizeof...(Ts)> mask = getMask<Rest...>();
+		mask.set(ComponentIndexByType<T, std::tuple<Ts...>>::value);
+		return mask;
 	}
+
+	int requestEntityID()
+	{
+		for(size_t i=0;i<size;i++)
+		{
+			if(entities[i].mask.none())
+				return (int)i;
+		}
+		return -1;
+	}
+
+	template<typename T>
+	void addComponents(int id, T&& t)
+	{
+		T* table = get<T>();
+
+		table[id] = t;
+		entities[id].set(ComponentIndexByType<T, std::tuple<Ts...>>::value);
+	}
+
+	template<typename T, typename... Rest>
+	void addComponents(int id, T&& t, Rest&&... rest)
+	{
+		addComponents<T>(id, std::forward<T>(t));
+		addComponents<Rest...>(id, std::forward<Rest>(rest)...);
+	}
+
+	template<typename T>
+	void removeComponents(int id)
+	{
+		entities[id].set(ComponentIndexByType<T, std::tuple<Ts...>>::value, false);
+	}
+
+	template<typename T, typename... Rest>
+	void removeComponents(int id)
+	{
+		removeComponents<T>(id);
+		removeComponents<Rest...>(id);
+	}
+
+	std::array<Entity<Ts...>, size> entities;
 
 private:
+	std::tuple<std::array<Ts ,size>...> components;	// very big!
 
-	void* component_tables[MAX_COMPONENTS_TYPE];
-	int num_components;
+	template<class T, class Tuple>
+	struct ComponentIndexByType
+	{
+	};
+	
+	template<class T, class... Types>
+	struct ComponentIndexByType<T, std::tuple<T, Types...>>
+	{
+		static const std::size_t value = 0;
+	};
+
+	template<class T, class U, class... Types>
+	struct ComponentIndexByType<T, std::tuple<U, Types...>>
+	{
+		static const std::size_t value = 1 + ComponentIndexByType<T, std::tuple<Types...>>::value;
+	};
 };

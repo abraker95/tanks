@@ -2,7 +2,8 @@
 
 struct Transform
 {
-	Transform(float x, float y, float rot) : x(x), y(y), rot(rot) {}
+	Transform();
+	Transform(float x, float y, float rot);
 
 	float x, y;
 	float rot;

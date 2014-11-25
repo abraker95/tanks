@@ -1,8 +1,11 @@
 #include "application.h"
+#include "systems/sprite_manager.h"
 
 Application::Application()
 {
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "[game name] ( dev version )");
+
+	SpriteManager test(&main_env);
 }
 
 Application::~Application()
