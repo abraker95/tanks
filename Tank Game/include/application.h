@@ -1,8 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "core/memory.h"
-#include "components/transform.h"
-#include "components/texture_handle.h"
+#include "core/environment.h"
 
 class Application
 {
@@ -15,5 +13,5 @@ public:
 private:
 	sf::RenderWindow* window;
 
-	Environment<10, Transform, TextureHandle> main_env;
+	Environment* main_env;
 };

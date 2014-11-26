@@ -1,21 +1,14 @@
 #pragma once
 
-#include "core/memory.h"
+#include "core/environment.h"
 #include "components/texture_handle.h"
 #include "components/transform.h"
 
 class SpriteManager
 {
 public:
-	SpriteManager()
-	{
-	}
-
-	void update()
-	{
-		
-	}
+	SpriteManager() { }
+	void update(Environment* env, float dt);
 
 private:
-	TextureHandle* texture_handles;
 };

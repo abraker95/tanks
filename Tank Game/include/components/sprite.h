@@ -1,6 +1,8 @@
 #pragma once
 
-struct Texture
+#include "core/environment.h"
+
+struct Texture : public Component<Texture>
 {
 	Texture();
 	Texture(const char* filename);

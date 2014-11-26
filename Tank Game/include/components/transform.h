@@ -1,6 +1,8 @@
 #pragma once
 
-struct Transform
+#include "core/environment.h"
+
+struct Transform : public Component<Transform>
 {
 	Transform();
 	Transform(float x, float y, float rot);

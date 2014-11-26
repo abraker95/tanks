@@ -1,6 +1,8 @@
 #pragma once
 
-struct Health
+#include "core/environment.h"
+
+struct Health : public Component<Health>
 {
 	int health;
 	int max_health;

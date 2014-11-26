@@ -2,8 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <cstring>
+#include "core/environment.h"
 
-struct TextureHandle
+struct TextureHandle : public Component<TextureHandle>
 {
 	TextureHandle();
 	TextureHandle(std::string filename);

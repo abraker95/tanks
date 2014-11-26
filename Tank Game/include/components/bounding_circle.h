@@ -1,6 +1,8 @@
 #pragma once
 
-struct BoundingCircle
+#include "core/environment.h"
+
+struct BoundingCircle : public Component<BoundingCircle>
 {
 	BoundingCircle();
 	BoundingCircle(float radius);

@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Window/Keyboard.hpp>
+#include "core/environment.h"
 
-struct TankControls
+struct TankControls : public Component<TankControls>
 {
 	TankControls();
 
