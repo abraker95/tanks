@@ -154,3 +154,24 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# =========================
+# CMake
+# =========================
+CMakeCache.txt
+CMakeLists.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# =========================
+# Output executable
+# =========================
+tank.exe
+
+# =========================
+# Vim temporary files
+# =========================
+*.swp
+
