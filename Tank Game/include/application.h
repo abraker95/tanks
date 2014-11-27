@@ -4,8 +4,8 @@
 #include "systems/input_system.h"
 #include "systems/texture_manager.h"
 #include "systems/render_system.h"
-#include "systems/movement_system.h"
 #include "systems/expiring_system.h"
+#include "systems/physics_system.h"
 
 class Application
 {
@@ -26,6 +26,6 @@ private:
 	InputSystem input_system;
 	TextureManager texture_manager;
 	RenderSystem render_system;
-	MovementSystem movement_system;
 	ExpiringSystem expiring_system;
+	PhysicsSystem physics_system;
 };

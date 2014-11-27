@@ -11,16 +11,27 @@ Application::Application() : main_env(32)
 	// TODO: automatically manage this
 	main_env.alloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires>();
+		Expires, BoundingCircle>();
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
 
 	main_env.createEntity(
-		Transform(500.f, 300.f, 0.f),
+		Transform(300.f, 300.f, 0.f),
 		Velocity(0.f, 0.f),
 		TextureHandle("Tank_0.png"),
-		TankControls(p1_keys)
+		TankControls(p1_keys),
+		BoundingCircle(0.f)
+	);
+
+	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
+
+	main_env.createEntity(
+		Transform(800.f, 300.f, 0.f),
+		Velocity(0.f, 0.f),
+		TextureHandle("Tank_0.png"),
+		TankControls(p2_keys),
+		BoundingCircle(0.f)
 	);
 }
 
@@ -29,7 +40,7 @@ Application::~Application()
 	// TODO: automatically manage this
 	main_env.dealloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires>();
+		Expires, BoundingCircle>();
 
 	if(window)
 		delete window;
@@ -58,7 +69,9 @@ void Application::update(float dt)
 {
 	input_system.update(&main_env);
 	expiring_system.update(&main_env, dt);
-	movement_system.update(&main_env, dt);
+
+	physics_system.update(&main_env, dt);
+
 	texture_manager.update(&main_env);
 	render_system.update(&main_env, window);
 }

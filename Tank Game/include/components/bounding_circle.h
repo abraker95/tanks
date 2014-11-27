@@ -6,5 +6,6 @@ struct BoundingCircle : public Component<BoundingCircle>
 {
 	BoundingCircle();
 	BoundingCircle(float radius);
+
 	float radius;
 };

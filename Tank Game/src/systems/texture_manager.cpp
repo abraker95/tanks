@@ -1,5 +1,6 @@
 #include <iostream>
 #include "systems/texture_manager.h"
+#include "components/bounding_circle.h"
 
 TextureManager::TextureManager()
 {
@@ -31,6 +32,12 @@ void TextureManager::update(Environment* env)
 				env->addComponents<RenderProperties>(i, RenderProperties(tex));
 				sf::Vector2u size = tex->getSize();
 				props[i].sprite.setOrigin((float)size.x/2.f, (float)size.y/2.f);	
+
+				if(env->hasComponents<BoundingCircle>(i))
+				{
+					BoundingCircle* bounding_circle = env->get<BoundingCircle>();
+					bounding_circle[i].radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
+				}
 			}
 		}
 	}
