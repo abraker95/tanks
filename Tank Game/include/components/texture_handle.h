@@ -10,5 +10,4 @@ struct TextureHandle : public Component<TextureHandle>
 	TextureHandle(std::string filename);
 
 	std::string filename;
-	sf::Texture* texture;
 };

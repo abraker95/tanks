@@ -4,6 +4,6 @@ Velocity::Velocity()
 {
 }
 
-Velocity::Velocity(float vx, float vy, float vrot) : vx(vx), vy(vy), vrot(vrot) 
+Velocity::Velocity(float speed, float vrot) : speed(speed), vrot(vrot) 
 {
 }

@@ -5,8 +5,9 @@
 
 struct RenderProperties : public Component<RenderProperties>
 {
-	Sprite();
-	Sprite();
+	RenderProperties();
+	RenderProperties(sf::Texture* texture);
+	~RenderProperties();
 
 	sf::Sprite sprite;
 };

@@ -5,6 +5,7 @@
 #include <bitset>
 #include <map>
 #include <vector>
+#include <iostream>
 
 #define MAX_COMPONENTS 32
 
@@ -24,30 +25,28 @@ const unsigned Component<T>::bitpos = bitpos_index++;
 class Environment
 {
 public:
-	Environment(int num_entites) 
+	Environment(const int num_entites) 
 	{
 		entities.resize(num_entites);
+		for(unsigned i=0;i<MAX_COMPONENTS;i++)
+			components_table[i] = nullptr;
 	}
 
 	virtual ~Environment() 
 	{
-		for(std::map<unsigned, void*>::iterator it=components_table.begin();it!=components_table.end();++it)
-			free(it->second);
-
-		components_table.clear();
 	}
 
 	template<typename T>
 	T* get()
 	{
-		return (T*)(components_table[Component<T>::bitpos]);
+		return static_cast<T*>(components_table[Component<T>::bitpos]);
 	}
 
 	template<typename T>
 	void alloc()
 	{
-		void* pool = malloc(sizeof(T) * entities.size());
-		components_table[Component<T>::bitpos] = (void*)pool;
+		void* pool = (void*)(new T[entities.size()]);
+		components_table[Component<T>::bitpos] = pool;
 	}
 
 	template<typename T, typename U, typename... Rest>
@@ -57,14 +56,13 @@ public:
 		alloc<U, Rest...>();
 	}
 
-
 	template<typename T>
 	void dealloc()
 	{
 		void* pool = components_table[Component<T>::bitpos];
-		components_table.erase(Component<T>::bitpos);
+		components_table[Component<T>::bitpos] = nullptr;
 
-		free(pool);
+		delete[] static_cast<T*>(pool);
 	}
 
 	template<typename T, typename U, typename... Rest>
@@ -74,21 +72,16 @@ public:
 		dealloc<U, Rest...>();
 	}
 
-	unsigned requestID()
+	template<typename... T>
+	void createEntity(T&&... t)
 	{
-		for(unsigned i=0;i<entities.size();i++)
-		{
-			if(entities[i].none())
-				return i;
-		}
-
-		// error
-		return 0;
+		unsigned new_id = requestID();
+		addComponents<T...>(new_id, std::forward<T>(t)...);
 	}
 
-	void deleteID(int id)
+	void destroyEntity(unsigned id)
 	{
-		entities[id].reset();
+		deleteID(id);
 	}
 
 	template<typename T>
@@ -106,6 +99,34 @@ public:
 		return mask | getMask<U, Rest...>();
 	}
 
+	template<typename T>
+	void addComponents(unsigned id, T&& init)
+	{
+		entities[id] |= getMask<T>();
+		T* pool = get<T>();
+		pool[id] = init;
+	}
+
+	template<typename T, typename R, typename... Rs>
+	void addComponents(unsigned id, T&& init, R&& r, Rs&&... rs)
+	{
+		addComponents<T>(id, std::forward<T>(init));
+		addComponents<R, Rs...>(id, std::forward<R>(r), std::forward<Rs>(rs)...);
+	}
+
+	template<typename T>
+	void removeComponents(unsigned id)
+	{
+		entities[id] &= ~getMask<T>();
+	}
+
+	template<typename T, typename R, typename... Rs>
+	void removeComponents(unsigned id)
+	{
+		removeComponents<T>(id);
+		removeComponents<R, Rs...>(id);
+	}
+
 	template<typename... T>
 	bool hasComponents(unsigned id)
 	{
@@ -119,6 +140,24 @@ public:
 	}
 
 private:
-	std::map<unsigned, void*> components_table;
+	unsigned requestID()
+	{
+		for(unsigned i=0;i<entities.size();i++)
+		{
+			if(entities[i].none())
+				return i;
+		}
+
+		// error
+		return 0;
+	}
+
+	void deleteID(unsigned id)
+	{
+		entities[id].reset();
+	}
+
+private:
+	void* components_table[MAX_COMPONENTS];
 	std::vector<ComponentMask> entities;
 };

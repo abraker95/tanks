@@ -5,6 +5,6 @@ TextureHandle::TextureHandle()
 }
 
 
-TextureHandle::TextureHandle(std::string filename) : filename(filename), texture(nullptr)
+TextureHandle::TextureHandle(std::string filename) : filename(filename)
 {
 }
