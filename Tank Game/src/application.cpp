@@ -9,7 +9,9 @@ Application::Application() : main_env(32)
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (experimental branch)");
 
 	// TODO: automatically manage this
-	main_env.alloc<Transform, Velocity, TextureHandle, RenderProperties, TankControls>();
+	main_env.alloc<
+		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
+		Expires>();
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
@@ -25,7 +27,9 @@ Application::Application() : main_env(32)
 Application::~Application()
 {
 	// TODO: automatically manage this
-	main_env.dealloc<Transform, Velocity, TextureHandle, RenderProperties, TankControls>();
+	main_env.dealloc<
+		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
+		Expires>();
 
 	if(window)
 		delete window;
@@ -53,6 +57,7 @@ int Application::run()
 void Application::update(float dt)
 {
 	input_system.update(&main_env);
+	expiring_system.update(&main_env, dt);
 	movement_system.update(&main_env, dt);
 	texture_manager.update(&main_env);
 	render_system.update(&main_env, window);
