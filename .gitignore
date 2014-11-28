@@ -159,7 +159,6 @@ $RECYCLE.BIN/
 # CMake
 # =========================
 CMakeCache.txt
-CMakeLists.txt
 CMakeFiles
 Makefile
 cmake_install.cmake
