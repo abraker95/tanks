@@ -7,6 +7,6 @@ struct Gun : public Component<Gun>
 {
 	Gun();
 
-	const float fireCooldown = 0.1f;
+	float fireCooldown = 0.5f;
 	sf::Clock fireClock;
 };

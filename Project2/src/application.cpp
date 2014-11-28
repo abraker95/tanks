@@ -2,14 +2,14 @@
 #include <array>
 #include "Components.h"
 
-Application::Application() : main_env(32)
+Application::Application() : main_env(128)
 {
-	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (experimental branch)");
+	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 
 	// TODO: automatically manage this
 	main_env.alloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls>();
+		Expires, BoundingCircle, MouseControls, Projectile, Gun>();
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
@@ -19,7 +19,8 @@ Application::Application() : main_env(32)
 		Velocity(0.f, 0.f),
 		TextureHandle("Tank_0.png"),
 		TankControls(p1_keys),
-		BoundingCircle(0.f)
+		BoundingCircle(),
+		Gun()
 	);
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
@@ -29,7 +30,8 @@ Application::Application() : main_env(32)
 		Velocity(0.f, 0.f),
 		TextureHandle("Tank_0.png"),
 		TankControls(p2_keys),
-		BoundingCircle(0.f)
+		BoundingCircle(),
+		Gun()
 	);
 }
 
@@ -38,7 +40,7 @@ Application::~Application()
 	// TODO: automatically manage this
 	main_env.dealloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls>();
+		Expires, BoundingCircle, MouseControls, Projectile, Gun>();
 
 	if(window)
 		delete window;

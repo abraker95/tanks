@@ -9,8 +9,6 @@ struct TankControls : public Component<TankControls>
 	TankControls();
 	TankControls(std::array<sf::Keyboard::Key, 5> _keys);
 
-	void Update();
-
 	enum
 	{
 		TURN_RIGHT = 0,

@@ -1,3 +1,5 @@
 #include "components/gun.h"
 
-Gun::Gun(){}
+Gun::Gun()
+{
+}

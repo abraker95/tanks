@@ -1,6 +1,6 @@
 #define PI 3.14159f
 #include <cmath>
-#include "components/velocity.h"
+#include "Components.h"
 #include "systems/physics_system.h"
 
 PhysicsSystem::PhysicsSystem()
@@ -38,7 +38,12 @@ void PhysicsSystem::update(Environment* env, float dt)
 				{
 					bounding_circle[i].collision = true;
 					bounding_circle[j].collision = true;
-					feedbackCircleCircle(transform, bounding_circle, i, j);
+
+					if(	!env->hasComponents<Projectile>(i) &&
+						env->hasComponents<Projectile>(i))
+					{
+						feedbackCircleCircle(transform, bounding_circle, i, j);
+					}
 				}
 				else
 				{

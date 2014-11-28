@@ -1,6 +1,6 @@
 #include "components/bounding_circle.h"
 
-BoundingCircle::BoundingCircle()
+BoundingCircle::BoundingCircle() : radius(0.f), collision(false)
 {
 }
 

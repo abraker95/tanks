@@ -14,7 +14,6 @@ void InputSystem::update(Environment* env)
 	Velocity* velocity = env->get<Velocity>();
 	Transform* transform = env->get<Transform>();
 	MouseControls* mouseControls = env->get<MouseControls>();
-	BoundingCircle* boundingCircle = env->get<BoundingCircle>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
@@ -32,8 +31,14 @@ void InputSystem::update(Environment* env)
 
 		if(env->hasComponents<TankControls, Velocity, Transform, BoundingCircle>(i))
 		{
-			tank_controls[i].Update();
+			// update the keystate bitmask
+			std::array<sf::Keyboard::Key,5>& keys = tank_controls[i].keys;
 			std::bitset<5>& state = tank_controls[i].state;
+
+			state.reset();
+			for(int j = 0; j<5; j++)
+				if(sf::Keyboard::isKeyPressed(keys[j]))
+					state.set(j, true);
 
 			// update the values based on keystate
 			     if(state.test(TankControls::TURN_RIGHT)) velocity[i].vrot = +300.f;
@@ -46,15 +51,23 @@ void InputSystem::update(Environment* env)
 
 			if(state.test(TankControls::FIRE))
 			{
-				env->createEntity(
-					Transform(transform[i].x, transform[i].y, transform[i].rot),
-					Velocity(50.f, 50.f),
-					TextureHandle("Bullet_0.png"),
-					BoundingCircle(0.f),
-					Expires(5, boundingCircle[env->maxEntities()-1].collision)
-					);
-				// spawn bullet
-				// env->createEntity(...);
+				if(env->hasComponents<Gun>(i))
+				{
+					Gun* gun = env->get<Gun>();
+
+					if(gun[i].fireClock.getElapsedTime().asSeconds() > gun[i].fireCooldown)
+					{
+						gun[i].fireClock.restart();
+						env->createEntity(
+							Transform(transform[i].x, transform[i].y, transform[i].rot),
+							Velocity(500.f, 0.f),
+							TextureHandle("Bullet_0.png"),
+							Expires(5.f),
+							Projectile(-20, i),
+							BoundingCircle()
+						);
+					}
+				}
 			}
 		}
 	}

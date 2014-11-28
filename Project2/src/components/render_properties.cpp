@@ -8,8 +8,3 @@ RenderProperties::RenderProperties(sf::Texture* texture)
 {
 	sprite.setTexture(*texture);
 }
-
-RenderProperties::~RenderProperties()
-{
-
-}

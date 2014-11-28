@@ -1,6 +1,7 @@
 #include <iostream>
 #include "systems/texture_manager.h"
 #include "components/bounding_circle.h"
+#include "components/render_properties.h"
 
 TextureManager::TextureManager()
 {

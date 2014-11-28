@@ -15,11 +15,11 @@ foreach(component
 	gun
 	health
 	render_properties
-	sprite
 	tank_controls
 	texture_handle
 	transform
 	velocity
+	projectile
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
@@ -27,7 +27,6 @@ endforeach(component)
 foreach(system
 	expiring_system
 	input_system
-	movement_system
 	physics_system
 	render_system
 	texture_manager

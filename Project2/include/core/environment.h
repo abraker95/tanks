@@ -8,7 +8,7 @@
 #include <iostream>
 #include "DEBUG.h"
 
-#define MAX_COMPONENTS 32
+#define MAX_COMPONENTS 64
 
 typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
