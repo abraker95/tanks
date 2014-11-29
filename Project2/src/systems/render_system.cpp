@@ -1,5 +1,6 @@
 #include "Components.h"
 #include "systems/render_system.h"
+#include "utils.h"
 
 RenderSystem::RenderSystem()
 {
@@ -33,7 +34,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 
 			sf::FloatRect bounds = props[i].sprite.getLocalBounds();
 
-			//if(mouse[i].pos[0]==)
+			if(BTWN(bounds.left, mouse[i].pos[0], bounds.width)&& BTWN(bounds.top, mouse[i].pos[1], bounds.height))
+			{}
 		}
 	}
 
