@@ -92,7 +92,7 @@ public:
 	template<typename... T>
 	void createEntity(T&&... t)
 	{
-		PRINT_DEBUG(std::cout<<" Create Entity"<<std::endl, MED_DEBUG);
+		PRINT_DEBUG(std::cout<<" Create Entity"<<std::endl, MED_DEBUG, ENVSYS);
 		unsigned new_id = requestID();
 		addComponents<T...>(new_id, std::forward<T>(t)...);
 	}

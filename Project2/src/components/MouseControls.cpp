@@ -1,13 +1,6 @@
 #include "components\MouseControls.h"
 
-MouseControls::MouseControls() {}
-MouseControls::MouseControls(std::array<sf::Mouse::Button, 3> _buttons): buttons(_buttons) {}
+MouseControls::MouseControls(): buttons({{sf::Mouse::Button::Left, sf::Mouse::Button::Middle, sf::Mouse::Button::Right}})
+{}
 
-void MouseControls::Update()
-{
-	// update the keystate bitmask
-	state.reset();
-	for(int j = 0; j<3; j++)
-		if(sf::Mouse::isButtonPressed(buttons[j]))
-			state.set(j, true);
-}
+//MouseControls::MouseControls(std::array<sf::Mouse::Button, 3> _buttons): buttons(_buttons) {}

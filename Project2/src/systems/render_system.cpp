@@ -1,5 +1,4 @@
-#include "components/transform.h"
-#include "components/render_properties.h"
+#include "Components.h"
 #include "systems/render_system.h"
 
 RenderSystem::RenderSystem()
@@ -25,6 +24,16 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			sprite.setPosition(trans[i].x, trans[i].y);
 			sprite.setRotation(trans[i].rot);
 			window->draw(sprite);
+		}
+
+		if(env->hasComponents<Transform, UserInterface, MouseControls, RenderProperties>(i))
+		{
+			/// \TODO: Finish button highlighting
+			MouseControls* mouse = env->get<MouseControls>();
+
+			sf::FloatRect bounds = props[i].sprite.getLocalBounds();
+
+			//if(mouse[i].pos[0]==)
 		}
 	}
 

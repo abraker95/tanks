@@ -12,24 +12,36 @@ void InputSystem::update(Environment* env)
 {
 	TankControls* tank_controls = env->get<TankControls>();
 	Velocity* velocity = env->get<Velocity>();
-	Transform* transform = env->get<Transform>();
 	MouseControls* mouseControls = env->get<MouseControls>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
-		  if(env->hasComponents<MouseControls/*, UI*/>(i))
+		  if(env->hasComponents<MouseControls, UserInterface>(i))
 		  {
-			mouseControls[i].Update();
-			std::bitset<3>& state = mouseControls[i].state;
+			 std::array<sf::Mouse::Button, 3>& buttons = mouseControls[i].buttons;
+			 std::bitset<3>& pressState = mouseControls[i].pressState,
+							 prevPressState = mouseControls[i].pressState; // not a ref
+			 std::bitset<3>& clickState = mouseControls[i].clickState;
 
-			     if(state.test(MouseControls::LEFT)) /*\TODO: UI event */;
-		    else if(state.test(MouseControls::MIDDLE)) /*\TODO: UI event */;
-		    else if(state.test(MouseControls::RIGHT)) /*\TODO: UI event */;
-			else /*\TODO: UI event */; 
+			 // update the mousestate bitmask
+			 pressState.reset();
+			 clickState.reset();
+			 for(int j = 0; j<3; j++)
+				 if(sf::Mouse::isButtonPressed(buttons[j]))
+				 {
+				  if(prevPressState[j]^true) clickState.set(j, true);
+					 pressState.set(j, true);
+				  PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
+				 }
+
+			      if(pressState.test(MouseControls::LEFT)) /*\TODO: UI event */;
+			 else if(pressState.test(MouseControls::MIDDLE)) /*\TODO: UI event */;
+			 else if(pressState.test(MouseControls::RIGHT)) /*\TODO: UI event */;
+			 else /*\TODO: UI event */; 
 		  }
 		
 
-		if(env->hasComponents<TankControls, Velocity, Transform, BoundingCircle>(i))
+		if(env->hasComponents<TankControls, Velocity>(i))
 		{
 			// update the keystate bitmask
 			std::array<sf::Keyboard::Key,5>& keys = tank_controls[i].keys;
@@ -51,9 +63,10 @@ void InputSystem::update(Environment* env)
 
 			if(state.test(TankControls::FIRE))
 			{
-				if(env->hasComponents<Gun>(i))
+				if(env->hasComponents<Gun, Transform, BoundingCircle>(i))
 				{
 					Gun* gun = env->get<Gun>();
+					Transform* transform = env->get<Transform>();
 
 					if(gun[i].fireClock.getElapsedTime().asSeconds() > gun[i].fireCooldown)
 					{

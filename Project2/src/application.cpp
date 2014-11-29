@@ -9,7 +9,7 @@ Application::Application() : main_env(128)
 	// TODO: automatically manage this
 	main_env.alloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun>();
+		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface>();
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
@@ -33,6 +33,14 @@ Application::Application() : main_env(128)
 		BoundingCircle(),
 		Gun()
 	);
+
+	// testing mouse features
+	main_env.createEntity(
+		Transform(200.f, 30.f, 0.f),
+		MouseControls(),
+		UserInterface(),
+		TextureHandle("Button.png")
+	);
 }
 
 Application::~Application()
@@ -40,7 +48,7 @@ Application::~Application()
 	// TODO: automatically manage this
 	main_env.dealloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun>();
+		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface>();
 
 	if(window)
 		delete window;

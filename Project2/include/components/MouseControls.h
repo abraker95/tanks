@@ -8,9 +8,7 @@ class MouseControls: public Component<MouseControls>
 {
 public:
 	MouseControls();
-	MouseControls(std::array<sf::Mouse::Button, 3> _buttons);
-
-	void Update();
+	//MouseControls(std::array<sf::Mouse::Button, 3> _buttons);
 
 	enum
 	{
@@ -21,5 +19,5 @@ public:
 
 	std::array<sf::Mouse::Button, 3> buttons;
 	std::array<int, 2> pos;
-	std::bitset<3> state;
+	std::bitset<3> pressState, clickState;
 };

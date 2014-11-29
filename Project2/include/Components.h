@@ -10,3 +10,4 @@
 #include "components\transform.h"
 #include "components\velocity.h"
 #include "components\projectile.h"
+#include "components\UserInterface.h"
