@@ -40,7 +40,7 @@ void PhysicsSystem::update(Environment* env, float dt)
 					bounding_circle[j].collision = true;
 
 					if(	!env->hasComponents<Projectile>(i) &&
-						env->hasComponents<Projectile>(i))
+						!env->hasComponents<Projectile>(j))
 					{
 						feedbackCircleCircle(transform, bounding_circle, i, j);
 					}

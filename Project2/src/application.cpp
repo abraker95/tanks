@@ -2,7 +2,7 @@
 #include <array>
 #include "Components.h"
 
-Application::Application() : main_env(128)
+Application::Application() : main_env(64)
 {
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 
