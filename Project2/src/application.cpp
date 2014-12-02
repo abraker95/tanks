@@ -38,7 +38,8 @@ Application::Application() : main_env(128)
 	main_env.createEntity(
 		Transform(200.f, 30.f, 0.f),
 		MouseControls(),
-		UserInterface(),
+		UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
+					 std::bitset<3>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),
 		TextureHandle("Button.png")
 	);
 }
@@ -76,6 +77,7 @@ int Application::run()
 void Application::update(float dt)
 {
 	input_system.update(&main_env);
+	ui_system.update(&main_env);
 	expiring_system.update(&main_env, dt);
 
 	physics_system.update(&main_env, dt);

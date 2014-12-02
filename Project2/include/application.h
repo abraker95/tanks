@@ -1,11 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
-#include "systems/input_system.h"
-#include "systems/texture_manager.h"
-#include "systems/render_system.h"
-#include "systems/expiring_system.h"
-#include "systems/physics_system.h"
+#include "Systems.h"
 
 class Application
 {
@@ -28,4 +24,5 @@ private:
 	RenderSystem render_system;
 	ExpiringSystem expiring_system;
 	PhysicsSystem physics_system;
+	UISystem ui_system;
 };
