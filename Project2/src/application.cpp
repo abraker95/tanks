@@ -39,7 +39,7 @@ Application::Application() : main_env(128)
 		Transform(200.f, 30.f, 0.f),
 		MouseControls(),
 		UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
-					 std::bitset<3>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),
+					 std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),
 		TextureHandle("Button.png")
 	);
 }

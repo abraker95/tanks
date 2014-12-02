@@ -4,20 +4,22 @@
 
 class UserInterface: public Component<UserInterface>
 {
+	#define states 4
+
 	public:
 		UserInterface();
-		UserInterface(std::function<void*()> _action, std::bitset<3> _enable);
+		UserInterface(std::function<void*()> _action, std::bitset<states> _enable);
 		~UserInterface();
 
 		enum
 		{
 			HIGHLIGHT = 0,
 			CLICK,
-			PRESS
+			PRESS,
+			DRAG
 		};
 
 		std::function<void*()> action;
-		std::bitset<3> enable,state;
-		bool call, cursorOnThis;
-
+		std::bitset<states> enable,state;
+		bool cursorOnThis;
 };

@@ -32,9 +32,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 				window->draw(sprite);
 		}
 
-		if(env->hasComponents<Transform, UserInterface, MouseControls, RenderProperties>(i))
+		if(env->hasComponents<Transform, UserInterface, MouseControls>(i))
 		{
-			/// \TODO: Finish button highlighting
 			UserInterface* ui = env->get<UserInterface>();
 			MouseControls* mouse = env->get<MouseControls>();
 			sf::FloatRect bounds = props[i].sprite.getLocalBounds();
@@ -53,21 +52,25 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			
 			if(ui[i].state.test(UserInterface::PRESS))
 			{
-				//	PRINT_DEBUG(std::cout<<"draw"<<std::endl, MED_DEBUG, GFXSYS);
 				sf::RectangleShape rectangle;
-				rectangle.setPosition(trans[i].x, trans[i].y);
-				rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
-				rectangle.setFillColor(sf::Color(50, 50, 50, 50));
-				window->draw(rectangle);
+					rectangle.setPosition(trans[i].x, trans[i].y);
+					rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
+					rectangle.setFillColor(sf::Color(50, 50, 50, 50));
+					window->draw(rectangle);
 			}
 			else if(ui[i].state.test(UserInterface::HIGHLIGHT))  // Just because the cursor is on the UI, doesn't mean it will always highlight. e.i.: Highlight is not enabled
 			{
-			//	PRINT_DEBUG(std::cout<<"draw"<<std::endl, MED_DEBUG, GFXSYS);
 				sf::RectangleShape rectangle;
-				rectangle.setPosition(trans[i].x, trans[i].y);
+					rectangle.setPosition(trans[i].x, trans[i].y);
 					rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
 					rectangle.setFillColor(sf::Color(200, 200, 200, 50));
 					window->draw(rectangle);
+			}
+
+			if(ui[i].state.test(UserInterface::DRAG))
+			{
+				trans[i].x = sf::Mouse::getPosition().x;
+				trans[i].y = sf::Mouse::getPosition().y;
 			}
 		}
 	}
