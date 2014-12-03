@@ -4,11 +4,12 @@
 
 class UserInterface: public Component<UserInterface>
 {
-	#define states 4
+	#define UIstates 5
 
 	public:
 		UserInterface();
-		UserInterface(std::function<void*()> _action, std::bitset<states> _enable);
+		UserInterface(std::function<void*()> *_action, std::bitset<UIstates> _enable);
+	//	UserInterface(std::function<void*()> _action, Type _type);
 		~UserInterface();
 
 		enum
@@ -16,10 +17,11 @@ class UserInterface: public Component<UserInterface>
 			HIGHLIGHT = 0,
 			CLICK,
 			PRESS,
-			DRAG
+			DRAG,
+			TOGGLE
 		};
 
-		std::function<void*()> action;
-		std::bitset<states> enable,state;
+		std::function<void*()> *action;
+		std::bitset<UIstates> enable,state;
 		bool cursorOnThis;
 };

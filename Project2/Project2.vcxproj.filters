@@ -42,9 +42,6 @@
     <ClInclude Include="include\application.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Components.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\DEBUG.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -99,11 +96,17 @@
     <ClInclude Include="include\components\UserInterface.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Systems.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\systems\UI_System.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Systems.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\GUIObj.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Components.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +182,9 @@
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\components\UserInterface.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\GUIObj.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>

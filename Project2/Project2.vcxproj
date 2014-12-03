@@ -70,7 +70,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Components.h" />
+    <ClInclude Include="include\Components.h" />
+    <ClInclude Include="include\components\GUIObj.h" />
     <ClInclude Include="include\systems\UI_System.h" />
     <ClInclude Include="Systems.h" />
     <ClInclude Include="include\application.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\components\bounding_circle.cpp" />
     <ClCompile Include="src\components\expires.cpp" />
+    <ClCompile Include="src\components\GUIObj.cpp" />
     <ClCompile Include="src\components\gun.cpp" />
     <ClCompile Include="src\components\health.cpp" />
     <ClCompile Include="src\components\MouseControls.cpp" />

@@ -11,3 +11,4 @@
 #include "components\velocity.h"
 #include "components\projectile.h"
 #include "components\UserInterface.h"
+#include "components\GUIObj.h"

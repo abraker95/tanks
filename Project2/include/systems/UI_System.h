@@ -6,6 +6,7 @@ class UISystem
 {
 public:
 	UISystem();
+	UISystem(Environment* env);
 	~UISystem();
 
 	void update(Environment* env);
