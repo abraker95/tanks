@@ -28,7 +28,6 @@ void InputSystem::update(Environment* env)
 			 for(int j = 0; j<3; j++)
 				 if(sf::Mouse::isButtonPressed(buttons[j]))
 				 {
-					 std::cout<<"x: "<<
 				  if(prevPressState[j]^true) clickState.set(j, true);
 					 pressState.set(j, true);
 				  //PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
