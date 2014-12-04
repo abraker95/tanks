@@ -1,7 +1,8 @@
 #include <iostream>
 #include "systems/texture_manager.h"
 #include "components/bounding_circle.h"
-#include "components/render_properties.h"
+#include "components/texture.h"
+#include "components/sprite.h"
 
 TextureManager::TextureManager()
 {
@@ -19,20 +20,23 @@ TextureManager::~TextureManager()
 
 void TextureManager::update(Environment* env)
 {
-	TextureHandle* texs = env->get<TextureHandle>();
-	RenderProperties* props = env->get<RenderProperties>();
+	TextureHandle* tex_desc = env->get<TextureHandle>();
+	Sprite* sprites = env->get<Sprite>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
 		if(env->hasComponents<TextureHandle>(i))
 		{
-			sf::Texture* tex = lookupAtlas(texs[i].filename);
+			sf::Texture* tex = lookupAtlas(tex_desc[i].filename);
 			env->removeComponents<TextureHandle>(i);
 			if(tex)
 			{
-				env->addComponents<RenderProperties>(i, RenderProperties(tex));
+				env->addComponents<Texture>(i, Texture(tex));
+
 				sf::Vector2u size = tex->getSize();
-				props[i].sprite.setOrigin((float)size.x/2.f, (float)size.y/2.f);	
+
+				if(env->hasComponents<Sprite>(i))
+					sprites[i].sprite.setOrigin((float)size.x/2.f, (float)size.y/2.f);	
 
 				if(env->hasComponents<BoundingCircle>(i))
 				{

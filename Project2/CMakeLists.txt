@@ -9,18 +9,23 @@ set(component_files "")
 set(system_files "")
 
 foreach(component
-	MouseControls
 	bounding_circle
 	expires
 	gun
 	health
-	render_properties
 	tank_controls
 	texture_handle
 	transform
 	velocity
 	projectile
 	UserInterface
+	GUIObj
+	MouseControls
+	sprite
+	texture
+	map_desc
+	VertexArray
+	Tilemap
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
@@ -31,6 +36,8 @@ foreach(system
 	physics_system
 	render_system
 	texture_manager
+	UI_System
+	MapCreationSystem
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
 endforeach(system)

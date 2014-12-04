@@ -5,7 +5,6 @@
 #include "core/environment.h"
 #include "components/texture_handle.h"
 #include "components/transform.h"
-#include "components/render_properties.h"
 
 class TextureManager
 {

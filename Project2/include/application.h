@@ -24,5 +24,6 @@ private:
 	RenderSystem render_system;
 	ExpiringSystem expiring_system;
 	PhysicsSystem physics_system;
-	UISystem ui_system;
+	UISystem* ui_system;
+	MapCreationSystem map_creation_system;
 };

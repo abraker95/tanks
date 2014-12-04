@@ -14,29 +14,40 @@ RenderSystem::~RenderSystem()
 void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 {
 	Transform* trans = env->get<Transform>();
-	RenderProperties* props = env->get<RenderProperties>();
+	Sprite* sprites = env->get<Sprite>();
+	Texture* textures = env->get<Texture>();
+	VertexArray* vertex_array = env->get<VertexArray>();
 
 	window->clear();
 	sf::View view = sf::View(sf::Vector2f(0, 0), (sf::Vector2f)window->getSize());
 		view.setCenter(sf::Vector2f(window->getSize().x/2, window->getSize().y/2));
 		window->setView(view);
 
+	for(unsigned i=0;env->maxEntities();i++)
+	{
+		if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
+		{
+			window->draw(vertex_array[i].vertices, textures[i].texture);
+			break; // should only be one map
+		}
+	}
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
-		if(env->hasComponents<Transform, RenderProperties>(i))
+		if(env->hasComponents<Transform, Sprite, Texture>(i))
 		{
-			sf::Sprite& sprite = props[i].sprite;
-				sprite.setPosition(trans[i].x, trans[i].y);
-				sprite.setRotation(trans[i].rot);
-				window->draw(sprite);
+			sf::Sprite& sprite = sprites[i].sprite;
+			sprite.setPosition(trans[i].x, trans[i].y);
+			sprite.setRotation(trans[i].rot);
+			sprite.setTexture(*textures[i].texture);
+			window->draw(sprite);
 		}
 
 		if(env->hasComponents<Transform, UserInterface, MouseControls>(i))
 		{
 			UserInterface* ui = env->get<UserInterface>();
 			MouseControls* mouse = env->get<MouseControls>();
-			sf::FloatRect bounds = props[i].sprite.getLocalBounds();
+			sf::FloatRect bounds = sprites[i].sprite.getLocalBounds();
 			sf::Vector2f pos = window->mapPixelToCoords(sf::Mouse::getPosition(), window->getView());
 			const int titleBar = 32;
 

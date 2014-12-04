@@ -10,10 +10,31 @@ Application::Application() : main_env(64)
 
 	// TODO: automatically manage this
 	main_env.alloc<
-		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj>();
+		Transform, Velocity, TextureHandle, TankControls, 
+		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj,
+		Sprite, Texture, MapDesc, VertexArray>();
 
 // [ENTITY CREATION]
+	
+	int* map = new int[20*12]{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 2, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 1, 1, 1, 1, 0, 0, 4, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 1, 1, 1, 5, 0, 0, 0, 4, 1, 1, 1, 3, 0, 2, 1, 1, 1, 1,
+		0, 0, 1, 1, 5, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 1,
+		0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 5, 0, 0, 0,
+		2, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	};
+
+	main_env.createEntity(
+		MapDesc(map, 20, 12, sf::Vector2u(64, 64)),
+		TextureHandle("Tilesheet.png")
+	);
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
@@ -24,7 +45,8 @@ Application::Application() : main_env(64)
 		TextureHandle("Tank_0.png"),
 		TankControls(p1_keys),
 		BoundingCircle(),
-		Gun()
+		Gun(),
+		Sprite()
 	);
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
@@ -35,7 +57,8 @@ Application::Application() : main_env(64)
 		TextureHandle("Tank_0.png"),
 		TankControls(p2_keys),
 		BoundingCircle(),
-		Gun()
+		Gun(),
+		Sprite()
 	);
 
 	// testing button
@@ -45,7 +68,8 @@ Application::Application() : main_env(64)
 		/*UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
 					 std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),*/
 		GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
-		TextureHandle("Button.png")
+		TextureHandle("Button.png"),
+		Sprite()
 	);
 
 	// Testing Radio Button
@@ -58,15 +82,18 @@ Application::Application() : main_env(64)
 
 // [FACTORY CONSTRUCTS]
 
-	&UISystem(&main_env);
+	ui_system = new UISystem(&main_env);
 }
 
 Application::~Application()
 {
+	delete ui_system;
+
 	// TODO: automatically manage this
 	main_env.dealloc<
-		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface>();
+		Transform, Velocity, TextureHandle, TankControls, 
+		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj,
+		Sprite, Texture, MapDesc, VertexArray>();
 
 	if(window)
 		delete window;
@@ -94,11 +121,12 @@ int Application::run()
 void Application::update(float dt)
 {
 	input_system.update(&main_env);
-	ui_system.update(&main_env);
+	ui_system->update(&main_env);
 	expiring_system.update(&main_env, dt);
 
 	physics_system.update(&main_env, dt);
 
 	texture_manager.update(&main_env);
+	map_creation_system.update(&main_env);
 	render_system.update(&main_env, window);
 }
