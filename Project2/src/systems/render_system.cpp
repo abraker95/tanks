@@ -81,15 +81,14 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			UserInterface* ui = env->get<UserInterface>();
 			MouseControls* mouse = env->get<MouseControls>();
 			sf::FloatRect bounds = sprites[i].sprite.getLocalBounds();
-			sf::Vector2f pos = window->mapPixelToCoords(sf::Mouse::getPosition(), window->getView());
-			const int titleBar = 32;
+			sf::Vector2i pos = sf::Mouse::getPosition(*window);
 
 		//	PRINT_DEBUG(std::cout<<" X pos view: "<<trans[i].x<<" X pos screen: "<<pos.x<<std::endl, HI_DEBUG, GFXSYS);
 		//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
 		//	PRINT_DEBUG(std::cout<<" Y range: "<<trans[i].y<<" "<<sf::Mouse::getPosition().y-window->getPosition().y<<" "<<bounds.height+trans[i].y<<std::endl<<endl, HI_DEBUG, GFXSYS);
 			
-			if(BTWN(trans[i].x, pos.x-window->getPosition().x, bounds.width+trans[i].x)
-			&& BTWN(trans[i].y+titleBar, pos.y-window->getPosition().y, bounds.height+trans[i].y+titleBar))
+			if(BTWN(trans[i].x - bounds.width/2, pos.x, trans[i].x + bounds.width/2)
+			&& BTWN(trans[i].y - bounds.height/2, pos.y, trans[i].y + bounds.height/2))
 				ui[i].cursorOnThis = true;
 			else
 				ui[i].cursorOnThis = false;
@@ -97,7 +96,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			if(ui[i].state.test(UserInterface::PRESS))
 			{
 				sf::RectangleShape rectangle;
-					rectangle.setPosition(trans[i].x, trans[i].y);
+					rectangle.setPosition(trans[i].x - bounds.width/2, trans[i].y - bounds.height/2);
 					rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
 					rectangle.setFillColor(sf::Color(50, 50, 50, 50));
 					window->draw(rectangle);
@@ -105,7 +104,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			else if(ui[i].state.test(UserInterface::HIGHLIGHT))  // Just because the cursor is on the UI, doesn't mean it will always highlight. e.i.: Highlight is not enabled
 			{
 				sf::RectangleShape rectangle;
-					rectangle.setPosition(trans[i].x, trans[i].y);
+					rectangle.setPosition(trans[i].x - bounds.width/2, trans[i].y- bounds.height/2);
 					rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
 					rectangle.setFillColor(sf::Color(200, 200, 200, 50));
 					window->draw(rectangle);
