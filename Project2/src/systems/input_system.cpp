@@ -14,9 +14,9 @@ void InputSystem::update(Environment* env)
 	Velocity* velocity = env->get<Velocity>();
 	MouseControls* mouseControls = env->get<MouseControls>();
 
-	for(unsigned i=0;i<env->maxEntities();i++)
+	for(unsigned i=0; i<env->maxEntities(); i++)
 	{
-		  if(env->hasComponents<MouseControls, UserInterface>(i))
+		  if(env->hasComponents<MouseControls>(i))
 		  {
 			 std::array<sf::Mouse::Button, 3>& buttons = mouseControls[i].buttons;
 			 std::bitset<3>& pressState = mouseControls[i].pressState,
@@ -24,23 +24,16 @@ void InputSystem::update(Environment* env)
 			 std::bitset<3>& clickState = mouseControls[i].clickState;
 
 			 // update the mousestate bitmask
-			 pressState.reset();
-			 clickState.reset();
+			 pressState.reset();  clickState.reset();
 			 for(int j = 0; j<3; j++)
 				 if(sf::Mouse::isButtonPressed(buttons[j]))
 				 {
 				  if(prevPressState[j]^true) clickState.set(j, true);
 					 pressState.set(j, true);
-				  PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
+				  //PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
 				 }
-
-			      if(pressState.test(MouseControls::LEFT)) /*\TODO: UI event */;
-			 else if(pressState.test(MouseControls::MIDDLE)) /*\TODO: UI event */;
-			 else if(pressState.test(MouseControls::RIGHT)) /*\TODO: UI event */;
-			 else /*\TODO: UI event */; 
 		  }
 		
-
 		if(env->hasComponents<TankControls, Velocity>(i))
 		{
 			// update the keystate bitmask

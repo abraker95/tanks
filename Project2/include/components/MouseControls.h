@@ -18,6 +18,5 @@ public:
 	};
 
 	std::array<sf::Mouse::Button, 3> buttons;
-	std::array<int, 2> pos;
 	std::bitset<3> pressState, clickState;
 };

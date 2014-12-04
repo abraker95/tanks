@@ -4,12 +4,16 @@
 
 Application::Application() : main_env(64)
 {
+// [CORE DECLARATIONS]
+
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 
 	// TODO: automatically manage this
 	main_env.alloc<
 		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface>();
+		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj>();
+
+// [ENTITY CREATION]
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
@@ -34,13 +38,27 @@ Application::Application() : main_env(64)
 		Gun()
 	);
 
-	// testing mouse features
+	// testing button
 	main_env.createEntity(
 		Transform(200.f, 30.f, 0.f),
 		MouseControls(),
-		UserInterface(),
+		/*UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
+					 std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),*/
+		GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
 		TextureHandle("Button.png")
 	);
+
+	// Testing Radio Button
+	/*main_env.createEntity(
+		Transform(500.f, 30.f, 0.f),
+		MouseControls(),
+		GUIObj(GUIObj::RADIO, []()->void* { ; return nullptr; }),
+		TextureHandle("Button.png")
+		);*/
+
+// [FACTORY CONSTRUCTS]
+
+	&UISystem(&main_env);
 }
 
 Application::~Application()
@@ -76,6 +94,7 @@ int Application::run()
 void Application::update(float dt)
 {
 	input_system.update(&main_env);
+	ui_system.update(&main_env);
 	expiring_system.update(&main_env, dt);
 
 	physics_system.update(&main_env, dt);

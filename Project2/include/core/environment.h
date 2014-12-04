@@ -12,6 +12,10 @@
 
 typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
+/// \TODO: Create environment variables in the game for settings/options. 
+///		   For example: Option to control tank's speed. A system will check
+///		   and apply the updated values to the entity's local vars
+
 // every component needs to inherit from this class
 // for every new component bitpos will be assigned with a new unique value
 template<typename T>
