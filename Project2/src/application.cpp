@@ -12,10 +12,11 @@ Application::Application() : main_env(64)
 	main_env.alloc<
 		Transform, Velocity, TextureHandle, TankControls, 
 		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj,
-		Sprite, Texture, MapDesc, VertexArray>();
+		Sprite, Texture, MapDesc, VertexArray, ViewController>();
 
 // [ENTITY CREATION]
 	
+	// tilemap
 	int* map = new int[20*12]{
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -39,8 +40,8 @@ Application::Application() : main_env(64)
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
 
-	main_env.createEntity(
-		Transform(300.f, 300.f, 0.f),
+	unsigned tank1 = main_env.createEntity(
+		Transform(200.f, 300.f, 0.f),
 		Velocity(0.f, 0.f),
 		TextureHandle("Tank_0.png"),
 		TankControls(p1_keys),
@@ -51,14 +52,23 @@ Application::Application() : main_env(64)
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
 
-	main_env.createEntity(
-		Transform(800.f, 300.f, 0.f),
+	unsigned tank2 = main_env.createEntity(
+		Transform(400.f, 300.f, 0.f),
 		Velocity(0.f, 0.f),
 		TextureHandle("Tank_0.png"),
 		TankControls(p2_keys),
 		BoundingCircle(),
 		Gun(),
 		Sprite()
+	);
+
+	// camera
+	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 12.f);
+	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
+	float ratio = (float)window->getSize().x/(float)window->getSize().y;
+
+	main_env.createEntity(
+		ViewController(borders, viewport, ratio, 400.f, 1200.f, 0.4f, {tank1, tank2})
 	);
 
 	// testing button
@@ -93,7 +103,7 @@ Application::~Application()
 	main_env.dealloc<
 		Transform, Velocity, TextureHandle, TankControls, 
 		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj,
-		Sprite, Texture, MapDesc, VertexArray>();
+		Sprite, Texture, MapDesc, VertexArray, ViewController>();
 
 	if(window)
 		delete window;
@@ -128,5 +138,6 @@ void Application::update(float dt)
 
 	texture_manager.update(&main_env);
 	map_creation_system.update(&main_env);
+	view_system.update(&main_env, window, dt);
 	render_system.update(&main_env, window);
 }

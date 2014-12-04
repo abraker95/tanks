@@ -16,3 +16,4 @@
 #include "components\map_desc.h"
 #include "components\VertexArray.h"
 #include "components\tilemap.h"
+#include "components\ViewController.h"

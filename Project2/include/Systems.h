@@ -7,3 +7,4 @@
 #include "systems/render_system.h"
 #include "systems/texture_manager.h"
 #include "systems/MapCreationSystem.h"
+#include "systems/view_system.h"

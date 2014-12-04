@@ -94,11 +94,13 @@ public:
 	// createEntity(Transform())
 	// and because it is "moved" around the copying is kept to the minimum.
 	template<typename... T>
-	void createEntity(T&&... t)
+	unsigned createEntity(T&&... t)
 	{
 		PRINT_DEBUG(std::cout<<" Create Entity"<<std::endl, MED_DEBUG, ENVSYS);
 		unsigned new_id = requestID();
 		addComponents<T...>(new_id, std::forward<T>(t)...);
+
+		return new_id;
 	}
 
 	// set the componentmask to 0

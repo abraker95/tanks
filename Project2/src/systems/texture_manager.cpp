@@ -60,9 +60,7 @@ sf::Texture* TextureManager::lookupAtlas(const std::string& filename)
 		std::cout<<"ERROR: Could not load "<<filename<<std::endl;
 		return nullptr;
 	}
-	else
-		std::cout<<"SUCCESS: Loaded "<<filename<<" successfully"<<std::endl;
-	
+
 	texture_atlas[filename] = new_texture;
 	return new_texture;
 }

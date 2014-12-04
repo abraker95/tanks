@@ -26,4 +26,5 @@ private:
 	PhysicsSystem physics_system;
 	UISystem* ui_system;
 	MapCreationSystem map_creation_system;
+	ViewSystem view_system;
 };

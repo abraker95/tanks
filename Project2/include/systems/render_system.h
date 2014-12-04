@@ -9,7 +9,4 @@ public:
 	~RenderSystem();
 
 	void update(Environment* env, sf::RenderWindow* window);
-
-private:
-	
 };

@@ -26,6 +26,7 @@ foreach(component
 	map_desc
 	VertexArray
 	Tilemap
+	ViewController
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
@@ -38,6 +39,7 @@ foreach(system
 	texture_manager
 	UI_System
 	MapCreationSystem
+	view_system	
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
 endforeach(system)

@@ -17,24 +17,54 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 	Sprite* sprites = env->get<Sprite>();
 	Texture* textures = env->get<Texture>();
 	VertexArray* vertex_array = env->get<VertexArray>();
+	ViewController* view_controller = env->get<ViewController>();
 
+	/*
 	window->clear();
 	sf::View view = sf::View(sf::Vector2f(0, 0), (sf::Vector2f)window->getSize());
 		view.setCenter(sf::Vector2f(window->getSize().x/2, window->getSize().y/2));
 		window->setView(view);
+	*/
 
-	for(unsigned i=0;env->maxEntities();i++)
+	for(unsigned k=0;k<env->maxEntities();k++)
 	{
-		if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
+
+		if(env->hasComponents<ViewController>(k))
 		{
-			window->draw(vertex_array[i].vertices, textures[i].texture);
-			break; // should only be one map
+			window->setView(view_controller[k].view);
+			for(unsigned i=0;env->maxEntities();i++)
+			{
+				if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
+				{
+					window->draw(vertex_array[i].vertices, textures[i].texture);
+					break; // should only be one map
+				}
+			}
+
+			for(unsigned i=0;i<env->maxEntities();i++)
+			{
+				// temporary fix
+				if(env->hasComponents<Transform, Sprite, Texture>(i) &&
+					!env->hasComponents<GUIObj>(i))
+				{
+					sf::Sprite& sprite = sprites[i].sprite;
+					sprite.setPosition(trans[i].x, trans[i].y);
+					sprite.setRotation(trans[i].rot);
+					sprite.setTexture(*textures[i].texture);
+					window->draw(sprite);
+				}
+			}
 		}
 	}
 
+	// reset default view for UI, so that
+	// the buttons don't move with the camera
+	window->setView(window->getDefaultView());
+
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
-		if(env->hasComponents<Transform, Sprite, Texture>(i))
+		// temporary fix
+		if(env->hasComponents<Transform, Sprite, Texture, GUIObj>(i))
 		{
 			sf::Sprite& sprite = sprites[i].sprite;
 			sprite.setPosition(trans[i].x, trans[i].y);
@@ -42,7 +72,10 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			sprite.setTexture(*textures[i].texture);
 			window->draw(sprite);
 		}
-
+	}
+	
+	for(unsigned i=0;i<env->maxEntities();i++)
+	{
 		if(env->hasComponents<Transform, UserInterface, MouseControls>(i))
 		{
 			UserInterface* ui = env->get<UserInterface>();
