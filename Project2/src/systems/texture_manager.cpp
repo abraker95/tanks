@@ -20,8 +20,8 @@ TextureManager::~TextureManager()
 
 void TextureManager::update(Environment* env)
 {
-	TextureHandle* tex_desc = env->get<TextureHandle>();
-	Sprite* sprites = env->get<Sprite>();
+	auto tex_desc = env->get<TextureHandle>();
+	auto sprites = env->get<Sprite>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
@@ -31,7 +31,7 @@ void TextureManager::update(Environment* env)
 			env->removeComponents<TextureHandle>(i);
 			if(tex)
 			{
-				env->addComponents<Texture>(i, Texture(tex));
+				env->addComponents<Texture>(i, new Texture(tex));
 
 				sf::Vector2u size = tex->getSize();
 
@@ -40,7 +40,7 @@ void TextureManager::update(Environment* env)
 
 				if(env->hasComponents<BoundingCircle>(i))
 				{
-					BoundingCircle* bounding_circle = env->get<BoundingCircle>();
+					auto bounding_circle = env->get<BoundingCircle>();
 					bounding_circle[i].radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
 				}
 			}

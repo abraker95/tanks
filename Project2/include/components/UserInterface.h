@@ -7,10 +7,8 @@ class UserInterface: public Component<UserInterface>
 	#define UIstates 5
 
 	public:
-		UserInterface();
 		UserInterface(std::function<void*()> *_action, std::bitset<UIstates> _enable);
 	//	UserInterface(std::function<void*()> _action, Type _type);
-		~UserInterface();
 
 		enum
 		{

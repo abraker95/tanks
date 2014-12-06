@@ -5,7 +5,6 @@
 
 struct MapDesc : public Component<MapDesc>
 {
-	MapDesc();
 	MapDesc(int* map, int width, int height, sf::Vector2u tile_size);
 
 	int* map;

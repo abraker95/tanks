@@ -4,7 +4,6 @@
 
 struct Texture : public Component<Texture>
 {
-	Texture();
 	Texture(sf::Texture* texture);
 
 	sf::Texture* texture;

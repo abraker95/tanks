@@ -6,7 +6,7 @@ UISystem::UISystem() {}
 UISystem::UISystem(Environment* env)
 {
 	// Factory based procedure for constructing GUIObjects
-	GUIObj* GUIobjs = env->get<GUIObj>();
+	auto GUIobjs = env->get<GUIObj>();
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
@@ -17,7 +17,7 @@ UISystem::UISystem(Environment* env)
 			if(GUIobjs[i].type==GUIObj::BUTTON)
 			{
 				assert(!env->hasComponents<UserInterface>(i));
-				env->addComponents<UserInterface>(i, UserInterface(&GUIobjs[i].action,
+				env->addComponents<UserInterface>(i, new UserInterface(&GUIobjs[i].action,
 					std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS)));
 			}
 		}
@@ -29,8 +29,8 @@ UISystem::~UISystem() {}
 
 void UISystem::update(Environment* env)
 {
-	UserInterface* ui = env->get<UserInterface>();
-	MouseControls* mouse = env->get<MouseControls>();
+	auto ui = env->get<UserInterface>();
+	auto mouse = env->get<MouseControls>();
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{

@@ -1,10 +1,5 @@
 #include "components/ViewController.h"
 
-ViewController::ViewController()
-{
-}
-
-
 ViewController::ViewController(
 		const sf::FloatRect& borders, const sf::FloatRect& viewport, float ratio, 
 		float minWidth, float maxWidth, float margin, std::vector<unsigned> focusedObjects)

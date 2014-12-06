@@ -10,7 +10,7 @@ ExpiringSystem::~ExpiringSystem()
 
 void ExpiringSystem::update(Environment* env, float dt)
 {
-	Expires* expires = env->get<Expires>();
+	auto expires = env->get<Expires>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{

@@ -1,9 +1,5 @@
 #include "components/health.h"
 
-Health::Health()
-{
-}
-
 Health::Health(int health, int max_health) : health(health), max_health(max_health) 
 {
 }

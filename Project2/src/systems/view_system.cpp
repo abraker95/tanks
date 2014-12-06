@@ -4,7 +4,7 @@
 
 void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 {
-	ViewController* view_controller = env->get<ViewController>();
+	auto view_controller = env->get<ViewController>();
 
 	for(unsigned i = 0;i < env->maxEntities();i++)
 	{
@@ -56,7 +56,7 @@ void ViewSystem::getMinimalView(
 	Environment* env, sf::Vector2f& _viewCenter, sf::Vector2f& _viewSize, 
 	std::vector<unsigned>& focusedObjects)
 {
-	Transform* transform = env->get<Transform>();
+	auto transform = env->get<Transform>();
 
 	sf::Vector2f min(transform[focusedObjects[0]].x, transform[focusedObjects[0]].y);
 	sf::Vector2f max = min;

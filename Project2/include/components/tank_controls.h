@@ -6,7 +6,6 @@
 
 struct TankControls : public Component<TankControls>
 {
-	TankControls();
 	TankControls(std::array<sf::Keyboard::Key, 5> _keys);
 
 	enum

@@ -3,6 +3,8 @@
 #include "components/VertexArray.h"
 #include "components/texture.h"
 #include "components/tilemap.h"
+#include "components/ViewController.h"
+#include "components/transform.h"
 
 void MapCreationSystem::update(Environment* env)
 {
@@ -17,11 +19,11 @@ void MapCreationSystem::update(Environment* env)
 
 void MapCreationSystem::buildVA(Environment* env, int id)
 {
-	VertexArray* vertex_array = env->get<VertexArray>();
-	MapDesc* map_desc = env->get<MapDesc>();
-	Texture* textures = env->get<Texture>();
-
-	env->addComponents<VertexArray>(id, VertexArray());
+	auto vertex_array = env->get<VertexArray>();
+	auto map_desc = env->get<MapDesc>();
+	auto textures = env->get<Texture>();
+	
+	env->addComponents<VertexArray>(id, new VertexArray());
 
 	sf::VertexArray& vertices = vertex_array[id].vertices;
 	int* tiles = map_desc[id].map;
@@ -59,5 +61,6 @@ void MapCreationSystem::buildVA(Environment* env, int id)
 	delete[] tiles;
 	env->removeComponents<MapDesc>(id);
 
-	env->addComponents<Tilemap>(id, Tilemap());
+	// adding a flag component
+	env->addComponents<Tilemap>(id, new Tilemap());
 }

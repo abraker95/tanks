@@ -4,7 +4,6 @@
 
 struct Transform : public Component<Transform>
 {
-	Transform();
 	Transform(float x, float y, float rot);
 
 	float x, y;

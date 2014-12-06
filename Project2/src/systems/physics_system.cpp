@@ -14,9 +14,9 @@ PhysicsSystem::~PhysicsSystem()
 
 void PhysicsSystem::update(Environment* env, float dt)
 {
-	Velocity* velocity = env->get<Velocity>();
-	Transform* transform = env->get<Transform>();
-	BoundingCircle* bounding_circle = env->get<BoundingCircle>();
+	auto velocity = env->get<Velocity>();
+	auto transform = env->get<Transform>();
+	auto bounding_circle = env->get<BoundingCircle>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
@@ -34,7 +34,10 @@ void PhysicsSystem::update(Environment* env, float dt)
 				env->hasComponents<Transform, BoundingCircle>(i) && 
 				env->hasComponents<Transform, BoundingCircle>(j))
 			{
-				if(intersectCircleCircle(transform, bounding_circle, i, j))
+				if(intersectCircleCircle(
+					transform[i].x, transform[i].y, bounding_circle[i].radius,
+					transform[j].x, transform[j].y, bounding_circle[j].radius))
+
 				{
 					bounding_circle[i].collision = true;
 					bounding_circle[j].collision = true;
@@ -42,7 +45,9 @@ void PhysicsSystem::update(Environment* env, float dt)
 					if(	!env->hasComponents<Projectile>(i) &&
 						!env->hasComponents<Projectile>(j))
 					{
-						feedbackCircleCircle(transform, bounding_circle, i, j);
+						feedbackCircleCircle(
+							transform[i].x, transform[i].y, bounding_circle[i].radius,
+							transform[j].x, transform[j].y, bounding_circle[j].radius);
 					}
 				}
 				else
@@ -56,25 +61,22 @@ void PhysicsSystem::update(Environment* env, float dt)
 }
 
 bool PhysicsSystem::intersectCircleCircle(
-	Transform* transform, BoundingCircle* bounding_circle, 
-	unsigned e1, unsigned e2)
+	float x1, float y1, float r1, float x2, float y2, float r2)
 {
-	float dx = transform[e1].x - transform[e2].x;
-	float dy = transform[e1].y - transform[e2].y;
-
-	float min_dist = bounding_circle[e1].radius + bounding_circle[e2].radius;
+	float dx = x1 - x2;
+	float dy = y1 - y2;
+	float min_dist = r1 + r2;
 
 	return (dx * dx + dy * dy < min_dist * min_dist);
 }
 
 void PhysicsSystem::feedbackCircleCircle(
-	Transform* transform, BoundingCircle* bounding_circle, 
-	unsigned e1, unsigned e2)
+	float& x1, float& y1, float r1, float x2, float y2, float r2)
 {
-	float dx = transform[e1].x - transform[e2].x;
-	float dy = transform[e1].y - transform[e2].y;
+	float dx = x1 - x2;
+	float dy = y1 - y2;
 	float length = sqrtf(dx * dx + dy * dy);
-	float min_dist = bounding_circle[e1].radius + bounding_circle[e2].radius;
+	float min_dist = r1 + r2;
 
 	dx /= length;
 	dy /= length;
@@ -82,6 +84,6 @@ void PhysicsSystem::feedbackCircleCircle(
 	dx *= min_dist;
 	dy *= min_dist;
 
-	transform[e1].x = transform[e2].x + dx;
-	transform[e1].y = transform[e2].y + dy;
+	x1 = x2 + dx;
+	y1 = y2 + dy;
 }

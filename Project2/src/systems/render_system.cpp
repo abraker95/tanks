@@ -13,11 +13,11 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 {
-	Transform* trans = env->get<Transform>();
-	Sprite* sprites = env->get<Sprite>();
-	Texture* textures = env->get<Texture>();
-	VertexArray* vertex_array = env->get<VertexArray>();
-	ViewController* view_controller = env->get<ViewController>();
+	auto trans = env->get<Transform>();
+	auto sprites = env->get<Sprite>();
+	auto textures = env->get<Texture>();
+	auto vertex_array = env->get<VertexArray>();
+	auto view_controller = env->get<ViewController>();
 
 	/*
 	window->clear();
@@ -78,8 +78,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 	{
 		if(env->hasComponents<Transform, UserInterface, MouseControls>(i))
 		{
-			UserInterface* ui = env->get<UserInterface>();
-			MouseControls* mouse = env->get<MouseControls>();
+			auto ui = env->get<UserInterface>();
+			auto mouse = env->get<MouseControls>();
 			sf::FloatRect bounds = sprites[i].sprite.getLocalBounds();
 			sf::Vector2i pos = sf::Mouse::getPosition(*window);
 

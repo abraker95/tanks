@@ -13,9 +13,7 @@ class GUIObj: public Component<GUIObj>
 			SCROLLBAR
 		};
 
-		GUIObj();
 		GUIObj(Type _type, std::function<void*()> _action);
-		~GUIObj();
 
 		Type type;
 		std::function<void*()> action;

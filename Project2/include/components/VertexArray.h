@@ -2,7 +2,7 @@
 #include <core/environment.h>
 #include <SFML/Graphics.hpp>
 
-class VertexArray
+class VertexArray : public Component<VertexArray>
 {
 public:
 	VertexArray();
