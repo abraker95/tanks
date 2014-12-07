@@ -42,8 +42,8 @@ Application::Application() : main_env(128)
 	main_env.createEntity(
 		Transform(200.f, 30.f, 0.f),
 		MouseControls(),
-		/*UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
-					 std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),*/
+		/*UserInterface(std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS),
+						[]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }),*/
 		GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
 		TextureHandle("Button.png")
 	);
@@ -52,7 +52,7 @@ Application::Application() : main_env(128)
 	/*main_env.createEntity(
 		Transform(500.f, 30.f, 0.f),
 		MouseControls(),
-		GUIObj(GUIObj::RADIO, []()->void* { ; return nullptr; }),
+		GUIObj(GUIObj::RADIO, []()->void* { (&main_env).var = !(&main_env).var; return nullptr; }),
 		TextureHandle("Button.png")
 		);*/
 

@@ -16,9 +16,10 @@ UISystem::UISystem(Environment* env)
 			// \NOTE: User Interfce action needs to be set externally
 			if(GUIobjs[i].type==GUIObj::BUTTON)
 			{
+				/// \TODO: add logic for if it already has the component
 				assert(!env->hasComponents<UserInterface>(i));
-				env->addComponents<UserInterface>(i, UserInterface(&GUIobjs[i].action,
-					std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS)));
+				env->addComponents<UserInterface>(i, UserInterface(
+					std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), &GUIobjs[i].action));
 			}
 		}
 	}

@@ -8,7 +8,7 @@ class UserInterface: public Component<UserInterface>
 
 	public:
 		UserInterface();
-		UserInterface(std::function<void*()> *_action, std::bitset<UIstates> _enable);
+		UserInterface(std::bitset<UIstates> _enable, std::function<void*()> *_action = nullptr);
 	//	UserInterface(std::function<void*()> _action, Type _type);
 		~UserInterface();
 
