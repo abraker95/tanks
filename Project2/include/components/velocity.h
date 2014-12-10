@@ -4,7 +4,6 @@
 
 struct Velocity : public Component<Velocity>
 {
-	Velocity();
 	Velocity(float speed, float vrot);
 
 	float speed;

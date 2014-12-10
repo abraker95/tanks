@@ -6,7 +6,10 @@ UISystem::UISystem() {}
 UISystem::UISystem(Environment* env)
 {
 	// Factory based procedure for constructing GUIObjects
-	GUIObj* GUIobjs = env->get<GUIObj>();
+	auto GUIobjs = env->get<GUIObj>();
+	auto sprite = env->get<Sprite>();
+	auto trans = env->get<Transform>();
+	auto labels = env->get<Label>();
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
@@ -16,11 +19,18 @@ UISystem::UISystem(Environment* env)
 			// \NOTE: User Interfce action needs to be set externally
 			if(GUIobjs[i].type==GUIObj::BUTTON)
 			{
-				/// \TODO: add logic for if it already has the component
 				assert(!env->hasComponents<UserInterface>(i));
-				env->addComponents<UserInterface>(i, UserInterface(
-					std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), &GUIobjs[i].action));
+				env->addComponents<UserInterface>(i, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), 
+																	   &GUIobjs[i].action));
 			}
+		}
+		if(env->hasComponents<Label>(i) && env->hasComponents<Transform>(i))
+		{
+			labels[i].label.setPosition(sf::Vector2f(trans[i].x+sprite[i].sprite.getLocalBounds().width/2, trans[i].y+sprite[i].sprite.getLocalBounds().height/2));
+			//PRINT_DEBUG(cout<<i<<endl, LOW_DEBUG, GFXSYS);
+			//sf::Font font;
+			//	if(!font.loadFromFile("arial.ttf")) PRINT_DEBUG(cout<<"ERROR: FONT NOT FOUND!", LOW_DEBUG, GFXSYS);
+			//	labels[i].label.setFont(font);
 		}
 	}
 }
@@ -30,8 +40,8 @@ UISystem::~UISystem() {}
 
 void UISystem::update(Environment* env)
 {
-	UserInterface* ui = env->get<UserInterface>();
-	MouseControls* mouse = env->get<MouseControls>();
+	auto ui = env->get<UserInterface>();
+	auto mouse = env->get<MouseControls>();
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{

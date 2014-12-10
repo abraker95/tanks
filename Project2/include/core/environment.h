@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <bitset>
 #include <map>
+#include <array>
 #include <vector>
 #include <iostream>
 #include "DEBUG.h"
@@ -12,23 +13,43 @@
 
 typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
+class ComponentBase;
+template<typename T> class Component;
+class Environment;
+template<typename T> class Iterator;
+
+class ComponentBase
+{
+public:
+	virtual ~ComponentBase() {}
+};
+
 /// \TODO: Create environment variables in the game for settings/options. 
 ///		   For example: Option to control tank's speed. A system will check
 ///		   and apply the updated values to the entity's local vars
 
+inline unsigned getComponentID()
+{
+	static unsigned counter = 0;
+	return counter++;
+}
+
 // every component needs to inherit from this class
 // for every new component bitpos will be assigned with a new unique value
 template<typename T>
-struct Component
+class Component : public ComponentBase
 {
-	static const unsigned bitpos;
+	friend class Environment;
+	static unsigned bitpos() 
+	{
+		static unsigned id = getComponentID();
+		return id;
+	}
+
+public:
+	Component() {}
+	virtual ~Component() {}
 };
-
-static unsigned bitpos_index = 0;
-
-// here bitpos get its value
-template<typename T>
-const unsigned Component<T>::bitpos = bitpos_index++;
 
 // the Environment class holds the entities' informations
 // and a table of pointers to the components arrays
@@ -36,69 +57,34 @@ const unsigned Component<T>::bitpos = bitpos_index++;
 class Environment
 {
 public:
-	Environment(const int num_entites) 
+	Environment(int num_entities) 
 	{
-		entities.resize(num_entites);
-		for(unsigned i=0;i<MAX_COMPONENTS;i++)
-			components_table[i] = nullptr;
+		entity_mask.resize(num_entities);
+		components_pointer.resize(num_entities);
 	}
 
 	virtual ~Environment() 
 	{
+		for(unsigned i=0;i<components.size();i++)
+			delete components[i];
 	}
 
-	// returns a pointer to the component arrays
-	// the type T acts as a parameter
 	template<typename T>
-	T* get()
+	Iterator<T> get()
 	{
-		return static_cast<T*>(components_table[Component<T>::bitpos]);
-	}
-
-	// allocate a pool in the memory for a component
-	template<typename T>
-	void alloc()
-	{
-		void* pool = (void*)(new T[entities.size()]);
-		components_table[Component<T>::bitpos] = pool;
-	}
-
-	// allow multiple Components to be allocated at once
-	template<typename T, typename U, typename... Rest>
-	void alloc()
-	{
-		alloc<T>();
-		alloc<U, Rest...>();
-	}
-
-	// deallocate a pool in the memory for a component
-	template<typename T>
-	void dealloc()
-	{
-		void* pool = components_table[Component<T>::bitpos];
-		components_table[Component<T>::bitpos] = nullptr;
-
-		delete[] static_cast<T*>(pool);
-	}
-
-	// allow multiple Components to be deallocated at once
-	template<typename T, typename U, typename... Rest>
-	void dealloc()
-	{
-		dealloc<T>();
-		dealloc<U, Rest...>();
+		return Iterator<T>(this);
 	}
 
 	// request a free entity id, and attach components to it
-	// arguments are rvalue ref to allow this kind of function call:
-	// createEntity(Transform())
-	// and because it is "moved" around the copying is kept to the minimum.
 	template<typename... T>
-	void createEntity(T&&... t)
+	unsigned createEntity(T*... t)
 	{
 		PRINT_DEBUG(std::cout<<" Create Entity"<<std::endl, MED_DEBUG, ENVSYS);
+
 		unsigned new_id = requestID();
-		addComponents<T...>(new_id, std::forward<T>(t)...);
+		addComponents<T...>(new_id, t...);
+
+		return new_id;
 	}
 
 	// set the componentmask to 0
@@ -112,7 +98,7 @@ public:
 	ComponentMask getMask()
 	{
 		ComponentMask mask;
-		mask.set(Component<T>::bitpos);
+		mask.set(Component<T>::bitpos());
 		return mask;
 	}
 
@@ -126,26 +112,38 @@ public:
 
 	// copy a component ( T ), for the entity ( id )
 	template<typename T>
-	void addComponents(unsigned id, T&& init)
+	void addComponents(unsigned id, T* init)
 	{
-		entities[id] |= getMask<T>();
-		T* pool = get<T>();
-		pool[id] = init;
+		entity_mask[id] |= getMask<T>();
+
+		components_pointer[id][Component<T>::bitpos()] = init;
+		components.push_back(init);
 	}
 	
 	// allow copying multiple components for an entity at once
 	template<typename T, typename R, typename... Rs>
-	void addComponents(unsigned id, T&& init, R&& r, Rs&&... rs)
+	void addComponents(unsigned id, T* init, R* r, Rs*... rs)
 	{
-		addComponents<T>(id, std::forward<T>(init));
-		addComponents<R, Rs...>(id, std::forward<R>(r), std::forward<Rs>(rs)...);
+		addComponents<T>(id, init);
+		addComponents<R, Rs...>(id, r, rs...);
 	}
 
 	// remove the bit which tells that the entity ( id ) has the component ( T )
 	template<typename T>
 	void removeComponents(unsigned id)
 	{
-		entities[id] &= ~getMask<T>();
+		entity_mask[id] &= ~getMask<T>();
+
+		ComponentBase* ptr = components_pointer[id][Component<T>::bitpos()];
+		for(unsigned i=0;i<components.size();i++)
+		{
+			if(components[i] == ptr)
+			{
+				components.erase(components.begin()+i);
+				delete ptr;
+				break;
+			}
+		}
 	}
 
 	// allow removing multiple components for an entity ( id ) at once
@@ -162,34 +160,58 @@ public:
 	bool hasComponents(unsigned id)
 	{
 		ComponentMask mask = getMask<T...>();
-		return (entities[id] & mask) == mask;
+		return (entity_mask[id] & mask) == mask;
 	}
 
 	// returns the max number of entities
 	unsigned maxEntities()
 	{
-		return entities.size();
+		return entity_mask.size();
+	}
+
+	template<typename T>
+	T& getComponent(unsigned id)
+	{
+		return *(static_cast<T*>(components_pointer[id][Component<T>::bitpos()]));
 	}
 
 private:
 	unsigned requestID()
 	{
-		for(unsigned i=0;i<entities.size();i++)
+		for(unsigned i=0;i<maxEntities();i++)
 		{
-			if(entities[i].none())
+			if(entity_mask[i].none())
 				return i;
 		}
 
 		// error
+		PRINT_DEBUG(std::cout<<" Too many entities!"<<std::endl, MED_DEBUG, ENVSYS);
 		return 0;
 	}
 
 	void deleteID(unsigned id)
 	{
-		entities[id].reset();
+		entity_mask[id].reset();
 	}
 
 private:
-	void* components_table[MAX_COMPONENTS];
-	std::vector<ComponentMask> entities;
+	std::vector<ComponentBase*> components;
+	std::vector<ComponentMask> entity_mask;
+	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
+};
+
+// The iterator is a wrapper class for the environment component getter
+template<typename T>
+class Iterator
+{
+public:
+	Iterator(Environment* env) : env(env) {}
+
+	T& operator[](unsigned entity_id)
+	{
+		return env->getComponent<T>(entity_id);
+	}
+
+private:
+	Environment* env;
 };

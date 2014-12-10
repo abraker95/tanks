@@ -4,12 +4,12 @@
 
 class RenderSystem : public Component<RenderSystem>
 {
-public:
-	RenderSystem();
-	~RenderSystem();
+	public:
+		RenderSystem(sf::RenderWindow* window);
+		~RenderSystem();
 
-	void update(Environment* env, sf::RenderWindow* window);
+		void update(Environment* env, sf::RenderWindow* _win);
 
-private:
-	
+	private:
+		sf::RenderTexture* buffer;
 };

@@ -2,71 +2,116 @@
 #include <array>
 #include "Components.h"
 
-Application::Application() : main_env(128)
+Application::Application() : main_env(64)
 {
 // [CORE DECLARATIONS]
 
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 
-	// TODO: automatically manage this
-	main_env.alloc<
-		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface, GUIObj>();
-
 // [ENTITY CREATION]
+	// tilemap
+	int* map = new int[20*12]{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 2, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 1, 1, 1, 1, 0, 0, 4, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 1, 1, 1, 5, 0, 0, 0, 4, 1, 1, 1, 3, 0, 2, 1, 1, 1, 1,
+		0, 0, 1, 1, 5, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 1,
+		0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 5, 0, 0, 0,
+		2, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	};
+
+	/*main_env.createEntity(
+		new MapDesc(map, 20, 12, sf::Vector2u(64, 64)),
+		new TextureHandle("Tilesheet.png")
+	);*/
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
 
-	main_env.createEntity(
-		Transform(300.f, 300.f, 0.f),
-		Velocity(0.f, 0.f),
-		TextureHandle("Tank_0.png"),
-		TankControls(p1_keys),
-		BoundingCircle(),
-		Gun()
-	);
+	/*
+	unsigned tank1 = main_env.createEntity(
+		new Transform(200.f, 300.f, 0.f),
+		new Velocity(0.f, 0.f),
+		new TextureHandle("Tank_0.png"),
+		new TankControls(p1_keys),
+		new BoundingCircle(),
+		new Gun(),
+		new Sprite()
+	);*/
+	
+	
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
+	/*
+	unsigned tank2 = main_env.createEntity(
+		new Transform(400.f, 300.f, 0.f),
+		new Velocity(0.f, 0.f),
+		new TextureHandle("Tank_0.png"),
+		new TankControls(p2_keys),
+		new BoundingCircle(),
+		new Gun(),
+		new Sprite()
+	);*/
+	
+	
 
-	main_env.createEntity(
-		Transform(800.f, 300.f, 0.f),
-		Velocity(0.f, 0.f),
-		TextureHandle("Tank_0.png"),
-		TankControls(p2_keys),
-		BoundingCircle(),
-		Gun()
-	);
+	// camera
+	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 12.f);
+	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
+	float ratio = (float)window->getSize().x/(float)window->getSize().y;
+	
+	/*main_env.createEntity(
+		new ViewController(borders, viewport, ratio, 400.f, 1200.f, 0.4f, {tank1, tank2})
+	);*/
 
 	// testing button
 	main_env.createEntity(
-		Transform(200.f, 30.f, 0.f),
-		MouseControls(),
-		/*UserInterface(std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS),
-						[]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }),*/
-		GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
-		TextureHandle("Button.png")
+		new Transform(200.f, 30.f, 0.f),
+		new MouseControls(),
+		/*UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
+					 std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),*/
+		new GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
+		//new TextureHandle("Button.png"),
+		new Label("button test"),
+		new Sprite()
 	);
+
 
 	// Testing Radio Button
 	/*main_env.createEntity(
 		Transform(500.f, 30.f, 0.f),
 		MouseControls(),
-		GUIObj(GUIObj::RADIO, []()->void* { (&main_env).var = !(&main_env).var; return nullptr; }),
+		GUIObj(GUIObj::RADIO, []()->void* { ; return nullptr; }),
 		TextureHandle("Button.png")
 		);*/
 
 // [FACTORY CONSTRUCTS]
-
-	&UISystem(&main_env);
+	ui_system = new UISystem(&main_env);
+	input_system = new InputSystem();
+	texture_manager = new TextureManager();
+	render_system = new RenderSystem(window);
+	expiring_system = new ExpiringSystem();
+	physics_system = new PhysicsSystem();
+	map_creation_system = new MapCreationSystem();
+	view_system = new ViewSystem();
+	
 }
 
 Application::~Application()
 {
-	// TODO: automatically manage this
-	main_env.dealloc<
-		Transform, Velocity, TextureHandle, RenderProperties, TankControls, 
-		Expires, BoundingCircle, MouseControls, Projectile, Gun, UserInterface>();
+	delete ui_system;
+	delete input_system;
+	delete texture_manager;
+	delete render_system;
+	delete expiring_system;
+	delete physics_system;
+	delete map_creation_system;
+	delete view_system;
 
 	if(window)
 		delete window;
@@ -93,12 +138,14 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	input_system.update(&main_env);
-	ui_system.update(&main_env);
-	expiring_system.update(&main_env, dt);
+	input_system->update(&main_env);
+	ui_system->update(&main_env);
+	expiring_system->update(&main_env, dt);
 
-	physics_system.update(&main_env, dt);
+	physics_system->update(&main_env, dt);
 
-	texture_manager.update(&main_env);
-	render_system.update(&main_env, window);
+	texture_manager->update(&main_env);
+	map_creation_system->update(&main_env);
+	view_system->update(&main_env, window, dt);
+	render_system->update(&main_env, window);
 }

@@ -10,9 +10,9 @@ InputSystem::~InputSystem() {}
 
 void InputSystem::update(Environment* env)
 {
-	TankControls* tank_controls = env->get<TankControls>();
-	Velocity* velocity = env->get<Velocity>();
-	MouseControls* mouseControls = env->get<MouseControls>();
+	auto tank_controls = env->get<TankControls>();
+	auto velocity = env->get<Velocity>();
+	auto mouseControls = env->get<MouseControls>();
 
 	for(unsigned i=0; i<env->maxEntities(); i++)
 	{
@@ -58,19 +58,19 @@ void InputSystem::update(Environment* env)
 			{
 				if(env->hasComponents<Gun, Transform, BoundingCircle>(i))
 				{
-					Gun* gun = env->get<Gun>();
-					Transform* transform = env->get<Transform>();
+					auto gun = env->get<Gun>();
+					auto transform = env->get<Transform>();
 
 					if(gun[i].fireClock.getElapsedTime().asSeconds() > gun[i].fireCooldown)
 					{
 						gun[i].fireClock.restart();
 						env->createEntity(
-							Transform(transform[i].x, transform[i].y, transform[i].rot),
-							Velocity(500.f, 0.f),
-							TextureHandle("Bullet_0.png"),
-							Expires(5.f),
-							Projectile(-20, i),
-							BoundingCircle()
+							new Transform(transform[i].x, transform[i].y, transform[i].rot),
+							new Velocity(500.f, 0.f),
+							new TextureHandle("Bullet_0.png"),
+							new Expires(5.f),
+							new Projectile(-20, i),
+							new BoundingCircle()
 						);
 					}
 				}

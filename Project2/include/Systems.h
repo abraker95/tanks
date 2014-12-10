@@ -4,3 +4,5 @@
 #include "systems/expiring_system.h"
 #include "systems/physics_system.h"
 #include "systems/UI_System.h"
+#include "systems/MapCreationSystem.h"
+#include "systems/view_system.h"

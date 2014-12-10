@@ -99,14 +99,38 @@
     <ClInclude Include="include\systems\UI_System.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Systems.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\components\GUIObj.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\Components.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\systems\MapCreationSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\systems\view_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\map_desc.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\VertexArray.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\ViewController.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\sprite.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\texture.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Systems.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\Label.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,9 +175,6 @@
     <ClCompile Include="src\components\projectile.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\render_properties.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\systems\render_system.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -187,5 +208,37 @@
     <ClCompile Include="src\components\GUIObj.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\systems\MapCreationSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\systems\view_system.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\map_desc.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\tilemap.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ViewController.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\VertexArray.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\sprite.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\texture.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\Label.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="arial.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>

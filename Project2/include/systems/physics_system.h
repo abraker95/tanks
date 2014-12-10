@@ -12,6 +12,6 @@ public:
 	void update(Environment* env, float dt);
 
 private:
-	bool intersectCircleCircle(Transform* transform, BoundingCircle* bounding_circle, unsigned e1, unsigned e2);
-	void feedbackCircleCircle(Transform* transform, BoundingCircle* bounding_circle, unsigned e1, unsigned e2);
+	bool intersectCircleCircle(float x1, float y1, float r1, float x2, float y2, float r2);
+	void feedbackCircleCircle(float& x1, float& y1, float r1, float x2, float y2, float r2);
 };

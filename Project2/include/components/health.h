@@ -7,7 +7,6 @@ struct Health : public Component<Health>
 	int health;
 	int max_health;
 
-	Health();
 	Health(int health, int max_health);
 	
 	void addHealth(int _health);

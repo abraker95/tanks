@@ -6,7 +6,6 @@
 
 struct TextureHandle : public Component<TextureHandle>
 {
-	TextureHandle();
 	TextureHandle(std::string filename);
 
 	std::string filename;

@@ -19,10 +19,12 @@ private:
 	Environment main_env;
 
 	// Systems
-	InputSystem input_system;
-	TextureManager texture_manager;
-	RenderSystem render_system;
-	ExpiringSystem expiring_system;
-	PhysicsSystem physics_system;
-	UISystem ui_system;
+	InputSystem* input_system;
+	TextureManager* texture_manager;
+	RenderSystem* render_system;
+	ExpiringSystem* expiring_system;
+	PhysicsSystem* physics_system;
+	UISystem* ui_system;
+	MapCreationSystem* map_creation_system;
+	ViewSystem* view_system;
 };
