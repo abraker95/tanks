@@ -39,7 +39,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 		if(env->hasComponents<ViewController>(k))
 		{
 			buffer->setView(view_controller[k].view);
-			for(unsigned i=0;env->maxEntities();i++)
+			for(unsigned i=0;i<env->maxEntities();i++)
 			{
 				if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
 				{
