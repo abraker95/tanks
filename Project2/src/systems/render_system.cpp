@@ -19,8 +19,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 	auto vertex_array = env->get<VertexArray>();
 	auto view_controller = env->get<ViewController>();
 
-	/*
 	window->clear();
+	/*
 	sf::View view = sf::View(sf::Vector2f(0, 0), (sf::Vector2f)window->getSize());
 		view.setCenter(sf::Vector2f(window->getSize().x/2, window->getSize().y/2));
 		window->setView(view);
@@ -32,7 +32,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 		if(env->hasComponents<ViewController>(k))
 		{
 			window->setView(view_controller[k].view);
-			for(unsigned i=0;env->maxEntities();i++)
+			for(unsigned i=0;i<env->maxEntities();i++)
 			{
 				if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
 				{
