@@ -55,6 +55,7 @@ endforeach(system)
 
 add_executable(tank 
 	include/core/environment.h
+	include/events.h
 	${component_files}
 	${system_files}
 	${manager_files}

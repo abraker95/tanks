@@ -10,13 +10,17 @@
 #include "DEBUG.h"
 
 #define MAX_COMPONENTS 64
+#define MAX_EVENTS 64
 
 typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
 class ComponentBase;
 template<typename T> class Component;
-class Environment;
 template<typename T> class Iterator;
+class Environment;
+
+class EventBase;
+template<typename T> class Event;
 
 class ComponentBase
 {
@@ -49,6 +53,35 @@ class Component : public ComponentBase
 public:
 	Component() {}
 	virtual ~Component() {}
+};
+
+
+// Same concept as components but for events
+class EventBase 
+{
+public:
+	virtual ~EventBase() {}
+};
+
+inline unsigned getEventID()
+{
+	static unsigned counter = 0;
+	return counter++;
+}
+
+template<typename T>
+class Event
+{
+	friend class Environment;
+	static unsigned bitpos() 
+	{
+		static unsigned id = getEventID();
+		return id;
+	}
+
+public:
+	Event() {}
+	virtual ~Event() {}
 };
 
 // the Environment class holds the entities' informations
@@ -175,6 +208,24 @@ public:
 		return *(static_cast<T*>(components_pointer[id][Component<T>::bitpos()]));
 	}
 
+	template<typename T>
+	void emit(T&& t)
+	{
+		events_queue[Event<T>::bitpos()].push_back(std::forward(t));
+	}
+
+	template<typename T>
+	const std::vector<T>* getEvents()
+	{
+		return &events_queue[Event<T>::bitpos()];
+	}
+
+	void clearEvents()
+	{
+		for(unsigned i=0;i<MAX_EVENTS;i++)
+			events_queue[i].clear();
+	}
+
 private:
 	unsigned requestID()
 	{
@@ -198,6 +249,7 @@ private:
 	std::vector<ComponentBase*> components;
 	std::vector<ComponentMask> entity_mask;
 	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
+	std::array<std::vector<EventBase>, MAX_EVENTS> events_queue;
 };
 
 // The iterator is a wrapper class for the environment component getter

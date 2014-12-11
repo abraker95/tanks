@@ -121,7 +121,6 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* 
 			labels[i].label.setFont(*font);
 			labels[i].label.setCharacterSize(24);
 
-			PRINT_DEBUG(cout<<"Label ptr: "<<&(labels[i].label)<<endl, HI_DEBUG, GFXSYS);
 			window->draw(labels[i].label);
 		}
 	}
