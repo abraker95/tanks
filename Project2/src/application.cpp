@@ -10,65 +10,19 @@ Application::Application() : main_env(64)
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 
 // [ENTITY CREATION]
-	// tilemap
-	int* map = new int[20*12]{
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 2, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 1, 1, 1, 1, 0, 0, 4, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 1, 1, 1, 5, 0, 0, 0, 4, 1, 1, 1, 3, 0, 2, 1, 1, 1, 1,
-		0, 0, 1, 1, 5, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 1,
-		0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 5, 0, 0, 0,
-		2, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	};
-
-	main_env.createEntity(
-		new MapDesc(map, 20, 12, sf::Vector2u(64, 64)),
-		new TextureHandle("Tilesheet.png")
-	);
+	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
 
 	// double-braces init because of std::array
-	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
-
+	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
+	unsigned tank1 = entity_manager.spawnTankPlayer(&main_env, &texture_manager, 200.f, 300.f, p1_keys);
 	
-	unsigned tank1 = main_env.createEntity(
-		new Transform(200.f, 300.f, 0.f),
-		new Velocity(0.f, 0.f),
-		new TextureHandle("Tank_0.png"),
-		new TankControls(p1_keys),
-		new BoundingCircle(),
-		new Gun(),
-		new Sprite()
-	);
+	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
+	unsigned tank2 = entity_manager.spawnTankPlayer(&main_env, &texture_manager, 400.f, 300.f, p2_keys);
 	
-	
-
-	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
-	
-	unsigned tank2 = main_env.createEntity(
-		new Transform(400.f, 300.f, 0.f),
-		new Velocity(0.f, 0.f),
-		new TextureHandle("Tank_0.png"),
-		new TankControls(p2_keys),
-		new BoundingCircle(),
-		new Gun(),
-		new Sprite()
-	);
-	
-	
-
 	// camera
-	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 12.f);
+	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	float ratio = (float)window->getSize().x/(float)window->getSize().y;
-	
-	main_env.createEntity(
-		new ViewController(borders, viewport, ratio, 400.f, 1200.f, 0.4f, {tank1, tank2})
-	);
+	entity_manager.createCamera(&main_env, borders, viewport, {tank1, tank2});
 
 	// testing button
 	main_env.createEntity(
@@ -94,24 +48,19 @@ Application::Application() : main_env(64)
 // [FACTORY CONSTRUCTS]
 	ui_system = new UISystem(&main_env);
 	input_system = new InputSystem();
-	texture_manager = new TextureManager();
 	render_system = new RenderSystem(window);
 	expiring_system = new ExpiringSystem();
 	physics_system = new PhysicsSystem();
-	map_creation_system = new MapCreationSystem();
 	view_system = new ViewSystem();
-	
 }
 
 Application::~Application()
 {
 	delete ui_system;
 	delete input_system;
-	delete texture_manager;
 	delete render_system;
 	delete expiring_system;
 	delete physics_system;
-	delete map_creation_system;
 	delete view_system;
 
 	if(window)
@@ -139,14 +88,10 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	input_system->update(&main_env);
+	input_system->update(&main_env, &entity_manager, &texture_manager);
 	ui_system->update(&main_env);
 	expiring_system->update(&main_env, dt);
-
 	physics_system->update(&main_env, dt);
-
-	texture_manager->update(&main_env);
-	map_creation_system->update(&main_env);
 	view_system->update(&main_env, window, dt);
 	render_system->update(&main_env, window);
 }

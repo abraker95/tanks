@@ -81,9 +81,6 @@
     <ClInclude Include="include\components\texture_handle.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\systems\texture_manager.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="include\components\transform.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -104,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="include\Components.h">
       <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\systems\MapCreationSystem.h">
-      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\systems\view_system.h">
       <Filter>Header Files\Systems</Filter>
@@ -131,6 +125,15 @@
     </ClInclude>
     <ClInclude Include="include\components\Label.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\managers\entity_manager.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\managers\map_loader.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\managers\texture_manager.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -184,9 +187,6 @@
     <ClCompile Include="src\components\texture_handle.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\systems\texture_manager.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\transform.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -207,9 +207,6 @@
     </ClCompile>
     <ClCompile Include="src\components\GUIObj.cpp">
       <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\systems\MapCreationSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\systems\view_system.cpp">
       <Filter>Source Files\Systems</Filter>
@@ -234,6 +231,15 @@
     </ClCompile>
     <ClCompile Include="src\components\Label.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\managers\texture_manager.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\managers\map_loader.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\managers\entity_manager.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

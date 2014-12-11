@@ -19,12 +19,12 @@ unsigned MapLoader::createMap(Environment* env, TextureManager* tex_man, std::st
 	char tileCountX, tileCountY;
 	char* mapData;
 	
-	if(not readMap(filename, tilesheet, tileWidth, tileHeight, tileCountX, tileCountY, mapData))
+	if(!readMap(filename, tilesheet, tileWidth, tileHeight, tileCountX, tileCountY, mapData))
 		return 0;
 
 	sf::Texture* tileset = tex_man->load(tilesheet);
 
-	if(not tileset)
+	if(!tileset)
 		return 0;
 
 	sf::VertexArray* array = buildVA(
@@ -45,7 +45,7 @@ bool MapLoader::readMap(
 {
 	ifstream map;
 	map.open(filename, ios::in | ios::binary);
-	if(not map.is_open())
+	if(!map.is_open())
 	{
 		std::cout<<"ERROR: Could not load the map "<<filename<<std::endl;
 		return false;

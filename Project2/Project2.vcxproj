@@ -78,8 +78,10 @@
     <ClInclude Include="include\components\texture.h" />
     <ClInclude Include="include\components\VertexArray.h" />
     <ClInclude Include="include\components\ViewController.h" />
+    <ClInclude Include="include\managers\entity_manager.h" />
+    <ClInclude Include="include\managers\map_loader.h" />
+    <ClInclude Include="include\managers\texture_manager.h" />
     <ClInclude Include="include\Systems.h" />
-    <ClInclude Include="include\systems\MapCreationSystem.h" />
     <ClInclude Include="include\systems\UI_System.h" />
     <ClInclude Include="include\systems\view_system.h" />
     <ClInclude Include="include\application.h" />
@@ -101,7 +103,6 @@
     <ClInclude Include="include\systems\input_system.h" />
     <ClInclude Include="include\systems\physics_system.h" />
     <ClInclude Include="include\systems\render_system.h" />
-    <ClInclude Include="include\systems\texture_manager.h" />
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -132,12 +133,13 @@
     <ClCompile Include="src\components\VertexArray.cpp" />
     <ClCompile Include="src\components\ViewController.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\managers\entity_manager.cpp" />
+    <ClCompile Include="src\managers\map_loader.cpp" />
+    <ClCompile Include="src\managers\texture_manager.cpp" />
     <ClCompile Include="src\systems\expiring_system.cpp" />
     <ClCompile Include="src\systems\input_system.cpp" />
-    <ClCompile Include="src\systems\MapCreationSystem.cpp" />
     <ClCompile Include="src\systems\physics_system.cpp" />
     <ClCompile Include="src\systems\render_system.cpp" />
-    <ClCompile Include="src\systems\texture_manager.cpp" />
     <ClCompile Include="src\systems\UI_System.cpp" />
     <ClCompile Include="src\systems\view_system.cpp" />
   </ItemGroup>
