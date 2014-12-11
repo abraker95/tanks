@@ -16,11 +16,12 @@ typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
 class ComponentBase;
 template<typename T> class Component;
-template<typename T> class Iterator;
+template<typename T> class ComponentIterator;
 class Environment;
 
 class EventBase;
 template<typename T> class Event;
+template<typename T> class EventIterator;
 
 class ComponentBase
 {
@@ -103,9 +104,9 @@ public:
 	}
 
 	template<typename T>
-	Iterator<T> get()
+	ComponentIterator<T>&& get()
 	{
-		return Iterator<T>(this);
+		return std::move(ComponentIterator<T>(this));
 	}
 
 	// request a free entity id, and attach components to it
@@ -215,9 +216,21 @@ public:
 	}
 
 	template<typename T>
-	const std::vector<EventBase*>& getEvents()
+	EventIterator<T>&& getEvents()
 	{
-		return events_queue[Event<T>::bitpos()];
+		return std::move(EventIterator<T>(this));
+	}
+
+	template<typename T>
+	unsigned getNumEvents()
+	{
+		return events_queue[Event<T>::bitpos()].size();
+	}
+
+	template<typename T>
+	T* getEvent(unsigned index)
+	{
+		return static_cast<T*>(events_queue[Event<T>::bitpos()][index]);
 	}
 
 	void clearEvents()
@@ -260,14 +273,35 @@ private:
 
 // The iterator is a wrapper class for the environment component getter
 template<typename T>
-class Iterator
+class ComponentIterator
 {
 public:
-	Iterator(Environment* env) : env(env) {}
+	ComponentIterator(Environment* env) : env(env) {}
 
 	T& operator[](unsigned entity_id)
 	{
 		return env->getComponent<T>(entity_id);
+	}
+
+private:
+	Environment* env;
+};
+
+// same thing for events
+template<typename T>
+class EventIterator
+{
+public:
+	EventIterator(Environment* env) : env(env) {}
+
+	T& operator[](unsigned index)
+	{
+		return *(env->getEvent<T>(index));
+	}
+
+	unsigned size()
+	{
+		return env->getNumEvents<T>();
 	}
 
 private:

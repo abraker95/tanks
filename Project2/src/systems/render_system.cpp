@@ -1,6 +1,7 @@
 #include "Components.h"
 #include "systems/render_system.h"
 #include "utils.h"
+#include "events.h"
 
 RenderSystem::RenderSystem(sf::RenderWindow* _win)
 {
