@@ -104,9 +104,9 @@ public:
 	}
 
 	template<typename T>
-	ComponentIterator<T>&& get()
+	ComponentIterator<T> get()
 	{
-		return std::move(ComponentIterator<T>(this));
+		return ComponentIterator<T>(this);
 	}
 
 	// request a free entity id, and attach components to it
@@ -216,9 +216,9 @@ public:
 	}
 
 	template<typename T>
-	EventIterator<T>&& getEvents()
+	EventIterator<T> getEvents()
 	{
-		return std::move(EventIterator<T>(this));
+		return EventIterator<T>(this);
 	}
 
 	template<typename T>
