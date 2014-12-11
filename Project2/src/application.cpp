@@ -25,15 +25,15 @@ Application::Application() : main_env(64)
 		1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
 
-	/*main_env.createEntity(
+	main_env.createEntity(
 		new MapDesc(map, 20, 12, sf::Vector2u(64, 64)),
 		new TextureHandle("Tilesheet.png")
-	);*/
+	);
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{ sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space }};
 
-	/*
+	
 	unsigned tank1 = main_env.createEntity(
 		new Transform(200.f, 300.f, 0.f),
 		new Velocity(0.f, 0.f),
@@ -42,12 +42,12 @@ Application::Application() : main_env(64)
 		new BoundingCircle(),
 		new Gun(),
 		new Sprite()
-	);*/
+	);
 	
 	
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{ sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F }};
-	/*
+	
 	unsigned tank2 = main_env.createEntity(
 		new Transform(400.f, 300.f, 0.f),
 		new Velocity(0.f, 0.f),
@@ -56,7 +56,7 @@ Application::Application() : main_env(64)
 		new BoundingCircle(),
 		new Gun(),
 		new Sprite()
-	);*/
+	);
 	
 	
 
@@ -65,9 +65,9 @@ Application::Application() : main_env(64)
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
 	float ratio = (float)window->getSize().x/(float)window->getSize().y;
 	
-	/*main_env.createEntity(
+	main_env.createEntity(
 		new ViewController(borders, viewport, ratio, 400.f, 1200.f, 0.4f, {tank1, tank2})
-	);*/
+	);
 
 	// testing button
 	main_env.createEntity(

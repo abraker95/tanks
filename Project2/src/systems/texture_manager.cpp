@@ -15,7 +15,7 @@ TextureManager::~TextureManager()
 		delete it->second;
 	}
 
-	texture_atlas.clear();
+//	texture_atlas.clear();
 }
 
 void TextureManager::update(Environment* env)

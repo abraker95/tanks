@@ -9,7 +9,4 @@ class RenderSystem : public Component<RenderSystem>
 		~RenderSystem();
 
 		void update(Environment* env, sf::RenderWindow* _win);
-
-	private:
-		sf::RenderTexture* buffer;
 };

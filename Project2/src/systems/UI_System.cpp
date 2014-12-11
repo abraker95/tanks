@@ -26,7 +26,7 @@ UISystem::UISystem(Environment* env)
 		}
 		if(env->hasComponents<Label>(i) && env->hasComponents<Transform>(i))
 		{
-			labels[i].label.setPosition(sf::Vector2f(trans[i].x+sprite[i].sprite.getLocalBounds().width/2, trans[i].y+sprite[i].sprite.getLocalBounds().height/2));
+			//labels[i].label.setPosition(sf::Vector2f(trans[i].x+sprite[i].sprite.getLocalBounds().width/2, trans[i].y+sprite[i].sprite.getLocalBounds().height/2));
 			//PRINT_DEBUG(cout<<i<<endl, LOW_DEBUG, GFXSYS);
 			//sf::Font font;
 			//	if(!font.loadFromFile("arial.ttf")) PRINT_DEBUG(cout<<"ERROR: FONT NOT FOUND!", LOW_DEBUG, GFXSYS);
