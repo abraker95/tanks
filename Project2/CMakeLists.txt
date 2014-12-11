@@ -28,6 +28,7 @@ foreach(component
 	VertexArray
 	Tilemap
 	ViewController
+	Label
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)

@@ -31,4 +31,7 @@ private:
 	EntityManager entity_manager;
 	TextureManager texture_manager;
 	MapLoader map_loader;
+
+	// Fonts
+	sf::Font font;
 };

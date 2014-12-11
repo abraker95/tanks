@@ -11,7 +11,7 @@ RenderSystem::~RenderSystem()
 {
 }
 
-void RenderSystem::update(Environment* env, sf::RenderWindow* window)
+void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* font)
 {
 	auto sprites = env->get<Sprite>();
 	auto trans = env->get<Transform>();
@@ -117,14 +117,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 				trans[i].y = sf::Mouse::getPosition().y;
 			}
 			
-			sf::Font font;
-			if(!font.loadFromFile("arial.ttf"))
-			{
-				PRINT_DEBUG(cout<<"CODE RED!!!", LOW_DEBUG, GFXSYS);
-			}
-
 			labels[i].label.setPosition(sf::Vector2f(350, 350));
-			labels[i].label.setFont(font);
+			labels[i].label.setFont(*font);
 			labels[i].label.setCharacterSize(24);
 
 			PRINT_DEBUG(cout<<"Label ptr: "<<&(labels[i].label)<<endl, HI_DEBUG, GFXSYS);
@@ -133,5 +127,4 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 	}
 
 	window->display();
-	for(int i = 0; i<100000000; i++);	
 }
