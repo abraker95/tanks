@@ -1,6 +1,7 @@
 #include "application.h"
 #include <array>
 #include "Components.h"
+#include "Managers.h"
 
 Application::Application() : main_env(64)
 {

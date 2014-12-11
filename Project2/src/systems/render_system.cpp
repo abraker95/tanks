@@ -35,7 +35,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			{
 				if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
 				{
-					window->draw(vertex_array[i].vertices, textures[i].texture);
+					window->draw(*vertex_array[i].array, textures[i].texture);
 					break; // should only be one map
 				}
 			}

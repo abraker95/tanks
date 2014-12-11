@@ -1,7 +1,7 @@
 #include "components/ViewController.h"
 
 ViewController::ViewController(
-		const sf::FloatRect& borders, const sf::FloatRect& viewport, float ratio, 
+		const sf::FloatRect& borders, const sf::FloatRect& viewport, 
 		float minWidth, float maxWidth, float margin, std::vector<unsigned> focusedObjects)
 : 
 	borders(borders), 
@@ -11,8 +11,7 @@ ViewController::ViewController(
 	margin(margin), 
 	focusedObjects(focusedObjects),
 	prevViewCenter(sf::Vector2f(0.f, 0.f)),
-	prevInit(false)
+	prevViewSize(sf::Vector2f(0.f, 0.f)),
+	prevRatio(0.f)
 {
-	this->ratio = ratio * viewport.width/viewport.height;
-	this->prevViewSize = sf::Vector2f(minWidth, minWidth / this->ratio);
 }

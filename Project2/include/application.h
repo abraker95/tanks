@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
 #include "Systems.h"
+#include "Managers.h"
 
 class Application
 {
@@ -19,12 +20,15 @@ private:
 	Environment main_env;
 
 	// Systems
-	InputSystem* input_system;
-	TextureManager* texture_manager;
-	RenderSystem* render_system;
-	ExpiringSystem* expiring_system;
-	PhysicsSystem* physics_system;
+	InputSystem input_system;
+	RenderSystem render_system;
+	ExpiringSystem expiring_system;
+	PhysicsSystem physics_system;
 	UISystem* ui_system;
-	MapCreationSystem* map_creation_system;
-	ViewSystem* view_system;
+	ViewSystem view_system;
+
+	// Managers
+	EntityManager entity_manager;
+	TextureManager texture_manager;
+	MapLoader map_loader;
 };

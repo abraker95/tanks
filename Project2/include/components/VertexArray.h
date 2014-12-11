@@ -5,7 +5,7 @@
 class VertexArray : public Component<VertexArray>
 {
 public:
-	VertexArray();
+	VertexArray(sf::VertexArray* array);
 
-	sf::VertexArray vertices;
+	sf::VertexArray* array;
 };

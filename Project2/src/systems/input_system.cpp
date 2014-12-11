@@ -8,7 +8,7 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* env)
+void InputSystem::update(Environment* env, EntityManager* entity_manager, TextureManager* texture_manager)
 {
 	auto tank_controls = env->get<TankControls>();
 	auto velocity = env->get<Velocity>();
@@ -64,14 +64,7 @@ void InputSystem::update(Environment* env)
 					if(gun[i].fireClock.getElapsedTime().asSeconds() > gun[i].fireCooldown)
 					{
 						gun[i].fireClock.restart();
-						env->createEntity(
-							new Transform(transform[i].x, transform[i].y, transform[i].rot),
-							new Velocity(500.f, 0.f),
-							new TextureHandle("Bullet_0.png"),
-							new Expires(5.f),
-							new Projectile(-20, i),
-							new BoundingCircle()
-						);
+						entity_manager->spawnBullet(env, texture_manager, i);
 					}
 				}
 			}

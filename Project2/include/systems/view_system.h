@@ -18,7 +18,7 @@ private:
 	void viewInBorders(sf::Vector2f& _viewCenter, sf::Vector2f& _viewSize, const sf::FloatRect& borders, float ratio);
 	void smoothMovement(
 		sf::Vector2f& _viewCenter, sf::Vector2f& _viewSize, float _elapsedTime, 
-		sf::Vector2f& prevViewSize, sf::Vector2f& prevViewCenter, bool& prevInit);
+		sf::Vector2f& prevViewSize, sf::Vector2f& prevViewCenter, bool prevInit);
 	
 	const float cameraCooldown = 0.2f;
 };

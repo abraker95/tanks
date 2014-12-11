@@ -6,6 +6,7 @@ include_directories(include)
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -std=c++11 $(CMAKE_CXX_FLAGS)")
 
 set(component_files "")
+set(manager_files "")
 set(system_files "")
 
 foreach(component
@@ -31,14 +32,20 @@ foreach(component
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
 
+foreach(manager
+	texture_manager
+	entity_manager
+	map_loader
+)
+	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
+endforeach(manager)
+
 foreach(system
 	expiring_system
 	input_system
 	physics_system
 	render_system
-	texture_manager
 	UI_System
-	MapCreationSystem
 	view_system	
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
@@ -49,6 +56,7 @@ add_executable(tank
 	include/core/environment.h
 	${component_files}
 	${system_files}
+	${manager_files}
 
 	src/application.cpp
 	include/application.h
