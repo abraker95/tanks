@@ -8,5 +8,4 @@ struct BoundingCircle : public Component<BoundingCircle>
 	BoundingCircle(float radius);
 
 	float radius;
-	unsigned collision;
 };

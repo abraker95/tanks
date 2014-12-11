@@ -70,7 +70,7 @@ inline unsigned getEventID()
 }
 
 template<typename T>
-class Event
+class Event : public EventBase
 {
 	friend class Environment;
 	static unsigned bitpos() 
@@ -209,21 +209,27 @@ public:
 	}
 
 	template<typename T>
-	void emit(T&& t)
+	void emit(T* t)
 	{
-		events_queue[Event<T>::bitpos()].push_back(std::forward(t));
+		events_queue[Event<T>::bitpos()].push_back(t);
 	}
 
 	template<typename T>
-	const std::vector<T>* getEvents()
+	const std::vector<EventBase*>& getEvents()
 	{
-		return &events_queue[Event<T>::bitpos()];
+		return events_queue[Event<T>::bitpos()];
 	}
 
 	void clearEvents()
 	{
 		for(unsigned i=0;i<MAX_EVENTS;i++)
+		{
+			for(unsigned j=0;j<events_queue[i].size();j++)
+			{
+				delete events_queue[i][j];
+			}
 			events_queue[i].clear();
+		}
 	}
 
 private:
@@ -249,7 +255,7 @@ private:
 	std::vector<ComponentBase*> components;
 	std::vector<ComponentMask> entity_mask;
 	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
-	std::array<std::vector<EventBase>, MAX_EVENTS> events_queue;
+	std::array<std::vector<EventBase*>, MAX_EVENTS> events_queue;
 };
 
 // The iterator is a wrapper class for the environment component getter

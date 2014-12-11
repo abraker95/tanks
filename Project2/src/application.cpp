@@ -2,6 +2,7 @@
 #include <array>
 #include "Components.h"
 #include "Managers.h"
+#include "events.h"
 
 Application::Application() : main_env(64)
 {
@@ -96,4 +97,6 @@ void Application::update(float dt)
 	physics_system->update(&main_env, dt);
 	view_system->update(&main_env, window, dt);
 	render_system->update(&main_env, window, &font);
+
+	main_env.clearEvents();
 }

@@ -2,6 +2,7 @@
 #include <cmath>
 #include "Components.h"
 #include "systems/physics_system.h"
+#include "events.h"
 
 PhysicsSystem::PhysicsSystem()
 {
@@ -39,8 +40,7 @@ void PhysicsSystem::update(Environment* env, float dt)
 					transform[j].x, transform[j].y, bounding_circle[j].radius))
 
 				{
-					bounding_circle[i].collision = true;
-					bounding_circle[j].collision = true;
+					env->emit(new CollisionEvent(i, j));
 
 					if(	!env->hasComponents<Projectile>(i) &&
 						!env->hasComponents<Projectile>(j))
@@ -50,11 +50,6 @@ void PhysicsSystem::update(Environment* env, float dt)
 							transform[j].x, transform[j].y, bounding_circle[j].radius);
 					}
 				}
-				else
-				{
-					bounding_circle[i].collision = false;
-					bounding_circle[j].collision = false;
-				}	
 			}
 		}
 	}
