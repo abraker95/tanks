@@ -7,16 +7,15 @@
 struct ViewController : public Component<ViewController>
 {
 	ViewController(
-		const sf::FloatRect& borders, const sf::FloatRect& viewport, float ratio, 
+		const sf::FloatRect& borders, const sf::FloatRect& viewport, 
 		float minWidth, float maxWidth, float margin, std::vector<unsigned> focusedObjects);
 
 	std::vector<unsigned> focusedObjects;
 	sf::FloatRect borders;
 	sf::FloatRect viewport;
-	float ratio;
 	float minWidth, maxWidth;
 	float margin;
+	float prevRatio;
 	sf::Vector2f prevViewSize, prevViewCenter; // previous view center and view size
-	bool prevInit;
 	sf::View view;
 };

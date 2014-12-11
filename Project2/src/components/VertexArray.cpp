@@ -1,3 +1,5 @@
 #include "components/VertexArray.h"
 
-VertexArray::VertexArray() {}
+VertexArray::VertexArray(sf::VertexArray* array) : array(array)
+{
+}

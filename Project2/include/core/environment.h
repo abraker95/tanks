@@ -177,7 +177,7 @@ public:
 private:
 	unsigned requestID()
 	{
-		for(unsigned i=0;i<maxEntities();i++)
+		for(unsigned i=1;i<maxEntities();i++)
 		{
 			if(entity_mask[i].none())
 				return i;

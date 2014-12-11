@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
+#include "Managers.h"
 
 class InputSystem
 {
@@ -8,5 +9,5 @@ class InputSystem
 		InputSystem();
 		~InputSystem();
 
-		void update(Environment* _env);
+		void update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager);
 };

@@ -13,18 +13,17 @@ void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 			if(view_controller[i].focusedObjects.size() == 0)
 				continue;
 			
-			view_controller[i].ratio = (float)window->getSize().x/(float)window->getSize().y;
-			view_controller[i].ratio *= view_controller[i].viewport.width/view_controller[i].viewport.height;
+			float ratio = (float)window->getSize().x/(float)window->getSize().y;
+			ratio *= view_controller[i].viewport.width/view_controller[i].viewport.height;
+			float prev_ratio = view_controller[i].prevRatio;
 
 			sf::Vector2f viewSize, viewCenter;
 			float margin = view_controller[i].margin;
-			float ratio = view_controller[i].ratio;
 			float minWidth = view_controller[i].minWidth;
 			float maxWidth = view_controller[i].maxWidth;
 			sf::FloatRect& borders = view_controller[i].borders;
 			sf::Vector2f& prevViewSize = view_controller[i].prevViewSize;
 			sf::Vector2f& prevViewCenter = view_controller[i].prevViewCenter;
-			bool& prevInit = view_controller[i].prevInit;
 			std::vector<unsigned> focusedObjects = view_controller[i].focusedObjects;
 			
 			getMinimalView(env, viewCenter, viewSize, focusedObjects);
@@ -43,11 +42,12 @@ void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 			viewInBorders(viewCenter, viewSize, borders, ratio);
 			smoothMovement(
 				viewCenter, viewSize, dt, 
-				prevViewSize, prevViewCenter, prevInit);
+				prevViewSize, prevViewCenter, ratio == prev_ratio);
 			
 			// set the new view coordinates and size
 			view_controller[i].view.setCenter(viewCenter);
 			view_controller[i].view.setSize(viewSize);
+			view_controller[i].prevRatio = ratio;
 		}
 	}
 }
@@ -140,7 +140,7 @@ void ViewSystem::viewInBorders(sf::Vector2f& _viewCenter, sf::Vector2f& _viewSiz
 
 void ViewSystem::smoothMovement(
 	sf::Vector2f& _viewCenter, sf::Vector2f& _viewSize, float _elapsedTime, 
-	sf::Vector2f& prevViewSize, sf::Vector2f& prevViewCenter, bool& prevInit)
+	sf::Vector2f& prevViewSize, sf::Vector2f& prevViewCenter, bool prevInit)
 {
 	if(prevInit)
 	{
@@ -151,9 +151,6 @@ void ViewSystem::smoothMovement(
 		_viewSize = prevViewSize + deltaViewSize * (_elapsedTime/cameraCooldown);
 		_viewCenter = prevViewCenter + deltaViewCenter * (_elapsedTime/cameraCooldown);
 	}
-
-	else
-		prevInit = true;
 
 	prevViewSize = _viewSize;
 	prevViewCenter = _viewCenter;
