@@ -13,6 +13,7 @@ UISystem::UISystem(Environment* env)
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
+		/// \TODO: Add color component for customization
 		if(env->hasComponents<GUIObj>(i))
 		{
 			// Button
@@ -26,17 +27,23 @@ UISystem::UISystem(Environment* env)
 									  new MouseControls()
 							       );
 
+				// \TODO: Put in Button data to avoid duplication in the Render System
+				const float margin = 50;
+				sf::FloatRect dim = sf::FloatRect(trans[i].x, trans[i].y,
+												  labels[i].label.getLocalBounds().width+margin, labels[i].label.getLocalBounds().height+margin);
+
+				/// \TODO: Figure out why the font files is not being found
 				if(labels[i].font.loadFromFile("arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 				labels[i].label.setFont(labels[i].font);
-
-				int charSize = labels[i].label.getCharacterSize();
-				int verticalFix = labels[i].font.getLineSpacing(charSize);
-				labels[i].label.setPosition(sf::Vector2f(trans[i].x+25, trans[i].y+25-verticalFix));
+				
+				int charSize = 24;
+				labels[i].label.setCharacterSize(charSize);
+				labels[i].label.setPosition(sf::Vector2f(trans[i].x+margin/2, trans[i].y+margin/2-charSize/2));
 				
 				
 				auto button = env->get<StdComponent<sf::RectangleShape>>();
 					button[i].data->setPosition(trans[i].x, trans[i].y);
-					button[i].data->setSize(sf::Vector2f(labels[i].label.getLocalBounds().width+50, labels[i].label.getLocalBounds().height+50));
+					button[i].data->setSize(sf::Vector2f(dim.width, dim.height));
 			}
 		}
 	}

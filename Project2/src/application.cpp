@@ -25,7 +25,7 @@ Application::Application() : main_env(64)
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
 	entity_manager.createCamera(&main_env, borders, viewport, {tank1, tank2});
 
-	font.loadFromFile("arial.ttf");
+//	font.loadFromFile("arial.ttf");
 
 	// testing button
 	main_env.createEntity(
@@ -91,7 +91,7 @@ void Application::update(float dt)
 	expiring_system->update(&main_env, dt);
 	physics_system->update(&main_env, dt);
 	view_system->update(&main_env, window, dt);
-	render_system->update(&main_env, window, &font);
+	render_system->update(&main_env, window);
 
 	main_env.clearEvents();
 }

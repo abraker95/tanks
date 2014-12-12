@@ -8,5 +8,5 @@ class RenderSystem : public Component<RenderSystem>
 		RenderSystem(sf::RenderWindow* window);
 		~RenderSystem();
 
-		void update(Environment* env, sf::RenderWindow* _win, sf::Font* font);
+		void update(Environment* env, sf::RenderWindow* _win);
 };

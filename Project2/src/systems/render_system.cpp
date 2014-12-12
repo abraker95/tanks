@@ -12,7 +12,7 @@ RenderSystem::~RenderSystem()
 {
 }
 
-void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* font)
+void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 {
 	auto sprites = env->get<Sprite>();
 	auto trans = env->get<Transform>();
@@ -118,11 +118,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* 
 			{
 				trans[i].x = sf::Mouse::getPosition().x;
 				trans[i].y = sf::Mouse::getPosition().y;
-			}
-			
-			//labels[i].label.setPosition(sf::Vector2f(350, 350));
-			labels[i].label.setFont(*font);
-			labels[i].label.setCharacterSize(24);
+			}			
 
 			window->draw(labels[i].label);
 		}
