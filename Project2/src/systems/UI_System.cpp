@@ -20,17 +20,24 @@ UISystem::UISystem(Environment* env)
 			if(GUIobjs[i].type==GUIObj::BUTTON)
 			{
 				assert(!env->hasComponents<UserInterface>(i));
-				env->addComponents<UserInterface>(i, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), 
-																	   &GUIobjs[i].action));
+				env->addComponents(i, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), 
+													   &GUIobjs[i].action),
+								      new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
+									  new MouseControls()
+							       );
+
+				if(labels[i].font.loadFromFile("arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+				labels[i].label.setFont(labels[i].font);
+
+				int charSize = labels[i].label.getCharacterSize();
+				int verticalFix = labels[i].font.getLineSpacing(charSize);
+				labels[i].label.setPosition(sf::Vector2f(trans[i].x+25, trans[i].y+25-verticalFix));
+				
+				
+				auto button = env->get<StdComponent<sf::RectangleShape>>();
+					button[i].data->setPosition(trans[i].x, trans[i].y);
+					button[i].data->setSize(sf::Vector2f(labels[i].label.getLocalBounds().width+50, labels[i].label.getLocalBounds().height+50));
 			}
-		}
-		if(env->hasComponents<Label>(i) && env->hasComponents<Transform>(i))
-		{
-			//labels[i].label.setPosition(sf::Vector2f(trans[i].x+sprite[i].sprite.getLocalBounds().width/2, trans[i].y+sprite[i].sprite.getLocalBounds().height/2));
-			//PRINT_DEBUG(cout<<i<<endl, LOW_DEBUG, GFXSYS);
-			//sf::Font font;
-			//	if(!font.loadFromFile("arial.ttf")) PRINT_DEBUG(cout<<"ERROR: FONT NOT FOUND!", LOW_DEBUG, GFXSYS);
-			//	labels[i].label.setFont(font);
 		}
 	}
 }

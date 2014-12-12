@@ -56,7 +56,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* 
 			}
 		}
 	}
-
+	
 	// reset default view for UI, so that
 	// the buttons don't move with the camera
 	window->setView(window->getDefaultView());
@@ -76,40 +76,42 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* 
 	
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
-		if(env->hasComponents<Transform, UserInterface, MouseControls, Label>(i))
+		/// \TODO: have the button's dimentions update when window size changes
+		if(env->hasComponents<Transform, UserInterface, MouseControls, Label, StdComponent<sf::RectangleShape>>(i))
 		{
 			auto ui = env->get<UserInterface>();
 			auto mouse = env->get<MouseControls>();
 			auto labels = env->get<Label>();
+			auto button = env->get<StdComponent<sf::RectangleShape>>();
 
-			sf::FloatRect bounds = sprites[i].sprite.getLocalBounds();
+			const float margin = 50;
+			sf::FloatRect dim = sf::FloatRect(trans[i].x,									 trans[i].y,
+			          						  labels[i].label.getLocalBounds().width+margin, labels[i].label.getLocalBounds().height+margin);
+
+			button[i].data->setSize(sf::Vector2f(dim.width, dim.height));
+			button[i].data->setFillColor(sf::Color(50, 50, 100, 255));
+			window->draw(*button[i].data);
+			
 			sf::Vector2i pos = sf::Mouse::getPosition(*window);
 
 		//	PRINT_DEBUG(std::cout<<" X pos view: "<<trans[i].x<<" X pos screen: "<<pos.x<<std::endl, HI_DEBUG, GFXSYS);
 		//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
 		//	PRINT_DEBUG(std::cout<<" Y range: "<<trans[i].y<<" "<<sf::Mouse::getPosition().y-window->getPosition().y<<" "<<bounds.height+trans[i].y<<std::endl<<endl, HI_DEBUG, GFXSYS);
 			
-			if(BTWN(trans[i].x - bounds.width/2, pos.x, trans[i].x + bounds.width/2)
-			&& BTWN(trans[i].y - bounds.height/2, pos.y, trans[i].y + bounds.height/2))
+			if(BTWN(dim.left, pos.x, dim.width+dim.left) && BTWN(dim.top, pos.y, dim.height+dim.top))
 				ui[i].cursorOnThis = true;
 			else
 				ui[i].cursorOnThis = false;
-			
+
 			if(ui[i].state.test(UserInterface::PRESS))
 			{
-				sf::RectangleShape rectangle;
-					rectangle.setPosition(trans[i].x - bounds.width/2, trans[i].y - bounds.height/2);
-					rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
-					rectangle.setFillColor(sf::Color(50, 50, 50, 50));
-					window->draw(rectangle);
+				button[i].data->setFillColor(sf::Color(50, 50, 50, 50));
+				window->draw(*button[i].data);
 			}
 			else if(ui[i].state.test(UserInterface::HIGHLIGHT))  // Just because the cursor is on the UI, doesn't mean it will always highlight. e.i.: Highlight is not enabled
 			{
-				sf::RectangleShape rectangle;
-					rectangle.setPosition(trans[i].x - bounds.width/2, trans[i].y- bounds.height/2);
-					rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
-					rectangle.setFillColor(sf::Color(200, 200, 200, 50));
-					window->draw(rectangle);
+				button[i].data->setFillColor(sf::Color(200, 200, 200, 50));
+				window->draw(*button[i].data);
 			}
 
 			if(ui[i].state.test(UserInterface::DRAG))
@@ -118,7 +120,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window, sf::Font* 
 				trans[i].y = sf::Mouse::getPosition().y;
 			}
 			
-			labels[i].label.setPosition(sf::Vector2f(350, 350));
+			//labels[i].label.setPosition(sf::Vector2f(350, 350));
 			labels[i].label.setFont(*font);
 			labels[i].label.setCharacterSize(24);
 

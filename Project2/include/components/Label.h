@@ -11,5 +11,6 @@ class Label: public Component<Label>
 		~Label();
 
 		sf::Text label;
+		sf::Font font;
 };
 

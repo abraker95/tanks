@@ -30,13 +30,8 @@ Application::Application() : main_env(64)
 	// testing button
 	main_env.createEntity(
 		new Transform(200.f, 30.f, 0.f),
-		new MouseControls(),
-		/*UserInterface([]()->void* { std::cout<<"button works!"<<std::endl; return nullptr; }, 
-					 std::bitset<4>(1<<UserInterface::HIGHLIGHT | 1<<UserInterface::CLICK | 1<<UserInterface::PRESS)),*/
 		new GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
-		//new TextureHandle("Button.png"),
-		new Label("button test"),
-		new Sprite()
+		new Label("button test")
 	);
 
 

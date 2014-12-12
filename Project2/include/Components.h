@@ -18,3 +18,4 @@
 #include "components\tilemap.h"
 #include "components\ViewController.h"
 #include "components\Label.h"
+//#include "Components\StdComponent.h"

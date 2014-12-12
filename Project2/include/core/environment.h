@@ -56,6 +56,16 @@ public:
 	virtual ~Component() {}
 };
 
+// \TODO: Make the constructor use better
+template<typename T>
+struct StdComponent: public Component<T>
+{
+	public:
+		StdComponent(T* _data) { data = _data; }
+		virtual ~StdComponent() { delete data; }
+		
+		T* data;
+};
 
 // Same concept as components but for events
 class EventBase 
