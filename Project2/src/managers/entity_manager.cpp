@@ -1,3 +1,4 @@
+#define PI 3.14159f
 #include "managers/entity_manager.h"
 #include "Components.h"
 
@@ -44,20 +45,29 @@ unsigned EntityManager::spawnBullet(
 	unsigned tank_id)
 {
 	auto transform = env->get<Transform>();
+	auto bounding_circle = env->get<BoundingCircle>();
+	auto sprite = env->get<Sprite>();
+	auto texture = env->get<Texture>();
+
+	if(!env->hasComponents<Transform, BoundingCircle>(tank_id))
+		return 0;
+	
+	float start_x = 
+		transform[tank_id].x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_circle[tank_id].radius;
+	float start_y = 
+		transform[tank_id].y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_circle[tank_id].radius;
 
 	unsigned new_bullet = env->createEntity(
-		new Transform(transform[tank_id].x, transform[tank_id].y, transform[tank_id].rot),
+		new Transform(start_x, start_y, transform[tank_id].rot),
 		new Velocity(500.f, 0.f),
 		new Texture(tex_man->load("Bullet_0.png")),
 		new Expires(5.f),
 		new Projectile(-20, tank_id),
-		new BoundingCircle()
+		new BoundingCircle(),
+		new Sprite()
 	);
 
-	auto sprite = env->get<Sprite>();
-	auto texture = env->get<Texture>();
-	auto bounding_circle = env->get<BoundingCircle>();
-
+	
 	if(texture[new_bullet].texture)
 	{
 		sf::Vector2u size = texture[new_bullet].texture->getSize();
