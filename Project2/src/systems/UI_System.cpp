@@ -20,6 +20,7 @@ UISystem::UISystem(Environment* env)
 			// \NOTE: User Interfce action needs to be set externally
 			if(GUIobjs[i].type==GUIObj::BUTTON)
 			{
+				PRINT_DEBUG(std::cout<<"i = "<<i<<"   Name: "<<env->getEntityName(i)<<"  ID: "<<env->getID(env->getEntityName(i))<<std::endl, HI_DEBUG, GFXSYS);
 				assert(!env->hasComponents<UserInterface>(i));
 				env->addComponents(i, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), 
 													   &GUIobjs[i].action),

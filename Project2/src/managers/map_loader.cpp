@@ -30,7 +30,7 @@ unsigned MapLoader::createMap(Environment* env, TextureManager* tex_man, std::st
 	sf::VertexArray* array = buildVA(
 		tileset, (int)tileWidth, (int)tileHeight, (int)tileCountX, (int)tileCountY, mapData);
 
-	return env->createEntity(
+	return env->createEntity("map",
 		new VertexArray(array),
 		new Texture(tileset),
 		new Tilemap());
@@ -78,14 +78,14 @@ sf::VertexArray* MapLoader::buildVA(
 	vertices->setPrimitiveType(sf::Quads);
 	vertices->resize(tileCountX * tileCountY * 4);
 
-	for(int i=0;i<tileCountX;i++)
+	for(float i=0;i<tileCountX;i++)
 	{
-		for(int j=0;j<tileCountY;j++)
+		for(float j=0;j<tileCountY;j++)
 		{
-			int tileNumber = (int)mapData[(j * (int)tileCountX + i) * 2 + 1];
+			int tileNumber = (int)mapData[(int)(j * tileCountX + i) * 2 + 1];
 
-			int tu = tileNumber % (tileset->getSize().x / tileCountX);
-			int tv = tileNumber / (tileset->getSize().x / tileCountY);
+			float tu = tileNumber % (tileset->getSize().x / tileCountX);
+			float tv = tileNumber / (tileset->getSize().x / tileCountY);
 
 			sf::Vertex* quad = &(*vertices)[(j * tileCountX + i) * 4];
 

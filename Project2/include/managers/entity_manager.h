@@ -11,16 +11,16 @@ public:
 	EntityManager();
 	~EntityManager();
 
-	unsigned spawnTankPlayer(
+	unsigned spawnTankPlayer(std::string _name,
 		Environment* env, TextureManager* tex_man, 
 		float x, float y, 
 		std::array<sf::Keyboard::Key, 5> keys);
 
-	unsigned spawnBullet(
+	unsigned spawnBullet(std::string _name,
 		Environment* env, TextureManager* tex_man, 
 		unsigned tank_id);
 
-	unsigned createCamera(
+	unsigned createCamera(std::string _name,
 		Environment* env, 
 		sf::FloatRect& borders, sf::FloatRect& viewport, 
 		std::vector<unsigned> focusedObjects);

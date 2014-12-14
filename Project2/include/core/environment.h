@@ -121,20 +121,27 @@ public:
 
 	// request a free entity id, and attach components to it
 	template<typename... T>
-	unsigned createEntity(T*... t)
+	unsigned createEntity(std::string _name, T*... t)
 	{
-		PRINT_DEBUG(std::cout<<" Create Entity"<<std::endl, MED_DEBUG, ENVSYS);
-
 		unsigned new_id = requestID();
 		addComponents<T...>(new_id, t...);
+		
+		PRINT_DEBUG(std::cout<<" Create Entity: "<<new_id-1<<"   Name size: "<<entityName.size()<<"   Name: "<<_name<<std::endl, MED_DEBUG, ENVSYS);
+
+		// if the the ID is not a newly generated one, then a previous position exists within the name array
+		if(entityName.size() > new_id)
+			entityName[new_id-1] = _name;
+		else
+			entityName.push_back(_name);
 
 		return new_id;
 	}
 
-	// set the componentmask to 0
+	// set the componentmask to 0 and make the name blank
 	void destroyEntity(unsigned id)
 	{
 		deleteID(id);
+		entityName[id] = "";
 	}
 
 	// returns 1<<Component<T>::bitpos
@@ -144,6 +151,18 @@ public:
 		ComponentMask mask;
 		mask.set(Component<T>::bitpos());
 		return mask;
+	}
+
+	std::string getEntityName(int _id)
+	{
+		// \TODO: Add invalid ref check
+		return entityName[_id-1];
+	}
+
+	int getID(std::string _entityName)
+	{
+		for(unsigned int i = 0; i<entityName.size(); i++)
+			if(entityName[i] == _entityName) return i+1;
 	}
 
 	// ORing every 1<<Component<T>::bitpos
@@ -179,6 +198,7 @@ public:
 		entity_mask[id] &= ~getMask<T>();
 
 		ComponentBase* ptr = components_pointer[id][Component<T>::bitpos()];
+		std::string* Nameptr = components_pointer[id][Component<T>::bitpos()];
 		for(unsigned i=0;i<components.size();i++)
 		{
 			if(components[i] == ptr)
@@ -277,6 +297,7 @@ private:
 private:
 	std::vector<ComponentBase*> components;
 	std::vector<ComponentMask> entity_mask;
+	std::vector<std::string> entityName;
 	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
 	std::array<std::vector<EventBase*>, MAX_EVENTS> events_queue;
 };

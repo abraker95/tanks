@@ -15,25 +15,27 @@ Application::Application() : main_env(64)
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = entity_manager.spawnTankPlayer(&main_env, &texture_manager, 200.f, 300.f, p1_keys);
+	unsigned tank1 = entity_manager.spawnTankPlayer("tank1", &main_env, &texture_manager, 200.f, 300.f, p1_keys);
 	
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
-	unsigned tank2 = entity_manager.spawnTankPlayer(&main_env, &texture_manager, 400.f, 300.f, p2_keys);
+	unsigned tank2 = entity_manager.spawnTankPlayer("tank2", &main_env, &texture_manager, 400.f, 300.f, p2_keys);
 	
 	// camera
 	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	entity_manager.createCamera(&main_env, borders, viewport, {tank1, tank2});
-
-//	font.loadFromFile("arial.ttf");
+	entity_manager.createCamera("mainCamera", &main_env, borders, viewport, {tank1, tank2});
 
 	// testing button
-	main_env.createEntity(
+	main_env.createEntity("button1",
 		new Transform(200.f, 30.f, 0.f),
 		new GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
 		new Label("button test")
 	);
 
+	/*main_env.createEntity(
+		new StdComponent<int>(new int(2)),
+		new StdComponent<int>(new int(4))
+		);*/
 
 	// Testing Radio Button
 	/*main_env.createEntity(

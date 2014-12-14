@@ -10,12 +10,12 @@ EntityManager::~EntityManager()
 {
 }
 
-unsigned EntityManager::spawnTankPlayer(
+unsigned EntityManager::spawnTankPlayer(std::string _name,
 	Environment* env, TextureManager* tex_man, 
 	float x, float y, 
 	std::array<sf::Keyboard::Key, 5> keys)
 {
-	unsigned new_tank = env->createEntity(
+	unsigned new_tank = env->createEntity(_name,
 		new Transform(x, y, 0.f),
 		new Velocity(0.f, 0.f),
 		new Texture(tex_man->load("Tank_0.png")),
@@ -40,7 +40,7 @@ unsigned EntityManager::spawnTankPlayer(
 	return new_tank;
 }
 
-unsigned EntityManager::spawnBullet(
+unsigned EntityManager::spawnBullet(std::string _name,
 	Environment* env, TextureManager* tex_man, 
 	unsigned tank_id)
 {
@@ -57,7 +57,7 @@ unsigned EntityManager::spawnBullet(
 	float start_y = 
 		transform[tank_id].y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_circle[tank_id].radius;
 
-	unsigned new_bullet = env->createEntity(
+	unsigned new_bullet = env->createEntity(_name,
 		new Transform(start_x, start_y, transform[tank_id].rot),
 		new Velocity(500.f, 0.f),
 		new Texture(tex_man->load("Bullet_0.png")),
@@ -79,12 +79,12 @@ unsigned EntityManager::spawnBullet(
 	return new_bullet;
 }
 
-unsigned EntityManager::createCamera(
+unsigned EntityManager::createCamera(std::string _name,
 	Environment* env, 
 	sf::FloatRect& borders, sf::FloatRect& viewport, 
 	std::vector<unsigned> focusedObjects)
 {
-	return env->createEntity(
+	return env->createEntity(_name,
 		new ViewController(borders, viewport, 400.f, 1200.f, 0.4f, focusedObjects)
 	);
 }
