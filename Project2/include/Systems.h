@@ -4,3 +4,4 @@
 #include "systems/physics_system.h"
 #include "systems/UI_System.h"
 #include "systems/view_system.h"
+#include "systems/damage_system.h"

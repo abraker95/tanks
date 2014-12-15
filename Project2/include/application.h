@@ -26,6 +26,7 @@ private:
 	PhysicsSystem* physics_system;
 	UISystem* ui_system;
 	ViewSystem* view_system;
+	DamageSystem* damage_system;
 
 	// Managers
 	EntityManager entity_manager;

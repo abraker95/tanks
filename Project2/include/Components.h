@@ -5,7 +5,6 @@
 #include "components\health.h"
 #include "components\MouseControls.h"
 #include "components\tank_controls.h"
-#include "components\texture_handle.h"
 #include "components\transform.h"
 #include "components\velocity.h"
 #include "components\projectile.h"
@@ -18,4 +17,5 @@
 #include "components\tilemap.h"
 #include "components\ViewController.h"
 #include "components\Label.h"
+#include "components\solid.h"
 //#include "Components\StdComponent.h"

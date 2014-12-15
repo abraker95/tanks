@@ -1,9 +1,10 @@
 #pragma once
 #include "core/environment.h"
+#include "include/math.h"
 
 struct BoundingBox : public Component<BoundingBox>
 {
-	BoundingBox(int width, int height);
+	BoundingBox(Vec2f size);
 
-	float width, height;
+	Vec2f size;
 };

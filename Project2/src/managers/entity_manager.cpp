@@ -1,4 +1,5 @@
 #define PI 3.14159f
+#include "math/vector.h"
 #include "managers/entity_manager.h"
 #include "Components.h"
 
@@ -15,27 +16,34 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	float x, float y, 
 	std::array<sf::Keyboard::Key, 5> keys)
 {
+	auto sprite = env->get<Sprite>();
+
+	sf::Texture* texture = tex_man->load("Tank_0.png");
+	float radius = 0.f;
+	Vec2f origin;
+
+	if(texture)
+	{
+		Vec2u size = texture->getSize();
+
+		origin.x = (float)size.x/2.f; 
+		origin.y = (float)size.y/2.f;
+		radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
+	}
+
 	unsigned new_tank = env->createEntity(_name,
-		new Transform(x, y, 0.f),
+		new Transform(Vec2f(x, y), 0.f),
 		new Velocity(0.f, 0.f),
-		new Texture(tex_man->load("Tank_0.png")),
+		new Texture(texture),
 		new TankControls(keys),
-		new BoundingCircle(),
+		new BoundingCircle(radius),
+		new Health(100, 100),
 		new Gun(),
-		new Sprite()
+		new Sprite(),
+		new Solid()
 	);
 
-	auto sprite = env->get<Sprite>();
-	auto texture = env->get<Texture>();
-	auto bounding_circle = env->get<BoundingCircle>();
-
-	if(texture[new_tank].texture)
-	{
-		sf::Vector2u size = texture[new_tank].texture->getSize();
-
-		sprite[new_tank].sprite.setOrigin((float)size.x/2.f, (float)size.y/2.f);	
-		bounding_circle[new_tank].radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
-	}
+	sprite[new_tank].sprite.setOrigin(origin.x, origin.y);
 
 	return new_tank;
 }
@@ -47,34 +55,40 @@ unsigned EntityManager::spawnBullet(std::string _name,
 	auto transform = env->get<Transform>();
 	auto bounding_circle = env->get<BoundingCircle>();
 	auto sprite = env->get<Sprite>();
-	auto texture = env->get<Texture>();
 
 	if(!env->hasComponents<Transform, BoundingCircle>(tank_id))
 		return 0;
 	
 	float start_x = 
-		transform[tank_id].x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_circle[tank_id].radius;
+		transform[tank_id].pos.x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_circle[tank_id].radius;
 	float start_y = 
-		transform[tank_id].y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_circle[tank_id].radius;
+		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_circle[tank_id].radius;
+	
+	sf::Texture* texture = tex_man->load("Bullet_0.png");
+	float radius = 0.f;
+	Vec2f origin;
+
+	if(texture)
+	{
+		Vec2u size = texture->getSize();
+
+		origin.x = (float)size.x/2.f; 
+		origin.y = (float)size.y/2.f;
+		radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
+	}
 
 	unsigned new_bullet = env->createEntity(_name,
-		new Transform(start_x, start_y, transform[tank_id].rot),
+		new Transform(Vec2f(start_x, start_y), transform[tank_id].rot),
 		new Velocity(500.f, 0.f),
-		new Texture(tex_man->load("Bullet_0.png")),
+		new Texture(texture),
 		new Expires(5.f),
-		new Projectile(-20, tank_id),
-		new BoundingCircle(),
+		new Projectile(20, tank_id),
+		new BoundingCircle(radius),
 		new Sprite()
 	);
 
 	
-	if(texture[new_bullet].texture)
-	{
-		sf::Vector2u size = texture[new_bullet].texture->getSize();
-
-		sprite[new_bullet].sprite.setOrigin((float)size.x/2.f, (float)size.y/2.f);	
-		bounding_circle[new_bullet].radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
-	}
+	sprite[new_bullet].sprite.setOrigin(origin.x, origin.y);
 
 	return new_bullet;
 }

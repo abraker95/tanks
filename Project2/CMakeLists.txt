@@ -15,7 +15,6 @@ foreach(component
 	gun
 	health
 	tank_controls
-	texture_handle
 	transform
 	velocity
 	projectile
@@ -29,6 +28,7 @@ foreach(component
 	Tilemap
 	ViewController
 	Label
+	solid
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
@@ -48,6 +48,7 @@ foreach(system
 	render_system
 	UI_System
 	view_system	
+	damage_system
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
 endforeach(system)

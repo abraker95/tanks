@@ -25,8 +25,8 @@ void PhysicsSystem::update(Environment* env, float dt)
 		{
 			transform[i].rot += velocity[i].vrot * dt;
 
-			transform[i].x += cosf(transform[i].rot * PI/180.f + PI/2.f) * velocity[i].speed * dt;
-			transform[i].y += sinf(transform[i].rot * PI/180.f + PI/2.f) * velocity[i].speed * dt;
+			transform[i].pos.x += cosf(transform[i].rot * PI/180.f + PI/2.f) * velocity[i].speed * dt;
+			transform[i].pos.y += sinf(transform[i].rot * PI/180.f + PI/2.f) * velocity[i].speed * dt;
 		}
 
 		for(unsigned j=0;j<env->maxEntities();j++)
@@ -36,18 +36,18 @@ void PhysicsSystem::update(Environment* env, float dt)
 				env->hasComponents<Transform, BoundingCircle>(j))
 			{
 				if(intersectCircleCircle(
-					transform[i].x, transform[i].y, bounding_circle[i].radius,
-					transform[j].x, transform[j].y, bounding_circle[j].radius))
+					transform[i].pos.x, transform[i].pos.y, bounding_circle[i].radius,
+					transform[j].pos.x, transform[j].pos.y, bounding_circle[j].radius))
 
 				{
 					env->emit(new CollisionEvent(i, j));
 
-					if(	!env->hasComponents<Projectile>(i) &&
-						!env->hasComponents<Projectile>(j))
+					if(	env->hasComponents<Solid>(i) &&
+						env->hasComponents<Solid>(j))
 					{
 						feedbackCircleCircle(
-							transform[i].x, transform[i].y, bounding_circle[i].radius,
-							transform[j].x, transform[j].y, bounding_circle[j].radius);
+							transform[i].pos.x, transform[i].pos.y, bounding_circle[i].radius,
+							transform[j].pos.x, transform[j].pos.y, bounding_circle[j].radius);
 					}
 				}
 			}

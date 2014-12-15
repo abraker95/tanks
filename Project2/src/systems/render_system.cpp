@@ -48,7 +48,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 					!env->hasComponents<GUIObj>(i))
 				{
 					sf::Sprite& sprite = sprites[i].sprite;
-						sprite.setPosition(trans[i].x, trans[i].y);
+						sprite.setPosition(trans[i].pos.x, trans[i].pos.y);
 						sprite.setRotation(trans[i].rot);
 						sprite.setTexture(*textures[i].texture);
 						window->draw(sprite);
@@ -67,7 +67,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 		if(env->hasComponents<Transform, Sprite, Texture, GUIObj>(i))
 		{
 			sf::Sprite& sprite = sprites[i].sprite;
-				sprite.setPosition(trans[i].x, trans[i].y);
+				sprite.setPosition(trans[i].pos.x, trans[i].pos.y);
 				sprite.setRotation(trans[i].rot);
 				sprite.setTexture(*textures[i].texture);
 				window->draw(sprite);
@@ -85,14 +85,14 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 			auto button = env->get<StdComponent<sf::RectangleShape>>();
 
 			const float margin = 50;
-			sf::FloatRect dim = sf::FloatRect(trans[i].x,									 trans[i].y,
+			sf::FloatRect dim = sf::FloatRect(trans[i].pos.x,									 trans[i].pos.y,
 			          						  labels[i].label.getLocalBounds().width+margin, labels[i].label.getLocalBounds().height+margin);
 
 			button[i].data->setSize(sf::Vector2f(dim.width, dim.height));
 			button[i].data->setFillColor(sf::Color(50, 50, 100, 255));
 			window->draw(*button[i].data);
 			
-			sf::Vector2i pos = sf::Mouse::getPosition(*window);
+			Vec2i pos = sf::Mouse::getPosition(*window);
 
 		//	PRINT_DEBUG(std::cout<<" X pos view: "<<trans[i].x<<" X pos screen: "<<pos.x<<std::endl, HI_DEBUG, GFXSYS);
 		//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
@@ -116,8 +116,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* window)
 
 			if(ui[i].state.test(UserInterface::DRAG))
 			{
-				trans[i].x = sf::Mouse::getPosition().x;
-				trans[i].y = sf::Mouse::getPosition().y;
+				trans[i].pos = sf::Mouse::getPosition();
 			}			
 
 			window->draw(labels[i].label);

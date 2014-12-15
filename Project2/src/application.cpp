@@ -27,7 +27,7 @@ Application::Application() : main_env(64)
 
 	// testing button
 	main_env.createEntity("button1",
-		new Transform(200.f, 30.f, 0.f),
+		new Transform(Vec2f(200.f, 30.f), 0.f),
 		new GUIObj(GUIObj::BUTTON, []()->void* { std::cout<<"button works"<<std::endl; return nullptr; }),
 		new Label("button test")
 	);
@@ -52,6 +52,7 @@ Application::Application() : main_env(64)
 	expiring_system = new ExpiringSystem();
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
+	damage_system = new DamageSystem();
 }
 
 Application::~Application()
@@ -62,6 +63,7 @@ Application::~Application()
 	delete expiring_system;
 	delete physics_system;
 	delete view_system;
+	delete damage_system;
 
 	if(window)
 		delete window;
@@ -92,6 +94,7 @@ void Application::update(float dt)
 	ui_system->update(&main_env);
 	expiring_system->update(&main_env, dt);
 	physics_system->update(&main_env, dt);
+	damage_system->update(&main_env);
 	view_system->update(&main_env, window, dt);
 	render_system->update(&main_env, window);
 

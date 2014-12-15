@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include <SFML/Graphics.hpp>
 
 template<typename T>
@@ -17,7 +18,14 @@ public:
 		y = v.y;
 	}
 
-	Vec2(const sf::Vector2<T>& v) 
+	template<typename U>
+	Vec2(const sf::Vector2<U>& v)
+	{
+		x = (T)v.x;
+		y = (T)v.y;
+	}
+
+	Vec2<T>(const sf::Vector2<T>& v) 
 	{ 
 		x = v.x;
 		y = v.y;
@@ -92,9 +100,14 @@ public:
 		return x == v.x && y == v.y;
 	}
 
+	T lengthSquared() const
+	{
+		return x * x + y * y;
+	}
+
 	T length() const
 	{
-		return (T)sqrtf((float)(x * x + y * y));
+		return (T)sqrtf((float)lengthSquared());
 	}
 
 	void normalize()
@@ -109,8 +122,26 @@ public:
 
 	bool isCollinear(const Vec2<T>& v) const
 	{
-		return getSlope() == v.getSlope();
+		return getSlope() == v.getSlope() || getSlope() == -v.getSlope();
+	}
+
+	bool isPerpendicular(const Vec2<T>& v) const
+	{
+		return dot(v) == (T)0;
+	}
+
+	template<typename U>
+	sf::Vector2<U> sfmlVector() const
+	{
+		return sf::Vector2<U>((U)x, (U)y);
 	}
 
 	T x, y;
 };
+
+typedef Vec2<double> Vec2d;
+typedef Vec2<float> Vec2f;
+typedef Vec2<int> Vec2i;
+typedef Vec2<unsigned int> Vec2u;
+typedef Vec2<unsigned char> Vec2u8;
+typedef Vec2<unsigned short> Vec2u16;

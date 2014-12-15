@@ -105,6 +105,7 @@ public:
 	{
 		entity_mask.resize(num_entities);
 		components_pointer.resize(num_entities);
+		entityName.resize(num_entities);
 	}
 
 	virtual ~Environment() 
@@ -126,14 +127,9 @@ public:
 		unsigned new_id = requestID();
 		addComponents<T...>(new_id, t...);
 		
-		PRINT_DEBUG(std::cout<<" Create Entity: "<<new_id-1<<"   Name size: "<<entityName.size()<<"   Name: "<<_name<<std::endl, MED_DEBUG, ENVSYS);
+		PRINT_DEBUG(std::cout<<" Create Entity: "<<new_id<<"    Name: "<<_name<<std::endl, MED_DEBUG, ENVSYS);
 
-		// if the the ID is not a newly generated one, then a previous position exists within the name array
-		if(entityName.size() > new_id)
-			entityName[new_id-1] = _name;
-		else
-			entityName.push_back(_name);
-
+		entityName[new_id] = _name;
 		return new_id;
 	}
 
@@ -156,13 +152,14 @@ public:
 	std::string getEntityName(int _id)
 	{
 		// \TODO: Add invalid ref check
-		return entityName[_id-1];
+		return entityName[_id];
 	}
 
 	int getID(std::string _entityName)
 	{
 		for(unsigned int i = 0; i<entityName.size(); i++)
 			if(entityName[i] == _entityName) return i+1;
+		return 0;
 	}
 
 	// ORing every 1<<Component<T>::bitpos
@@ -252,7 +249,7 @@ public:
 	}
 
 	template<typename T>
-	unsigned getNumEvents()
+	unsigned numEvents()
 	{
 		return events_queue[Event<T>::bitpos()].size();
 	}
@@ -332,7 +329,7 @@ public:
 
 	unsigned size()
 	{
-		return env->getNumEvents<T>();
+		return env->numEvents<T>();
 	}
 
 private:

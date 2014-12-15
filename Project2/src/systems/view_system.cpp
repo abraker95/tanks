@@ -58,14 +58,14 @@ void ViewSystem::getMinimalView(
 {
 	auto transform = env->get<Transform>();
 
-	sf::Vector2f min(transform[focusedObjects[0]].x, transform[focusedObjects[0]].y);
+	sf::Vector2f min = transform[focusedObjects[0]].pos.sfmlVector<float>();
 	sf::Vector2f max = min;
 
 	// compute the "average" point
 	_viewCenter = sf::Vector2f(0.f, 0.f);
 	for(size_t i=0;i<focusedObjects.size();i++)
 	{
-		const sf::Vector2f pos = sf::Vector2f(transform[focusedObjects[i]].x, transform[focusedObjects[i]].y);
+		const sf::Vector2f pos = transform[focusedObjects[i]].pos.sfmlVector<float>();
 		_viewCenter.x += pos.x;
 		_viewCenter.y += pos.y;
 
