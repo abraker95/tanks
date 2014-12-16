@@ -64,7 +64,7 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 					if(gun[i].fireClock.getElapsedTime().asSeconds() > gun[i].fireCooldown)
 					{
 						gun[i].fireClock.restart();
-						entity_manager->spawnBullet("bullet", env, texture_manager, i);
+						entity_manager->spawnBullet("", env, texture_manager, i);
 					}
 				}
 			}
