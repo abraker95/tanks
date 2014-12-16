@@ -1,6 +1,7 @@
 #pragma once
 #include "core/environment.h"
-#include "include/math.h"
+#include "math.h"
+#include "math/vector.h"
 
 struct BoundingBox : public Component<BoundingBox>
 {

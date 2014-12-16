@@ -71,17 +71,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Components.h" />
+    <ClInclude Include="include\components\bounding_box.h" />
     <ClInclude Include="include\components\GUIObj.h" />
     <ClInclude Include="include\components\Label.h" />
     <ClInclude Include="include\components\map_desc.h" />
+    <ClInclude Include="include\components\solid.h" />
     <ClInclude Include="include\components\sprite.h" />
+    <ClInclude Include="include\components\StdComponent.h" />
     <ClInclude Include="include\components\texture.h" />
+    <ClInclude Include="include\components\tilemap.h" />
     <ClInclude Include="include\components\VertexArray.h" />
     <ClInclude Include="include\components\ViewController.h" />
+    <ClInclude Include="include\Managers.h" />
     <ClInclude Include="include\managers\entity_manager.h" />
     <ClInclude Include="include\managers\map_loader.h" />
     <ClInclude Include="include\managers\texture_manager.h" />
+    <ClInclude Include="include\math\vector.h" />
     <ClInclude Include="include\Systems.h" />
+    <ClInclude Include="include\systems\damage_system.h" />
     <ClInclude Include="include\systems\UI_System.h" />
     <ClInclude Include="include\systems\view_system.h" />
     <ClInclude Include="include\application.h" />
@@ -113,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\components\bounding_box.cpp" />
     <ClCompile Include="src\components\bounding_circle.cpp" />
     <ClCompile Include="src\components\expires.cpp" />
     <ClCompile Include="src\components\GUIObj.cpp" />
@@ -122,10 +130,10 @@
     <ClCompile Include="src\components\map_desc.cpp" />
     <ClCompile Include="src\components\MouseControls.cpp" />
     <ClCompile Include="src\components\projectile.cpp" />
+    <ClCompile Include="src\components\solid.cpp" />
     <ClCompile Include="src\components\sprite.cpp" />
     <ClCompile Include="src\components\tank_controls.cpp" />
     <ClCompile Include="src\components\texture.cpp" />
-    <ClCompile Include="src\components\texture_handle.cpp" />
     <ClCompile Include="src\components\tilemap.cpp" />
     <ClCompile Include="src\components\transform.cpp" />
     <ClCompile Include="src\components\UserInterface.cpp" />
@@ -136,6 +144,7 @@
     <ClCompile Include="src\managers\entity_manager.cpp" />
     <ClCompile Include="src\managers\map_loader.cpp" />
     <ClCompile Include="src\managers\texture_manager.cpp" />
+    <ClCompile Include="src\systems\damage_system.cpp" />
     <ClCompile Include="src\systems\expiring_system.cpp" />
     <ClCompile Include="src\systems\input_system.cpp" />
     <ClCompile Include="src\systems\physics_system.cpp" />
