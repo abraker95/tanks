@@ -25,7 +25,10 @@ void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 			}
 
 			if(focusedObjects.size() == 0)
+			{
+				std::cout<<"no focused objects!"<<std::endl;
 				continue;
+			}
 			
 			float ratio = (float)window->getSize().x/(float)window->getSize().y;
 			ratio *= view_controller[i].viewport.width/view_controller[i].viewport.height;

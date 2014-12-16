@@ -149,7 +149,7 @@ public:
 		return mask;
 	}
 
-	std::string getEntityName(int _id)
+	std::string getEntityName(unsigned _id)
 	{
 		// \TODO: Add invalid ref check
 		return entityName[_id];
@@ -158,7 +158,7 @@ public:
 	int getID(std::string _entityName)
 	{
 		for(unsigned int i = 0; i<entityName.size(); i++)
-			if(entityName[i] == _entityName) return i+1;
+			if(entityName[i] == _entityName) return i;
 		return 0;
 	}
 
