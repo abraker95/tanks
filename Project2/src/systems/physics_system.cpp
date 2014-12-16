@@ -25,36 +25,52 @@ void PhysicsSystem::update(Environment* env, float dt)
 			transform[i].pos += Vec2f(Vec2f::Polar(transform[i].rot + 90.f, velocity[i].speed * dt));
 		}
 
-		for(unsigned j=0;j<env->maxEntities();j++)
+		// this if-else if reduces the complexity a lot
+		if(env->hasComponents<Transform, BoundingCircle>(i))
 		{
-			handleCircleCircleCollisions(env, i, j);			
-			handleRectCircleCollisions(env, i, j);
+			for(unsigned j=0;j<env->maxEntities();j++)
+			{
+				handleCircleCircleCollisions(env, i, j, j);			
+			}
+			
+			for(unsigned j=0;j<env->maxEntities();j++)
+			{
+				handleRectCircleCollisions(env, j, i, i);
+			}
+		}
+
+		else if(env->hasComponents<Transform, BoundingBox>(i))
+		{
+			for(unsigned j=0;j<env->maxEntities();j++)
+			{
+				handleRectCircleCollisions(env, i, j, j);
+			}
 		}
 	}
 }
 
-void PhysicsSystem::handleCircleCircleCollisions(Environment* env, unsigned i, unsigned j)
+void PhysicsSystem::handleCircleCircleCollisions(
+	Environment* env, unsigned circle1, unsigned circle2, unsigned obstacle)
 {
-	auto transform = env->get<Transform>();
-	auto bounding_circle = env->get<BoundingCircle>();
-
-	if(i != j && 
-		env->hasComponents<Transform, BoundingCircle>(i) && 
-		env->hasComponents<Transform, BoundingCircle>(j))
+	if(circle1 != circle2 && env->hasComponents<Transform, BoundingCircle>(obstacle))
 	{
+		auto transform = env->get<Transform>();
+		auto bounding_circle = env->get<BoundingCircle>();
+
 		if(intersectCircleCircle(
-			transform[i].pos, bounding_circle[i].radius,
-			transform[j].pos, bounding_circle[j].radius))
+			transform[circle1].pos, bounding_circle[circle1].radius,
+			transform[circle2].pos, bounding_circle[circle2].radius))
 
 		{
-			env->emit(new CollisionEvent(i, j));
+			env->emit(new CollisionEvent(circle1, circle2));
 
-			if(	env->hasComponents<Solid>(i) &&
-				env->hasComponents<Solid>(j))
+			if(	env->hasComponents<Solid>(circle1) &&
+				env->hasComponents<Solid>(circle2))
 			{
-				transform[i].pos += feedbackCircleCircle(
-					transform[i].pos, bounding_circle[i].radius,
-					transform[j].pos, bounding_circle[j].radius);
+				unsigned pusher = obstacle == circle1 ? circle2 : circle1;
+				transform[pusher].pos += feedbackCircleCircle(
+					transform[circle1].pos, bounding_circle[circle2].radius,
+					transform[circle2].pos, bounding_circle[circle2].radius);
 			}
 		}
 	}
@@ -80,53 +96,34 @@ Vec2f PhysicsSystem::feedbackCircleCircle(
 	return c2 + delta - c1;
 }
 
-void PhysicsSystem::handleRectCircleCollisions(Environment* env, unsigned i, unsigned j)
+void PhysicsSystem::handleRectCircleCollisions(
+	Environment* env, unsigned box, unsigned circle, unsigned obstacle)
 {
-	if(i == j) 
-		return;
-
-	unsigned box = 0;
-	unsigned circle = 0;
-
-	auto transform = env->get<Transform>();
-	auto bounding_circle = env->get<BoundingCircle>();
-	auto bounding_box = env->get<BoundingBox>();
-
-	if(
-		env->hasComponents<Transform, BoundingCircle>(i) && 
-		env->hasComponents<Transform, BoundingBox>(j))
+	if(box != circle && 
+		env->hasComponents<Transform, BoundingCircle>(circle) && 
+		env->hasComponents<Transform, BoundingBox>(box))
 	{
-		circle = i;
-		box = j;
-	}
+		auto transform = env->get<Transform>();
+		auto bounding_circle = env->get<BoundingCircle>();
+		auto bounding_box = env->get<BoundingBox>();
 
-	else if(
-		env->hasComponents<Transform, BoundingCircle>(j) && 
-		env->hasComponents<Transform, BoundingBox>(i))
-	{
-		circle = j;
-		box = i;
-	}
-
-	else
-		return;
-	
-	if(intersectRectCircle(
-		transform[box].pos, bounding_box[box].size, 
-		transform[circle].pos, bounding_circle[circle].radius))
-	{
-		env->emit(new CollisionEvent(i, j));
-		if(	env->hasComponents<Solid>(i) &&
-			env->hasComponents<Solid>(j))
+		if(intersectRectCircle(
+			transform[box].pos, bounding_box[box].size, 
+			transform[circle].pos, bounding_circle[circle].radius))
 		{
-			Vec2f delta = feedbackRectCircle(
-				transform[box].pos, bounding_box[box].size,
-				transform[circle].pos, bounding_circle[circle].radius);
+			env->emit(new CollisionEvent(box, circle));
+			if(	env->hasComponents<Solid>(box) &&
+				env->hasComponents<Solid>(circle))
+			{
+				Vec2f delta = feedbackRectCircle(
+					transform[box].pos, bounding_box[box].size,
+					transform[circle].pos, bounding_circle[circle].radius);
 
-			if(i == circle)
-				transform[i].pos += delta;
-			else
-				transform[j].pos -= delta;
+				if(obstacle == box)
+					transform[box].pos += delta;
+				else
+					transform[circle].pos -= delta;
+			}
 		}
 	}
 }
