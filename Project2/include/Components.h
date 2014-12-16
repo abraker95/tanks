@@ -18,4 +18,5 @@
 #include "components\ViewController.h"
 #include "components\Label.h"
 #include "components\solid.h"
+#include "components\bounding_box.h"
 //#include "Components\StdComponent.h"
