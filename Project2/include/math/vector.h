@@ -102,7 +102,7 @@ public:
 	Vec2<T> operator/(const T& n) const
 	{
 		Vec2<T> tmp(*this);
-		return tmp *= n;
+		return tmp /= n;
 	}
 
 	float dot(const Vec2<T>& v) const

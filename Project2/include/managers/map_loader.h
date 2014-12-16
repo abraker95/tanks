@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
 #include "managers/texture_manager.h"
@@ -29,4 +30,6 @@ private:
 		char& tileCountX, char& tileCountY,
 		char& numLayers,
 		char*& mapData);
+	
+	std::vector<sf::VertexArray*> arrays;
 };

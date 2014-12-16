@@ -9,6 +9,8 @@ MapLoader::MapLoader()
 
 MapLoader::~MapLoader()
 {
+	for(unsigned i=0;i<arrays.size();i++)
+		delete arrays[i];
 }
 
 
@@ -30,6 +32,8 @@ unsigned MapLoader::createMap(Environment* env, TextureManager* tex_man, std::st
 
 	sf::VertexArray* array = buildVA(
 		env, tileset, (int)tileWidth, (int)tileHeight, (int)tileCountX, (int)tileCountY, (int)numLayers, mapData);
+
+	arrays.push_back(array);
 
 	return env->createEntity("map",
 		new VertexArray(array),
@@ -85,7 +89,6 @@ sf::VertexArray* MapLoader::buildVA(
 	vertices->setPrimitiveType(sf::Quads);
 	vertices->resize(tileCountX * tileCountY * 4);
 
-
 	int quadIndex = 0;
 	for(int l=0;l<numLayers;l++)
 	{
@@ -99,13 +102,12 @@ sf::VertexArray* MapLoader::buildVA(
 			{
 				int tileType = (int)layerData[(j * tileCountX + i) * 2];
 				int tileNumber = (int)layerData[(j * tileCountX + i) * 2 + 1];
+				int tu = tileNumber % (tileset->getSize().x / tileWidth);
+				int tv = tileNumber / (tileset->getSize().x / tileWidth);
 				
 				// 1st layer
 				if(l == 0 && tileType != 0)
 				{
-					float tu = tileNumber % (tileset->getSize().x / tileWidth);
-					float tv = tileNumber / (tileset->getSize().x / tileWidth);
-
 					sf::Vertex* quad = &(*vertices)[quadIndex++ * 4];
 
 					quad[0].position = sf::Vector2f((float)i       	* tileWidth, (float)j	   	* tileHeight);
@@ -113,16 +115,29 @@ sf::VertexArray* MapLoader::buildVA(
 					quad[2].position = sf::Vector2f((float)(i + 1) 	* tileWidth, (float)(j + 1) * tileHeight);
 					quad[3].position = sf::Vector2f((float)i		* tileWidth, (float)(j + 1) * tileHeight);
 
-					quad[0].texCoords = sf::Vector2f(tu		 	* tileWidth, tv		  * tileHeight);
-					quad[1].texCoords = sf::Vector2f((tu + 1) 	* tileWidth, tv		  * tileHeight);
-					quad[2].texCoords = sf::Vector2f((tu + 1) 	* tileWidth, (tv + 1) * tileHeight);
-					quad[3].texCoords = sf::Vector2f(tu		 	* tileWidth, (tv + 1) * tileHeight);
+					quad[0].texCoords = sf::Vector2f((float)tu		 	* tileWidth, (float)tv		 * tileHeight);
+					quad[1].texCoords = sf::Vector2f((float)(tu + 1)	* tileWidth, (float)tv		 * tileHeight);
+					quad[2].texCoords = sf::Vector2f((float)(tu + 1) 	* tileWidth, (float)(tv + 1) * tileHeight);
+					quad[3].texCoords = sf::Vector2f((float)tu		 	* tileWidth, (float)(tv + 1) * tileHeight);
 				}
 
 				// 2nd layer
 				if(l == 1 && tileType != 0)
 				{
-					// TODO: Create walls entities
+					auto sprites = env->get<Sprite>();
+
+					unsigned new_wall = env->createEntity("",
+						new Transform(Vec2f(
+							((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
+						new Texture(tileset),
+						new BoundingBox(Vec2f(tileWidth, tileHeight)),
+						new Sprite(),
+						new Solid()
+					);
+
+					sprites[new_wall].sprite.setOrigin((float)tileWidth/2.f, (float)tileHeight/2.f);
+					sprites[new_wall].sprite.setTextureRect(
+						sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight));
 				}
 			}
 		}

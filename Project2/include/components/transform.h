@@ -5,10 +5,12 @@
 
 struct Transform : public Component<Transform>
 {
-	Transform(Vec2f pos, float rot);
+	Transform(Vec2f pos, float rot = 0.f);
+	Transform(Vec2f pos, Vec2f scale, float rot = 0.f);
 
 	Vec2f pos;
 	float rot;
+	Vec2f scale;
 
 	// only geometric transformations here - Sherushe
 	/*

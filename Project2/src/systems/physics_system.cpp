@@ -28,6 +28,7 @@ void PhysicsSystem::update(Environment* env, float dt)
 		for(unsigned j=0;j<env->maxEntities();j++)
 		{
 			handleCircleCircleCollisions(env, i, j);			
+			handleRectCircleCollisions(env, i, j);
 		}
 	}
 }
@@ -109,6 +110,25 @@ void PhysicsSystem::handleRectCircleCollisions(Environment* env, unsigned i, uns
 
 	else
 		return;
+	
+	if(intersectRectCircle(
+		transform[box].pos, bounding_box[box].size, 
+		transform[circle].pos, bounding_circle[circle].radius))
+	{
+		env->emit(new CollisionEvent(i, j));
+		if(	env->hasComponents<Solid>(i) &&
+			env->hasComponents<Solid>(j))
+		{
+			Vec2f delta = feedbackRectCircle(
+				transform[box].pos, bounding_box[box].size,
+				transform[circle].pos, bounding_circle[circle].radius);
+
+			if(i == circle)
+				transform[i].pos += delta;
+			else
+				transform[j].pos -= delta;
+		}
+	}
 }
 
 bool PhysicsSystem::intersectRectCircle(const Vec2f& p1, const Vec2f& s1, const Vec2f& c2, float r2)
@@ -167,7 +187,7 @@ bool PhysicsSystem::intersectLineCircle(const Vec2f& s1, const Vec2f& f1, const 
 bool PhysicsSystem::intersectPointCircle(const Vec2f& p1, const Vec2f& c2, float r2)
 {
 	Vec2f delta = p1 - c2;
-	return (delta.lengthSquared() < r2 * r2);
+	return (delta.lengthSquared() <= r2 * r2);
 }
 
 bool PhysicsSystem::intersectPointRect(const Vec2f& p1, const Vec2f& p2, const Vec2f& s)
