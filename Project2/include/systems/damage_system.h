@@ -10,5 +10,4 @@ public:
 
 private:
 	void handleProjectiles(Environment* env, const CollisionEvent& collision);
-	void removeFocus(Environment* env, unsigned target_id);
 };

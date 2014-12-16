@@ -28,7 +28,7 @@ Application::Application() : main_env(64)
 	// testing button
 	main_env.createEntity("button1",
 		new Transform(Vec2f(200.f, 30.f), 0.f),
-		new GUIObj(GUIObj::BUTTON, [this]()->void* { main_env.destroyEntity(main_env.getID("tank1")); return nullptr; }),
+		new GUIObj(GUIObj::BUTTON, [this]()->void* { main_env.destroyEntity(main_env.getID("tank1")); main_env.emit(new DestroyEvent(main_env.getID("tank1"))); return nullptr; }),
 		new Label("Click to destory tank!")
 	);
 

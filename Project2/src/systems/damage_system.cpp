@@ -53,34 +53,13 @@ void DamageSystem::handleProjectiles(Environment* env, const CollisionEvent& col
 					{
 						std::cout<<" *BOOM*"<<std::endl;
 						
-						removeFocus(env, target_id);
+						env->emit(new DestroyEvent(target_id));
 						env->destroyEntity(target_id);
 					}
 				}
 				
 				env->destroyEntity(projectile_id);
 			}
-		}
-	}
-}
-
-void DamageSystem::removeFocus(Environment* env, unsigned target_id)
-{
-	auto view_controller = env->get<ViewController>();
-	for(unsigned i=0;i<env->maxEntities();i++)
-	{
-		if(env->hasComponents<ViewController>(i))
-		{
-			std::vector<unsigned>& focuses = view_controller[i].focusedObjects;
-			for(unsigned j=0;j<focuses.size();j++)
-			{
-				if(focuses[j] == target_id)
-				{
-					focuses.erase(focuses.begin()+j);
-					break;
-				}
-			}
-			break;
 		}
 	}
 }

@@ -29,6 +29,7 @@ foreach(component
 	ViewController
 	Label
 	solid
+	bounding_box
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)

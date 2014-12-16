@@ -1,6 +1,7 @@
 #include "systems/view_system.h"
 #include "components/transform.h"
 #include "components/ViewController.h"
+#include "events.h"
 
 void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 {
@@ -10,7 +11,20 @@ void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 	{
 		if(env->hasComponents<ViewController>(i))
 		{
-			if(view_controller[i].focusedObjects.size() == 0)
+			auto destroyed = env->getEvents<DestroyEvent>();
+			std::vector<unsigned>& focusedObjects = view_controller[i].focusedObjects;
+			for(unsigned j=0;j<destroyed.size();j++)
+			{
+				for(unsigned k=0;k<focusedObjects.size();)
+				{
+					if(focusedObjects[k] == destroyed[j].entity)
+						focusedObjects.erase(focusedObjects.begin() + k);
+					else
+						k++;
+				}
+			}
+
+			if(focusedObjects.size() == 0)
 				continue;
 			
 			float ratio = (float)window->getSize().x/(float)window->getSize().y;
@@ -24,7 +38,6 @@ void ViewSystem::update(Environment* env, sf::RenderWindow* window, float dt)
 			sf::FloatRect& borders = view_controller[i].borders;
 			sf::Vector2f& prevViewSize = view_controller[i].prevViewSize;
 			sf::Vector2f& prevViewCenter = view_controller[i].prevViewCenter;
-			std::vector<unsigned> focusedObjects = view_controller[i].focusedObjects;
 			
 			getMinimalView(env, viewCenter, viewSize, focusedObjects);
 

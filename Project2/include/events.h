@@ -9,3 +9,10 @@ struct CollisionEvent : public Event<CollisionEvent>
 	unsigned entity1;
 	unsigned entity2;
 };
+
+struct DestroyEvent : public Event<DestroyEvent>
+{
+	DestroyEvent(unsigned entity) : entity(entity) {}
+
+	unsigned entity;
+};
