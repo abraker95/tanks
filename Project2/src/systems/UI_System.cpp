@@ -101,7 +101,7 @@ void UISystem::update(Environment* env)
 				// This is needed for the logic handeling the case where the cursor goes fast
 				// enough to escape the object's bounds
 				bool drag = ui[i].enable.test(UserInterface::DRAG),
-					toggle = ui[i].enable.test(UserInterface::TOGGLE);
+					 toggle = ui[i].enable.test(UserInterface::TOGGLE);
 
 				ui[i].state.reset();
 				if(ui[i].cursorOnThis)
