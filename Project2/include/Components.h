@@ -19,3 +19,5 @@
 #include "components\Label.h"
 #include "components\solid.h"
 #include "components\KeyControls.h"
+#include "components\bounding_box.h"
+//#include "Components\StdComponent.h"

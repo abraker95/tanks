@@ -4,7 +4,7 @@
 #include "Managers.h"
 #include "events.h"
 
-Application::Application() : main_env(64)
+Application::Application() : main_env(128)
 {
 // [CORE DECLARATIONS]
 

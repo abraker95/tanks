@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
 #include "managers/texture_manager.h"
@@ -15,9 +16,11 @@ public:
 
 private:
 	sf::VertexArray* buildVA(
+		Environment* env,
 		sf::Texture* tilesheet,
 		int tileWidth, int tileHeight,
 		int tileCountX, int tileCountY,
+		int numLayers,
 		char* mapData);
 
 	bool readMap(
@@ -25,5 +28,8 @@ private:
 		std::string& tilesheet,
 		char& tileWidth, char& tileHeight,
 		char& tileCountX, char& tileCountY,
+		char& numLayers,
 		char*& mapData);
+	
+	std::vector<sf::VertexArray*> arrays;
 };

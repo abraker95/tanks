@@ -220,6 +220,9 @@ public:
 	template<typename... T>
 	bool hasComponents(unsigned id)
 	{
+		if(entity_mask[id].none()) 
+			return false;
+
 		ComponentMask mask = getMask<T...>();
 		return (entity_mask[id] & mask) == mask;
 	}
