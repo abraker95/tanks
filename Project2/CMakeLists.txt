@@ -30,6 +30,7 @@ foreach(component
 	Label
 	solid
 	bounding_box
+	KeyControls
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)

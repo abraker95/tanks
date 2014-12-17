@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include "math/vector.h"
 #include "Components.h"
 #include "systems/physics_system.h"
@@ -130,8 +131,8 @@ void PhysicsSystem::handleRectCircleCollisions(
 
 bool PhysicsSystem::intersectRectCircle(const Vec2f& p1, const Vec2f& s1, const Vec2f& c2, float r2)
 {
-	if(intersectPointRect(c2, p1, s1))
-		return true;
+	if(!intersectRectRect(c2, p1, c2, Vec2f(r2 * 2.f, r2 * 2.f)))
+		return false;
 	
 	// the four corners
 	Vec2f cr1(p1.x - s1.x/2, p1.y - s1.y/2);
@@ -149,22 +150,44 @@ bool PhysicsSystem::intersectRectCircle(const Vec2f& p1, const Vec2f& s1, const 
 
 Vec2f PhysicsSystem::feedbackRectCircle(Vec2f& p1, const Vec2f& s, Vec2f& c2, float r2)
 {
-	Vec2f delta;
 
-	float dx1 = (c2.x + r2) - (p1.x - s.x/2.f);
-	float dx2 = (p1.x + s.x/2.f) - (c2.x - r2);
+	// corders - circle
+	if(
+		p1.x - s.x/2.f >  c2.x && p1.x + s.x/2.f < c2.x &&
+		p1.y - s.y/2.f > c2.y && p1.y + s.y/2.f < c2.y)
+	{
+		Vec2f corner = p1, delta;
 
-	delta.x = std::min(dx1, dx2);
+		corner.x += copysign(s.x/2.f, c2.x - p1.x);
+		corner.y += copysign(s.y/2.f, c2.y - p1.y);
 
-	float dy1 = (c2.y + r2) - (p1.y - s.y/2.f);
-	float dy2 = (p1.y + s.y/2.f) - (c2.y - r2);
+		delta = corner - c2;
 
-	delta.y = std::min(dy1, dy2);
-	
-	if(delta.x < delta.y) delta.y = 0.f;
-	else delta.x = 0.f;
-	
-	return delta;
+		delta.normalize();
+		delta *= r2;
+
+		return c2 + delta - corner;
+	}
+
+	// edges - circle
+	/* else */
+	{
+		Vec2f delta;
+		float dx1 = (c2.x + r2) - (p1.x - s.x/2.f);
+		float dx2 = (c2.x - r2) - (p1.x + s.x/2.f);
+
+		delta.x = abs(dx1) < abs(dx2) ? dx1 : dx2;
+
+		float dy1 = (c2.y + r2) - (p1.y - s.y/2.f);
+		float dy2 = (c2.y - r2) - (p1.y + s.y/2.f);
+
+		delta.y = abs(dy1) < abs(dy2) ? dy1 : dy2;
+		
+		if(abs(delta.x) < abs(delta.y)) delta.y = 0.f;
+		else delta.x = 0.f;
+		
+		return delta;
+	}
 }
 
 bool PhysicsSystem::intersectLineCircle(const Vec2f& s1, const Vec2f& f1, const Vec2f& c2, float r2)
@@ -192,5 +215,13 @@ bool PhysicsSystem::intersectPointRect(const Vec2f& p1, const Vec2f& p2, const V
 	return (
 		p1.x >= p2.x - s.x/2.f && p1.x <= p2.x + s.x/2.f &&
 		p1.y >= p2.y - s.y/2.f && p1.y <= p2.y + s.y/2.f
+	);
+}
+
+bool PhysicsSystem::intersectRectRect(const Vec2f& p1, const Vec2f& s1, const Vec2f& p2, const Vec2f& s2)
+{
+	return !( // not
+		p1.x - s1.x/2.f >= p2.x + s2.x/2.f || p2.x - s2.x/2.f >= p1.x + s1.x/2.f ||
+		p1.y - s1.y/2.f >= p2.y + s2.y/2.f || p2.y - s2.y/2.f >= p1.y + s1.y/2.f
 	);
 }

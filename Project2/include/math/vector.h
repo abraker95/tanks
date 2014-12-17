@@ -132,7 +132,7 @@ public:
 
 	float getSlope() const
 	{
-		return (float)x / (float)y;
+		return (float)y / (float)x;
 	}
 
 	bool isCollinear(const Vec2<T>& v) const
