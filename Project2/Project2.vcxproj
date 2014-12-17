@@ -73,6 +73,7 @@
     <ClInclude Include="include\Components.h" />
     <ClInclude Include="include\components\bounding_box.h" />
     <ClInclude Include="include\components\GUIObj.h" />
+    <ClInclude Include="include\components\KeyControls.h" />
     <ClInclude Include="include\components\Label.h" />
     <ClInclude Include="include\components\map_desc.h" />
     <ClInclude Include="include\components\solid.h" />
@@ -82,6 +83,7 @@
     <ClInclude Include="include\components\tilemap.h" />
     <ClInclude Include="include\components\VertexArray.h" />
     <ClInclude Include="include\components\ViewController.h" />
+    <ClInclude Include="include\events.h" />
     <ClInclude Include="include\Managers.h" />
     <ClInclude Include="include\managers\entity_manager.h" />
     <ClInclude Include="include\managers\map_loader.h" />
@@ -126,6 +128,7 @@
     <ClCompile Include="src\components\GUIObj.cpp" />
     <ClCompile Include="src\components\gun.cpp" />
     <ClCompile Include="src\components\health.cpp" />
+    <ClCompile Include="src\components\KeyControls.cpp" />
     <ClCompile Include="src\components\Label.cpp" />
     <ClCompile Include="src\components\map_desc.cpp" />
     <ClCompile Include="src\components\MouseControls.cpp" />

@@ -156,6 +156,12 @@
     <ClInclude Include="include\systems\damage_system.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\events.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\KeyControls.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Tank Game\Tank Game\Bullet_0.png">
@@ -266,6 +272,9 @@
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\components\solid.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\KeyControls.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>

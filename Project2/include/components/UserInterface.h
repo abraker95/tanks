@@ -22,6 +22,6 @@ class UserInterface: public Component<UserInterface>
 		};
 
 		std::function<void*()> *action;
-		std::bitset<UIstates> enable,state;
-		bool cursorOnThis;
+		std::bitset<UIstates> enable, state; // enable: what states are allowed, state: current state
+		bool cursorOnThis, show;
 };

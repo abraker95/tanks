@@ -18,4 +18,4 @@
 #include "components\ViewController.h"
 #include "components\Label.h"
 #include "components\solid.h"
-//#include "Components\StdComponent.h"
+#include "components\KeyControls.h"

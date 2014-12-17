@@ -26,11 +26,15 @@ Application::Application() : main_env(64)
 	entity_manager.createCamera("mainCamera", &main_env, borders, viewport, {tank1, tank2});
 
 	// testing button
-	main_env.createEntity("button1",
+	main_env.createEntity("Button1",
 		new Transform(Vec2f(200.f, 30.f), 0.f),
 		new GUIObj(GUIObj::BUTTON, [this]()->void* { main_env.emit(new DestroyEvent(main_env.getID("tank1"))); main_env.destroyEntity(main_env.getID("tank1"));  return nullptr; }),
 		new Label("Click to destory tank!")
 	);
+
+	main_env.createEntity("ESC UI",
+		new GUIObj(GUIObj::VOID, [this]()->void* { return nullptr; })
+		);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),

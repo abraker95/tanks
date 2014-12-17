@@ -1,5 +1,4 @@
 #pragma once
-
 #include "core/environment.h"
 
 struct CollisionEvent : public Event<CollisionEvent>
@@ -15,4 +14,9 @@ struct DestroyEvent : public Event<DestroyEvent>
 	DestroyEvent(unsigned entity) : entity(entity) {}
 
 	unsigned entity;
+};
+
+struct MenuEvent: public Event<MenuEvent>
+{
+	MenuEvent() {}
 };

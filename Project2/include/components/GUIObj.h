@@ -10,7 +10,8 @@ class GUIObj: public Component<GUIObj>
 			BUTTON,
 			SLIDER,
 			RADIO,
-			SCROLLBAR
+			SCROLLBAR,
+			VOID
 		};
 
 		GUIObj(Type _type, std::function<void*()> _action);

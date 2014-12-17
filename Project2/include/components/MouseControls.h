@@ -4,11 +4,11 @@
 #include <bitset>
 #include "core/environment.h"
 
+/// \TODO: This can be a singleton. There is no reason mouse states should be copied as entities.
 class MouseControls: public Component<MouseControls>
 {
 public:
 	MouseControls();
-	//MouseControls(std::array<sf::Mouse::Button, 3> _buttons);
 
 	enum
 	{

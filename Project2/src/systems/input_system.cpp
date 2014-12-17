@@ -13,6 +13,7 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 	auto tank_controls = env->get<TankControls>();
 	auto velocity = env->get<Velocity>();
 	auto mouseControls = env->get<MouseControls>();
+	auto keyControls = env->get<KeyControls>();
 
 	for(unsigned i=0; i<env->maxEntities(); i++)
 	{
@@ -33,9 +34,27 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 				  //PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
 				 }
 		  }
+
+		  if(env->hasComponents<KeyControls>(i))
+		  {
+			///  std::array<sf::Keyboard::Key, 256>& keys = keyControls[i].key;
+			  std::bitset<256>& pressState = keyControls[i].pressState,
+				  prevPressState = keyControls[i].pressState; // not a ref
+			  std::bitset<256>& clickState = keyControls[i].clickState;
+
+			  // update the mousestate bitmask
+			  pressState.reset();  clickState.reset();
+			  for(int j = 0; j<256; j++)
+				  if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key(j))))
+				  {
+				   if(prevPressState[j]^true) clickState.set(j, true);
+				   pressState.set(j, true);
+				  //PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
+				  }
+		  }
 		
-		if(env->hasComponents<TankControls, Velocity>(i))
-		{
+  		  if(env->hasComponents<TankControls, Velocity>(i))
+		  {
 			// update the keystate bitmask
 			std::array<sf::Keyboard::Key,5>& keys = tank_controls[i].keys;
 			std::bitset<5>& state = tank_controls[i].state;

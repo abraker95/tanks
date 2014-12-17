@@ -70,8 +70,8 @@ struct StdComponent: public Component<T>
 // Same concept as components but for events
 class EventBase 
 {
-public:
-	virtual ~EventBase() {}
+	public:
+		virtual ~EventBase() {}
 };
 
 inline unsigned getEventID()
@@ -84,6 +84,7 @@ template<typename T>
 class Event : public EventBase
 {
 	friend class Environment;
+
 	static unsigned bitpos() 
 	{
 		static unsigned id = getEventID();
@@ -91,7 +92,6 @@ class Event : public EventBase
 	}
 
 public:
-	Event() {}
 	virtual ~Event() {}
 };
 
@@ -195,7 +195,7 @@ public:
 		entity_mask[id] &= ~getMask<T>();
 
 		ComponentBase* ptr = components_pointer[id][Component<T>::bitpos()];
-		std::string* Nameptr = components_pointer[id][Component<T>::bitpos()];
+		std::string* Nameptr = (std::string*)components_pointer[id][Component<T>::bitpos()];
 		for(unsigned i=0;i<components.size();i++)
 		{
 			if(components[i] == ptr)
@@ -239,36 +239,49 @@ public:
 	template<typename T>
 	void emit(T* t)
 	{
-		events_queue[Event<T>::bitpos()].push_back(t);
+		int id = Event<T>::bitpos();
+		eventExec[id] = false;
+		events_queue[id].push_back(t);
 	}
 
 	template<typename T>
 	EventIterator<T> getEvents()
 	{
+		eventExec[Event<T>::bitpos()] = true;
 		return EventIterator<T>(this);
 	}
 
 	template<typename T>
 	unsigned numEvents()
 	{
+		//PRINT_DEBUG(cout<<"menuHides size: "<<events_queue[Event<T>::bitpos()].size()<<endl, HI_DEBUG, GFXSYS);
 		return events_queue[Event<T>::bitpos()].size();
 	}
 
 	template<typename T>
 	T* getEvent(unsigned index)
 	{
+	//	int id = Event<T>::bitpos();
+	//	eventExec[id] = true;
 		return static_cast<T*>(events_queue[Event<T>::bitpos()][index]);
 	}
 
 	void clearEvents()
 	{
+		//PRINT_DEBUG(cout<<"Clear Events "<<endl, HI_DEBUG, GFXSYS);
 		for(unsigned i=0;i<MAX_EVENTS;i++)
 		{
-			for(unsigned j=0;j<events_queue[i].size();j++)
+			//PRINT_DEBUG(cout<<" eventExec: "<<eventExec[i]<<"      events_queue: "<<i<<endl, HI_DEBUG, ENVSYS);
+
+			if(eventExec[i]==true)
 			{
-				delete events_queue[i][j];
+				for(unsigned j = 0; j<events_queue[i].size(); j++)
+				{
+					delete events_queue[i][j];
+				}
+
+				events_queue[i].clear();
 			}
-			events_queue[i].clear();
 		}
 	}
 
@@ -297,6 +310,7 @@ private:
 	std::vector<std::string> entityName;
 	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
 	std::array<std::vector<EventBase*>, MAX_EVENTS> events_queue;
+	std::array<bool, MAX_EVENTS> eventExec;
 };
 
 // The iterator is a wrapper class for the environment component getter
@@ -328,7 +342,7 @@ public:
 	}
 
 	unsigned size()
-	{
+	{	
 		return env->numEvents<T>();
 	}
 
