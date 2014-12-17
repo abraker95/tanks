@@ -76,7 +76,7 @@ void UISystem::update(Environment* env)
 	{
 		if(env->hasComponents<UserInterface, KeyControls>(i))
 		{
-			if(key[i].clickState.at(sf::Keyboard::Escape))
+			if(key[i].clickState.test(sf::Keyboard::Escape))
 			{
 				env->emit(new MenuEvent());
 			}

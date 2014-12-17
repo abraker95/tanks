@@ -24,4 +24,5 @@ private:
 	bool intersectLineCircle(const Vec2f& s1, const Vec2f& f1, const Vec2f& c1, float r2);
 	bool intersectPointCircle(const Vec2f& p1, const Vec2f& c1, float r2);
 	bool intersectPointRect(const Vec2f& p1, const Vec2f& p2, const Vec2f& s);
+	bool intersectRectRect(const Vec2f& p1, const Vec2f& s1, const Vec2f& p2, const Vec2f& s2);
 };
