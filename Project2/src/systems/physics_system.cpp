@@ -24,29 +24,31 @@ void PhysicsSystem::update(Environment* env, float dt)
 		{
 			transform[i].rot += velocity[i].vrot * dt;
 			transform[i].pos += Vec2f(Vec2f::Polar(transform[i].rot + 90.f, velocity[i].speed * dt));
-		}
-
-		// this if-else if reduces the complexity a lot
-		if(env->hasComponents<Transform, BoundingCircle>(i))
-		{
-			for(unsigned j=0;j<env->maxEntities();j++)
-			{
-				handleCircleCircleCollisions(env, i, j, j);			
-			}
 			
-			for(unsigned j=0;j<env->maxEntities();j++)
+			// this if-else if reduces the complexity a lot
+			if(velocity[i].speed != 0.f && env->hasComponents<Transform, BoundingCircle>(i))
 			{
-				handleRectCircleCollisions(env, j, i, i);
+				for(unsigned j=0;j<env->maxEntities();j++)
+				{
+					handleCircleCircleCollisions(env, i, j, j);			
+				}
+				
+				for(unsigned j=0;j<env->maxEntities();j++)
+				{
+					handleRectCircleCollisions(env, j, i, i);
+				}
+			}
+
+			else if(velocity[i].speed != 0.f && env->hasComponents<Transform, BoundingBox>(i))
+			{
+				for(unsigned j=0;j<env->maxEntities();j++)
+				{
+					handleRectCircleCollisions(env, i, j, j);
+				}
 			}
 		}
 
-		else if(env->hasComponents<Transform, BoundingBox>(i))
-		{
-			for(unsigned j=0;j<env->maxEntities();j++)
-			{
-				handleRectCircleCollisions(env, i, j, j);
-			}
-		}
+		
 	}
 }
 
