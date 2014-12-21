@@ -102,6 +102,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 						}
 						else PRINT_DEBUG(std::cout<<"ERROR: Could not load shader"<<std::endl, HI_DEBUG, GFXSYS);	
 					}
+					else shader = nullptr;
 				}
 			}
 		}
