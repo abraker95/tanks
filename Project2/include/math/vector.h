@@ -145,6 +145,11 @@ public:
 		return dot(v) == (T)0;
 	}
 
+	Vec2<T> getPerpendicular() const
+	{
+		return Vec2<T>(-y, x);
+	}
+
 	float getAngle() const
 	{
 		return atanf((float)y / (float)x);

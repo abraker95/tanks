@@ -10,7 +10,6 @@ set(manager_files "")
 set(system_files "")
 
 foreach(component
-	bounding_circle
 	expires
 	gun
 	health
@@ -23,7 +22,6 @@ foreach(component
 	MouseControls
 	sprite
 	texture
-	map_desc
 	VertexArray
 	Tilemap
 	ViewController

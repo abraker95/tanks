@@ -16,7 +16,7 @@ Application::Application() : main_env(128)
 
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = entity_manager.spawnTankPlayer("tank1", &main_env, &texture_manager, 200.f, 417.f, p1_keys);
+	unsigned tank1 = entity_manager.spawnTankPlayer("tank1", &main_env, &texture_manager, 200.f, 300.f, p1_keys);
 	
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
 	unsigned tank2 = entity_manager.spawnTankPlayer("tank2", &main_env, &texture_manager, 400.f, 300.f, p2_keys);

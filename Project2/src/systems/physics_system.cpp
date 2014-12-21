@@ -17,213 +17,114 @@ void PhysicsSystem::update(Environment* env, float dt)
 {
 	auto velocity = env->get<Velocity>();
 	auto transform = env->get<Transform>();
+	auto bounding_box = env->get<BoundingBox>();
 
 	for(unsigned i=0;i<env->maxEntities();i++)
 	{
 		if(env->hasComponents<Transform, Velocity>(i))
 		{
+			Vec2f vel = Vec2f::Polar(transform[i].rot + 90.f, velocity[i].speed);
+
+			if(velocity[i].speed != 0.f && env->hasComponents<Solid, BoundingBox>(i))
+			{
+				while(true)
+				{
+					float min_toi = 0.f, toi;
+					unsigned min_toi_entity;
+					Vec2f min_toi_vel;
+
+					for(unsigned j=0;j<env->maxEntities();j++)
+					{
+						if(env->hasComponents<Transform, Solid, BoundingBox>(j))
+						{
+							Vec2f vel_corrected = vel;
+							toi = avoidCollisionAABB(
+								transform[i].pos, bounding_box[i].size, vel_corrected, 
+								transform[j].pos, bounding_box[j].size, dt);
+
+							if(toi > 0.f && (min_toi == 0.f || toi < min_toi))
+							{
+								min_toi = toi;
+								min_toi_entity = j;
+								min_toi_vel = vel_corrected;
+							}
+						}
+					}
+
+					if(min_toi > 0.f)
+					{
+						env->emit(new CollisionEvent(i, min_toi_entity));
+						vel = min_toi_vel;
+					}
+					else
+						break;
+				}
+			}
+
+
+			transform[i].pos += vel * dt;
 			transform[i].rot += velocity[i].vrot * dt;
-			transform[i].pos += Vec2f(Vec2f::Polar(transform[i].rot + 90.f, velocity[i].speed * dt));
-			
-			// this if-else if reduces the complexity a lot
-			if(velocity[i].speed != 0.f && env->hasComponents<Transform, BoundingCircle>(i))
-			{
-				for(unsigned j=0;j<env->maxEntities();j++)
-				{
-					handleCircleCircleCollisions(env, i, j, j);			
-				}
-				
-				for(unsigned j=0;j<env->maxEntities();j++)
-				{
-					handleRectCircleCollisions(env, j, i, i);
-				}
-			}
-
-			else if(velocity[i].speed != 0.f && env->hasComponents<Transform, BoundingBox>(i))
-			{
-				for(unsigned j=0;j<env->maxEntities();j++)
-				{
-					handleRectCircleCollisions(env, i, j, j);
-				}
-			}
-		}
-
-		
-	}
-}
-
-void PhysicsSystem::handleCircleCircleCollisions(
-	Environment* env, unsigned circle1, unsigned circle2, unsigned obstacle)
-{
-	if(circle1 != circle2 && env->hasComponents<Transform, BoundingCircle>(obstacle))
-	{
-		auto transform = env->get<Transform>();
-		auto bounding_circle = env->get<BoundingCircle>();
-
-		if(intersectCircleCircle(
-			transform[circle1].pos, bounding_circle[circle1].radius,
-			transform[circle2].pos, bounding_circle[circle2].radius))
-
-		{
-			env->emit(new CollisionEvent(circle1, circle2));
-
-			if(	env->hasComponents<Solid>(circle1) &&
-				env->hasComponents<Solid>(circle2))
-			{
-				unsigned pusher = obstacle == circle1 ? circle2 : circle1;
-				transform[pusher].pos += feedbackCircleCircle(
-					transform[circle1].pos, bounding_circle[circle2].radius,
-					transform[circle2].pos, bounding_circle[circle2].radius);
-			}
 		}
 	}
 }
 
-bool PhysicsSystem::intersectCircleCircle(
-	const Vec2f& c1, float r1, const Vec2f& c2, float r2)
+// returns true if a collision was avoided
+float PhysicsSystem::avoidCollisionAABB(Vec2f& origin1, Vec2f& size1, Vec2f& vel, Vec2f& origin2, Vec2f& size2, float elapsed)
 {
-	Vec2f delta = c1 - c2;
-	float minDist = r1 + r2;
+	// size of minkowski sum
+	Vec2f MSsize = size1 + size2;
+	Vec2f normal;
 
-	return (delta.lengthSquared() < minDist * minDist);
-}
-
-Vec2f PhysicsSystem::feedbackCircleCircle(
-	const Vec2f& c1, float r1, const Vec2f& c2, float r2)
-{
-	Vec2f delta = c1 - c2;
-
-	delta.normalize();
-	delta *= r1 + r2;
-
-	return c2 + delta - c1;
-}
-
-void PhysicsSystem::handleRectCircleCollisions(
-	Environment* env, unsigned box, unsigned circle, unsigned obstacle)
-{
-	if(box != circle && 
-		env->hasComponents<Transform, BoundingCircle>(circle) && 
-		env->hasComponents<Transform, BoundingBox>(box))
+	float t = raycastOnAABB(origin1, vel, origin2, MSsize, normal);
+	if(t > 0.f && t < elapsed)
 	{
-		auto transform = env->get<Transform>();
-		auto bounding_circle = env->get<BoundingCircle>();
-		auto bounding_box = env->get<BoundingBox>();
+		Vec2f disp = vel * elapsed;
+		disp -= normal * normal.dot(disp);
+		vel = disp/elapsed;
 
-		if(intersectRectCircle(
-			transform[box].pos, bounding_box[box].size, 
-			transform[circle].pos, bounding_circle[circle].radius))
-		{
-			env->emit(new CollisionEvent(box, circle));
-			if(	env->hasComponents<Solid>(box) &&
-				env->hasComponents<Solid>(circle))
-			{
-				Vec2f delta = feedbackRectCircle(
-					transform[box].pos, bounding_box[box].size,
-					transform[circle].pos, bounding_circle[circle].radius);
-
-				if(obstacle == box)
-					transform[box].pos += delta;
-				else
-					transform[circle].pos -= delta;
-			}
-		}
+		return t;
 	}
+	return 0.f;
 }
 
-bool PhysicsSystem::intersectRectCircle(const Vec2f& p1, const Vec2f& s1, const Vec2f& c2, float r2)
+float PhysicsSystem::raycastOnAABB(Vec2f& point, Vec2f& dir, Vec2f& origin, Vec2f& size, Vec2f& normal)
 {
-	if(!intersectRectRect(c2, p1, c2, Vec2f(r2 * 2.f, r2 * 2.f)))
-		return false;
-	
-	// the four corners
-	Vec2f cr1(p1.x - s1.x/2, p1.y - s1.y/2);
-	Vec2f cr2(p1.x + s1.x/2, p1.y - s1.y/2);
-	Vec2f cr3(p1.x + s1.x/2, p1.y + s1.y/2);
-	Vec2f cr4(p1.x - s1.x/2, p1.y + s1.y/2);
+	float minX = origin.x - size.x/2.f, maxX = origin.x + size.x/2.f;
+	float minY = origin.y - size.y/2.f, maxY = origin.y + size.y/2.f;
+	float t = -1.f;
 
-	return (
-		intersectLineCircle(cr1, cr2, c2, r2) ||
-		intersectLineCircle(cr2, cr3, c2, r2) ||
-		intersectLineCircle(cr3, cr4, c2, r2) ||
-		intersectLineCircle(cr4, cr1, c2, r2)
-	);
-}
-
-Vec2f PhysicsSystem::feedbackRectCircle(Vec2f& p1, const Vec2f& s, Vec2f& c2, float r2)
-{
-
-	// corders - circle
-	if(
-		p1.x - s.x/2.f >  c2.x && p1.x + s.x/2.f < c2.x &&
-		p1.y - s.y/2.f > c2.y && p1.y + s.y/2.f < c2.y)
+	float y;
+	if(point.x < minX && dir.x != 0.f)
 	{
-		Vec2f corner = p1, delta;
-
-		corner.x += copysign(s.x/2.f, c2.x - p1.x);
-		corner.y += copysign(s.y/2.f, c2.y - p1.y);
-
-		delta = corner - c2;
-
-		delta.normalize();
-		delta *= r2;
-
-		return c2 + delta - corner;
+		normal = Vec2f(-1.f, 0.f);
+		t = (minX - point.x)/dir.x;
 	}
 
-	// edges - circle
-	/* else */
+	else if(point.x > maxX && dir.x != 0.f)
 	{
-		Vec2f delta;
-		float dx1 = (c2.x + r2) - (p1.x - s.x/2.f);
-		float dx2 = (c2.x - r2) - (p1.x + s.x/2.f);
-
-		delta.x = abs(dx1) < abs(dx2) ? dx1 : dx2;
-
-		float dy1 = (c2.y + r2) - (p1.y - s.y/2.f);
-		float dy2 = (c2.y - r2) - (p1.y + s.y/2.f);
-
-		delta.y = abs(dy1) < abs(dy2) ? dy1 : dy2;
-		
-		if(abs(delta.x) < abs(delta.y)) delta.y = 0.f;
-		else delta.x = 0.f;
-		
-		return delta;
+		normal = Vec2f(1.f, 0.f);
+		t = (maxX - point.x)/dir.x;
 	}
-}
-
-bool PhysicsSystem::intersectLineCircle(const Vec2f& s1, const Vec2f& f1, const Vec2f& c2, float r2)
-{
-	Vec2f lineVec = f1 - s1;
-	Vec2f lineCenter = c2 - s1;
 	
-	float length = lineVec.length();
-	Vec2f unitLineVec = lineVec / length;
+	y = point.y + t * dir.y;
+	if(t >= 0.f && y > minY && y < maxY)
+		return t;
 	
-	float projDist = lineCenter.dot(unitLineVec);
-	Vec2f proj = unitLineVec * projDist + s1;
+	float x;
+	if(point.y < minY && dir.y != 0.f)
+	{
+		normal = Vec2f(0.f, -1.f);
+		t = (minY - point.y)/dir.y;
+	}
+	else if(point.y > maxY && dir.y != 0.f)
+	{
+		normal = Vec2f(0.f, 1.f);
+		t = (maxY - point.y)/dir.y;
+	}
+	
+	x = point.x + t * dir.x;
+	if(t >= 0.f && x > minX && x < maxX)
+		return t;
 
-	return (projDist >= 0.f && projDist <= length && intersectPointCircle(proj, c2, r2));
-}
-
-bool PhysicsSystem::intersectPointCircle(const Vec2f& p1, const Vec2f& c2, float r2)
-{
-	Vec2f delta = p1 - c2;
-	return (delta.lengthSquared() <= r2 * r2);
-}
-
-bool PhysicsSystem::intersectPointRect(const Vec2f& p1, const Vec2f& p2, const Vec2f& s)
-{
-	return (
-		p1.x >= p2.x - s.x/2.f && p1.x <= p2.x + s.x/2.f &&
-		p1.y >= p2.y - s.y/2.f && p1.y <= p2.y + s.y/2.f
-	);
-}
-
-bool PhysicsSystem::intersectRectRect(const Vec2f& p1, const Vec2f& s1, const Vec2f& p2, const Vec2f& s2)
-{
-	return !( // not
-		p1.x - s1.x/2.f >= p2.x + s2.x/2.f || p2.x - s2.x/2.f >= p1.x + s1.x/2.f ||
-		p1.y - s1.y/2.f >= p2.y + s2.y/2.f || p2.y - s2.y/2.f >= p1.y + s1.y/2.f
-	);
+	return -1.f;
 }

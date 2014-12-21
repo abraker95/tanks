@@ -19,16 +19,14 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	auto sprite = env->get<Sprite>();
 
 	sf::Texture* texture = tex_man->load("res/Tank_0.png");
-	float radius = 0.f;
 	Vec2f origin;
 
+	Vec2u size = texture->getSize();
 	if(texture)
 	{
-		Vec2u size = texture->getSize();
 
 		origin.x = (float)size.x/2.f; 
 		origin.y = (float)size.y/2.f;
-		radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
 	}
 
 	unsigned new_tank = env->createEntity(_name,
@@ -36,7 +34,7 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		new Velocity(0.f, 0.f),
 		new Texture(texture),
 		new TankControls(keys),
-		new BoundingCircle(radius),
+		new BoundingBox(Vec2f((float)size.x, (float)size.y)),
 		new Health(100, 100),
 		new Gun(),
 		new Sprite(),
@@ -53,28 +51,25 @@ unsigned EntityManager::spawnBullet(std::string _name,
 	unsigned tank_id)
 {
 	auto transform = env->get<Transform>();
-	auto bounding_circle = env->get<BoundingCircle>();
+	auto bounding_box = env->get<BoundingBox>();
 	auto sprite = env->get<Sprite>();
 
-	if(!env->hasComponents<Transform, BoundingCircle>(tank_id))
+	if(!env->hasComponents<Transform, BoundingBox>(tank_id))
 		return 0;
 	
 	float start_x = 
-		transform[tank_id].pos.x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_circle[tank_id].radius;
+		transform[tank_id].pos.x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_box[tank_id].size.x/2.f;
 	float start_y = 
-		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_circle[tank_id].radius;
+		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_box[tank_id].size.x/2.f;
 	
 	sf::Texture* texture = tex_man->load("res/Bullet_0.png");
-	float radius = 0.f;
 	Vec2f origin;
 
+	Vec2u size = texture->getSize();
 	if(texture)
 	{
-		Vec2u size = texture->getSize();
-
 		origin.x = (float)size.x/2.f; 
 		origin.y = (float)size.y/2.f;
-		radius = size.x < size.y ? (float)size.x/2.f : (float)size.y/2.f;
 	}
 
 	unsigned new_bullet = env->createEntity(_name,
@@ -83,7 +78,8 @@ unsigned EntityManager::spawnBullet(std::string _name,
 		new Texture(texture),
 		new Expires(5.f),
 		new Projectile(20, tank_id),
-		new BoundingCircle(radius),
+		new BoundingBox(Vec2f((float)size.x, (float)size.y)),
+		new Solid(),
 		new Sprite()
 	);
 

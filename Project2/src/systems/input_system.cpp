@@ -75,7 +75,7 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 
 			if(state.test(TankControls::FIRE))
 			{
-				if(env->hasComponents<Gun, Transform, BoundingCircle>(i))
+				if(env->hasComponents<Gun, Transform>(i))
 				{
 					auto gun = env->get<Gun>();
 					auto transform = env->get<Transform>();
