@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\blur.frag" />
+    <None Include="res\blur.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Bullet_0.png" />

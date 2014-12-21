@@ -273,6 +273,9 @@
     <None Include="res\blur.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\blur.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Bullet_0.png">
