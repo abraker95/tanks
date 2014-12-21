@@ -9,6 +9,7 @@ Application::Application() : main_env(128)
 // [CORE DECLARATIONS]
 
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
+	fullscreen = false;
 
 // [ENTITY CREATION]
 	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
@@ -25,15 +26,49 @@ Application::Application() : main_env(128)
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
 	entity_manager.createCamera("mainCamera", &main_env, borders, viewport, {tank1, tank2});
 
+	/// \TODO: Put the button creation code into its own funtion
+
 	// testing button
-	main_env.createEntity("Button1",
+	main_env.createEntity("Test_Button",
 		new Transform(Vec2f(200.f, 30.f), 0.f),
 		new GUIObj(GUIObj::BUTTON, [this]()->void* { main_env.emit(new DestroyEvent(main_env.getID("tank1"))); main_env.destroyEntity(main_env.getID("tank1"));  return nullptr; }),
 		new Label("Click to destory tank!")
 	);
 
+	main_env.createEntity("Quit_Button",
+		new Transform(Vec2f(800.f, 30.f), 0.f),
+		new GUIObj(GUIObj::BUTTON, [this]()->void* { exit(0);  return nullptr; }),
+		new Label("Quit")
+		);
+
+	auto ToggleFullscreen = [this]()->void*
+	{
+		if(fullscreen == false)
+			window->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
+		else
+			window->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);			
+		
+		fullscreen = !fullscreen;
+		return nullptr;
+	};
+
+	main_env.createEntity("Full_Win_Button",
+		new Transform(Vec2f(200.f, 120.f), 0.f),
+		new GUIObj(GUIObj::BUTTON, ToggleFullscreen),
+		new Label("Fullscreen / Windowed")
+		);
+
+	main_env.createEntity("New_Game_Button",
+		new Transform(Vec2f(800.f, 120.f), 0.f),
+		new GUIObj(GUIObj::BUTTON, [this]()->void* {/* \TODO: Implement game reset code */  return nullptr; }),
+		new Label("New Game")
+		);
+
 	main_env.createEntity("ESC UI",
-		new GUIObj(GUIObj::VOID, [this]()->void* { return nullptr; })
+		new GUIObj(GUIObj::VOID, [this]()->void* { return nullptr; }),
+		new StdComponent<bool>(new bool(true), "visible"),
+		new StdComponent<sf::Texture>(nullptr, "shader_filter"),
+		new StdComponent<sf::Shader>(nullptr, "blur_shader")
 		);
 
 	/*main_env.createEntity(

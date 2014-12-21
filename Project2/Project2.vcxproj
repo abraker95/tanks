@@ -115,12 +115,6 @@
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Tank Game\Tank Game\Bullet_0.png" />
-    <Image Include="..\..\Tank Game\Tank Game\Tank_0.png" />
-    <Image Include="..\..\Tank Game\Tank Game\Tilesheet.png" />
-    <Image Include="Button.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\components\bounding_box.cpp" />
     <ClCompile Include="src\components\bounding_circle.cpp" />
@@ -156,7 +150,15 @@
     <ClCompile Include="src\systems\view_system.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="arial.ttf" />
+    <Font Include="res\arial.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\blur.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Bullet_0.png" />
+    <Image Include="res\Tank_0.png" />
+    <Image Include="res\Tilesheet.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

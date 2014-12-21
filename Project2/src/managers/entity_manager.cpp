@@ -18,7 +18,7 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 {
 	auto sprite = env->get<Sprite>();
 
-	sf::Texture* texture = tex_man->load("Tank_0.png");
+	sf::Texture* texture = tex_man->load("res/Tank_0.png");
 	float radius = 0.f;
 	Vec2f origin;
 
@@ -64,7 +64,7 @@ unsigned EntityManager::spawnBullet(std::string _name,
 	float start_y = 
 		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_circle[tank_id].radius;
 	
-	sf::Texture* texture = tex_man->load("Bullet_0.png");
+	sf::Texture* texture = tex_man->load("res/Bullet_0.png");
 	float radius = 0.f;
 	Vec2f origin;
 

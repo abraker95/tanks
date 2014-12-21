@@ -5,8 +5,12 @@
 class RenderSystem : public Component<RenderSystem>
 {
 	public:
-		RenderSystem(sf::RenderWindow* window);
+		RenderSystem(sf::RenderWindow* _win);
 		~RenderSystem();
 
-		void update(Environment* env, sf::RenderWindow* _win);
+		void update(Environment* _env, sf::RenderWindow* _win);
+
+	private:
+		sf::Shader* shader;
+		sf::RenderTexture GameScene, UIScene;
 };

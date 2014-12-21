@@ -164,20 +164,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Tank Game\Tank Game\Bullet_0.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\Tank Game\Tank Game\Tank_0.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\Tank Game\Tank Game\Tilesheet.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Button.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\components\bounding_circle.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -279,8 +265,24 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="arial.ttf">
+    <Font Include="res\arial.ttf">
       <Filter>Resource Files</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\blur.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Bullet_0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Tank_0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Tilesheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

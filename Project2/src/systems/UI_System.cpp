@@ -38,7 +38,7 @@ UISystem::UISystem(Environment* env)
 
 				/// \TODO: This is DANGEROUS if label is not a component of this entity
 				/// \TODO: Figure out why the font files is not being found
-				if(labels[i].font.loadFromFile("arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+				if(labels[i].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 				labels[i].label.setFont(labels[i].font);
 				
 				int charSize = 24;
@@ -74,11 +74,13 @@ void UISystem::update(Environment* env)
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
-		if(env->hasComponents<UserInterface, KeyControls>(i))
+		if(env->hasComponents<UserInterface, KeyControls, StdComponent<bool>>(i))
 		{
+			auto visible = env->get<StdComponent<bool>>();
 			if(key[i].clickState.test(sf::Keyboard::Escape))
 			{
 				env->emit(new MenuEvent());
+				*visible[i].data = !*visible[i].data;
 			}
 			//PRINT_DEBUG(cout<<"menuHides size: "<<env->getEvents<MenuEvent>().size()<<endl, HI_DEBUG, GFXSYS);
 		}
@@ -91,9 +93,7 @@ void UISystem::update(Environment* env)
 			auto menuHide = env->getEvents<MenuEvent>();
 			
 			if(menuHide.size() >= 1)
-			{
 				ui[i].show = !ui[i].show;
-			}
 
 			if(ui[i].show)
 			{
@@ -101,7 +101,7 @@ void UISystem::update(Environment* env)
 				// This is needed for the logic handeling the case where the cursor goes fast
 				// enough to escape the object's bounds
 				bool drag = ui[i].enable.test(UserInterface::DRAG),
-					 toggle = ui[i].enable.test(UserInterface::TOGGLE);
+				   	 toggle = ui[i].enable.test(UserInterface::TOGGLE);
 
 				ui[i].state.reset();
 				if(ui[i].cursorOnThis)
@@ -116,7 +116,7 @@ void UISystem::update(Environment* env)
 					}
 				}
 
-				if(mouse[i].pressState.test(MouseControls::LEFT) && drag)
+				if(mouse[i].pressState.test(MouseControls::LEFT)&&drag)
 					ui[i].state.set(UserInterface::DRAG);
 			}
 		}

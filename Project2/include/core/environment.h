@@ -61,10 +61,12 @@ template<typename T>
 struct StdComponent: public Component<T>
 {
 	public:
-		StdComponent(T* _data) { data = _data; }
-		virtual ~StdComponent() { delete data; }
+		StdComponent(T* _data, std::string _name = "") { data = _data; name = _name;  del = true; }
+		virtual ~StdComponent() { if(del) delete data; }
 		
 		T* data;
+		std::string name;
+		bool del;
 };
 
 // Same concept as components but for events
@@ -236,7 +238,7 @@ public:
 	template<typename T>
 	T& getComponent(unsigned id)
 	{
-		return *(static_cast<T*>(components_pointer[id][Component<T>::bitpos()]));
+		return *(dynamic_cast<T*>(components_pointer[id][Component<T>::bitpos()]));
 	}
 
 	template<typename T>

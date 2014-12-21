@@ -4,10 +4,10 @@
 
 class UISystem
 {
-public:
-	UISystem();
-	UISystem(Environment* env);
-	~UISystem();
+	public:
+		UISystem();
+		UISystem(Environment* env);
+		~UISystem();
 
-	void update(Environment* env);
+		void update(Environment* env);
 };
