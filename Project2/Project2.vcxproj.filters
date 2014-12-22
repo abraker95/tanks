@@ -164,9 +164,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\components\bounding_circle.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\expires.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -220,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="src\systems\view_system.cpp">
       <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\components\map_desc.cpp">
-      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\components\tilemap.cpp">
       <Filter>Source Files\Components</Filter>
@@ -285,6 +279,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Tilesheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Tank_Body.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Tank_Gun.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -117,14 +117,12 @@
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\components\bounding_box.cpp" />
-    <ClCompile Include="src\components\bounding_circle.cpp" />
     <ClCompile Include="src\components\expires.cpp" />
     <ClCompile Include="src\components\GUIObj.cpp" />
     <ClCompile Include="src\components\gun.cpp" />
     <ClCompile Include="src\components\health.cpp" />
     <ClCompile Include="src\components\KeyControls.cpp" />
     <ClCompile Include="src\components\Label.cpp" />
-    <ClCompile Include="src\components\map_desc.cpp" />
     <ClCompile Include="src\components\MouseControls.cpp" />
     <ClCompile Include="src\components\projectile.cpp" />
     <ClCompile Include="src\components\solid.cpp" />
@@ -159,6 +157,8 @@
   <ItemGroup>
     <Image Include="res\Bullet_0.png" />
     <Image Include="res\Tank_0.png" />
+    <Image Include="res\Tank_Body.png" />
+    <Image Include="res\Tank_Gun.png" />
     <Image Include="res\Tilesheet.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
