@@ -12,47 +12,35 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 {
 	auto tank_controls = env->get<TankControls>();
 	auto velocity = env->get<Velocity>();
-	auto mouseControls = env->get<MouseControls>();
-	auto keyControls = env->get<KeyControls>();
 
-	for(unsigned i=0; i<env->maxEntities(); i++)
+	// update the mouse state
+	std::bitset<3>& prevMousePressState =  input_manager.mousePressState; // not a ref
+	input_manager.mousePressState.reset();  input_manager.mouseClickState.reset();
+			 
+	for(int j = 0; j<3; j++)
 	{
-		  if(env->hasComponents<MouseControls>(i))
-		  {
-			 std::array<sf::Mouse::Button, 3>& buttons = mouseControls[i].buttons;
-			 std::bitset<3>& pressState = mouseControls[i].pressState,
-							 prevPressState = mouseControls[i].pressState; // not a ref
-			 std::bitset<3>& clickState = mouseControls[i].clickState;
-
-			 // update the mousestate bitmask
-			 pressState.reset();  clickState.reset();
-			 for(int j = 0; j<3; j++)
-				 if(sf::Mouse::isButtonPressed(buttons[j]))
-				 {
-				  if(prevPressState[j]^true) clickState.set(j, true);
-					 pressState.set(j, true);
-				  //PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
-				 }
-		  }
-
-		  if(env->hasComponents<KeyControls>(i))
-		  {
-			///  std::array<sf::Keyboard::Key, 256>& keys = keyControls[i].key;
-			  std::bitset<256>& pressState = keyControls[i].pressState,
-				  prevPressState = keyControls[i].pressState; // not a ref
-			  std::bitset<256>& clickState = keyControls[i].clickState;
-
-			  // update the mousestate bitmask
-			  pressState.reset();  clickState.reset();
-			  for(int j = 0; j<256; j++)
-				  if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key(j))))
-				  {
-				   if(prevPressState[j]^true) clickState.set(j, true);
-				   pressState.set(j, true);
-				  //PRINT_DEBUG(std::cout<<"PressState: "<<pressState<<"    clickState: "<<clickState<<std::endl, LOW_DEBUG, ISYS);
-				  }
-		  }
+		if(sf::Mouse::isButtonPressed(input_manager.buttons[j]))
+		{
+			if(prevMousePressState[j]^true) input_manager.mouseClickState.set(j, true);
+			input_manager.mousePressState.set(j, true);
+		}
+	}
 		
+	// update the key states  
+	std::bitset<256> prevKeyPressState = input_manager.keyPressState; // not a ref
+	input_manager.keyPressState.reset();  input_manager.keyClickState.reset();
+	
+	for(int j = 0; j<256; j++)
+	{
+		if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key(j))))
+		{
+			if(prevKeyPressState[j] ^ true) input_manager.keyClickState.set(j, true);
+			input_manager.keyPressState.set(j, true);
+		}
+	}
+
+	for(unsigned i = 0; i<env->maxEntities(); i++)
+	{
   		  if(env->hasComponents<TankControls, Velocity>(i))
 		  {
 			// update the keystate bitmask

@@ -63,11 +63,17 @@ struct StdComponent: public Component<T>
 	public:
 		StdComponent(T* _data, std::string _name = "") { data = _data; name = _name;  del = true; }
 		virtual ~StdComponent() { if(del) delete data; }
+
+		void operator=(T* _data) { if(data) delete data;  data = _data; del = false; }
 		
 		T* data;
 		std::string name;
+		
+	private:
 		bool del;
 };
+
+#define Component(type, name, val) new StdComponent<type>(val, name)
 
 // Same concept as components but for events
 class EventBase 
@@ -93,8 +99,8 @@ class Event : public EventBase
 		return id;
 	}
 
-public:
-	virtual ~Event() {}
+	public:
+		virtual ~Event() {}
 };
 
 // the Environment class holds the entities' informations
@@ -103,6 +109,8 @@ public:
 class Environment
 {
 public:
+	bool fullscreen;
+
 	Environment(int num_entities) 
 	{
 		entity_mask.resize(num_entities);

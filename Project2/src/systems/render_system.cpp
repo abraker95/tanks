@@ -22,11 +22,6 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	auto vertex_array = env->get<VertexArray>();
 	auto view_controller = env->get<ViewController>();
 
-	if(GameScene.getSize() != _win->getSize())
-		GameScene.create(_win->getSize().x, _win->getSize().y);
-	if(UIScene.getSize()!= _win->getSize())
-		UIScene.create(_win->getSize().x, _win->getSize().y);
-
 	for(unsigned k=0;k<env->maxEntities();k++)
 	{
 		if(env->hasComponents<ViewController>(k))
@@ -40,6 +35,23 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 					break; // should only be one map
 				}
 			}
+
+			/*// update RenderTarget size if switched video modes
+			for(unsigned i = 0; i<env->maxEntities(); i++)
+			{
+				if(env->hasComponents<StdComponent<bool&>>(i))
+				{
+					auto fullscreen = env->get<StdComponent<bool&>>();
+					if(fullscreen[i].name == "fullscreen")
+					{
+						if(fullscreen[i].data != )
+						{
+							GameScene.create(_win->getSize().x, _win->getSize().y);
+							UIScene.create(_win->getSize().x, _win->getSize().y);
+						}
+					}
+				}
+			}*/
 
 			for(unsigned i=0;i<env->maxEntities();i++)
 			{
@@ -80,7 +92,6 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 						//	PRINT_DEBUG(std::cout<<"Texture: "<<shaderObj[i].data<<"  Source: "<<env->get<StdComponent<sf::Texture>>()[i].data<<std::endl, HI_DEBUG, GFXSYS);
 							shaderObj[i].data->create(_win->getSize().x, _win->getSize().y);
 							shaderObj[i].data = (sf::Texture*)&GameScene.getTexture();
-							shaderObj[i].del = false;
 						}
 						
 						bool validShader = blur[i].data != nullptr;
@@ -108,13 +119,13 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 		}
 
 		/// \TODO: have the button's dimentions update when window size changes
-		if(env->hasComponents<Transform, UserInterface, MouseControls, Label, StdComponent<sf::RectangleShape>>(i))
+		if(env->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(i))
 		{
 			auto ui = env->get<UserInterface>();
 			
 			if(ui[i].show)
 			{
-				auto mouse = env->get<MouseControls>();
+			//	auto mouse = env->get<MouseControls>();
 				auto labels = env->get<Label>();
 				auto button = env->get<StdComponent<sf::RectangleShape>>();
 

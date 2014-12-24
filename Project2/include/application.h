@@ -15,7 +15,6 @@ public:
 
 private:
 	sf::RenderWindow* window;
-	bool fullscreen;
 
 	// Environments
 	Environment main_env;
@@ -33,4 +32,5 @@ private:
 	EntityManager entity_manager;
 	TextureManager texture_manager;
 	MapLoader map_loader;
+	UI_Manager UI_manager;
 };

@@ -1,0 +1,84 @@
+#include "managers/UI_Manager.h"
+#include "Components.h"
+
+UI_Manager::UI_Manager()
+{}
+
+
+UI_Manager::~UI_Manager()
+{}
+
+void UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name)
+{
+	unsigned int button = _env->createEntity
+	(
+		_name,
+		new Transform(_pos),
+		new GUIObj(GUIObj::BUTTON, _action),
+		new Label(_lable),
+		new StdComponent<sf::RectangleShape>(new sf::RectangleShape())
+	);
+
+	auto GUIobjs = _env->get<GUIObj>();
+	auto labels = _env->get<Label>();
+
+	/// \NOTE: I have ABSOLUTELY no idea why &GUIobjs[button].action works while creating this component with &action in the createEntity funtion creates a wierd pointer error.
+	_env->addComponents(button, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS),
+						&GUIobjs[button].action));
+
+	const float margin = 50;
+	sf::FloatRect dim = sf::FloatRect(_pos.x, _pos.y,
+		labels[button].label.getLocalBounds().width+margin, labels[button].label.getLocalBounds().height+margin);
+
+	/// \TODO: This is DANGEROUS if label is not a component of this entity
+	/// \TODO: Figure out why the font files is not being found
+	if(labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+	labels[button].label.setFont(labels[button].font);
+
+	int charSize = 24;
+	labels[button].label.setCharacterSize(charSize);
+	labels[button].label.setPosition(sf::Vector2f(_pos.x+margin/2, _pos.y+margin/2-charSize/2));
+
+
+	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
+		bounds[button].data->setPosition(_pos.x, _pos.y);
+		bounds[button].data->setSize(sf::Vector2f(dim.width, dim.height));
+}
+
+void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
+{
+	std::function<void*()> quitAction = [this]()->void*
+	{ 
+	 exit(0);  
+	 return nullptr; 
+	};
+	CreateButton(_env, Vec2f(200.f, 30.f), quitAction, "Quit", "Quit_Button");
+
+	std::function<void*()> ToggleFullscreen = [_env, _win]()->void*
+	{
+		if(_env->fullscreen == false)
+			_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
+		else
+			_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
+
+		_env->fullscreen = !_env->fullscreen;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(200.f, 120.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button");
+
+
+	auto NewGame = []()->void*
+	{
+		/* \TODO: Implement game reset code */ 
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(800.f, 120.f), NewGame, "New Game", "New_Game_Button");
+
+
+	_env->createEntity("ESC UI",
+		new GUIObj(GUIObj::VOID, [this]()->void* { return nullptr; }),
+		Component(bool, "visible", new bool(true)),
+		Component(sf::Texture, "shader_filter", nullptr),
+		Component(sf::Shader, "blur_shader", nullptr)
+		);
+}

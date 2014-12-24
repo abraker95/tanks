@@ -33,9 +33,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\components\bounding_circle.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\components\expires.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -59,9 +56,6 @@
     </ClInclude>
     <ClInclude Include="include\systems\input_system.h">
       <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\components\MouseControls.h">
-      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\systems\physics_system.h">
       <Filter>Header Files\Systems</Filter>
@@ -141,9 +135,6 @@
     <ClInclude Include="include\components\solid.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\components\StdComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\components\tilemap.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -159,8 +150,11 @@
     <ClInclude Include="include\events.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="include\components\KeyControls.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="include\managers\InputControls_Mgr.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\managers\UI_Manager.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -178,9 +172,6 @@
     </ClCompile>
     <ClCompile Include="src\systems\input_system.cpp">
       <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\components\MouseControls.cpp">
-      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\systems\physics_system.cpp">
       <Filter>Source Files\Systems</Filter>
@@ -254,8 +245,11 @@
     <ClCompile Include="src\components\solid.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\KeyControls.cpp">
-      <Filter>Source Files\Components</Filter>
+    <ClCompile Include="src\managers\InputControls_Mgr.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\managers\UI_Manager.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

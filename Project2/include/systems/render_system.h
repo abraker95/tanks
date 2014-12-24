@@ -13,4 +13,5 @@ class RenderSystem : public Component<RenderSystem>
 	private:
 		sf::Shader* shader;
 		sf::RenderTexture GameScene, UIScene;
+		bool fullscreen;
 };
