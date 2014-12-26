@@ -14,7 +14,7 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 	auto velocity = env->get<Velocity>();
 
 	// update the mouse state
-	std::bitset<3>& prevMousePressState =  input_manager.mousePressState; // not a ref
+	std::bitset<3> prevMousePressState =  input_manager.mousePressState; // not a ref; copy
 	input_manager.mousePressState.reset();  input_manager.mouseClickState.reset();
 			 
 	for(int j = 0; j<3; j++)

@@ -22,8 +22,7 @@ UISystem::UISystem(Environment* env)
 			if(GUIobjs[i].type==GUIObj::VOID)
 			{
 				assert(!env->hasComponents<UserInterface>(i));
-				env->addComponents(i, new UserInterface(std::bitset<UIstates>(), &GUIobjs[i].action)
-					);
+				env->addComponents(i, new UserInterface(std::bitset<UIstates>(), &GUIobjs[i].action));
 				//env->removeComponents<GUIObj>(i);
 			}
 		}
@@ -69,7 +68,7 @@ void UISystem::update(Environment* env)
 					// This is needed for the logic handeling the case where the cursor goes fast
 					// enough to escape the object's bounds
 					bool drag = ui[i].enable.test(UserInterface::DRAG),
-						toggle = ui[i].enable.test(UserInterface::TOGGLE);
+					     toggle = ui[i].enable.test(UserInterface::TOGGLE);
 
 					ui[i].state.reset();
 					if(ui[i].cursorOnThis)
@@ -84,7 +83,7 @@ void UISystem::update(Environment* env)
 						}
 					}
 
-					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT)&&drag)
+					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT) && drag)
 						ui[i].state.set(UserInterface::DRAG);
 				}
 			}

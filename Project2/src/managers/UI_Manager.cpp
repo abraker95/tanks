@@ -1,5 +1,6 @@
 #include "managers/UI_Manager.h"
 #include "Components.h"
+#include "events.h"
 
 UI_Manager::UI_Manager()
 {}
@@ -56,12 +57,14 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 
 	std::function<void*()> ToggleFullscreen = [_env, _win]()->void*
 	{
-		if(_env->fullscreen == false)
+		auto WindowMode = _env->getEvents<WindowModeEvent>();
+
+		if(*WindowMode[0].fullscreen == false)
 			_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
 		else
 			_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
 
-		_env->fullscreen = !_env->fullscreen;
+		*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(200.f, 120.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button");

@@ -45,7 +45,7 @@ template<typename T>
 class Component : public ComponentBase
 {
 	friend class Environment;
-	static unsigned bitpos() 
+	static unsigned bitpos()
 	{
 		static unsigned id = getComponentID();
 		return id;
@@ -64,8 +64,8 @@ struct StdComponent: public Component<T>
 		StdComponent(T* _data, std::string _name = "") { data = _data; name = _name;  del = true; }
 		virtual ~StdComponent() { if(del) delete data; }
 
-		void operator=(T* _data) { if(data) delete data;  data = _data; del = false; }
-		
+		void set(T* _data) { if(data) delete data;  data = _data; del = false; }
+
 		T* data;
 		std::string name;
 		
@@ -109,7 +109,6 @@ class Event : public EventBase
 class Environment
 {
 public:
-	bool fullscreen;
 
 	Environment(int num_entities) 
 	{

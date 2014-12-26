@@ -8,10 +8,12 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win)
 	GameScene.create(_win->getSize().x, _win->getSize().y);
 	UIScene.create(_win->getSize().x, _win->getSize().y);
 	shader = nullptr;
+	fullscreen = new bool(false);
 }
 
 RenderSystem::~RenderSystem()
 {
+	delete fullscreen;
 }
 
 void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
@@ -21,6 +23,15 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	auto textures = env->get<Texture>();
 	auto vertex_array = env->get<VertexArray>();
 	auto view_controller = env->get<ViewController>();
+
+	/// \NOTE: fullscreen is a pointer, while prevFullscreen isn't
+	if(prevFullscreen != *fullscreen)
+	{
+		GameScene.create(_win->getSize().x, _win->getSize().y);
+		UIScene.create(_win->getSize().x, _win->getSize().y);
+	}
+	prevFullscreen = *fullscreen;
+	env->emit(new WindowModeEvent(fullscreen));
 
 	for(unsigned k=0;k<env->maxEntities();k++)
 	{
@@ -35,23 +46,6 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 					break; // should only be one map
 				}
 			}
-
-			/*// update RenderTarget size if switched video modes
-			for(unsigned i = 0; i<env->maxEntities(); i++)
-			{
-				if(env->hasComponents<StdComponent<bool&>>(i))
-				{
-					auto fullscreen = env->get<StdComponent<bool&>>();
-					if(fullscreen[i].name == "fullscreen")
-					{
-						if(fullscreen[i].data != )
-						{
-							GameScene.create(_win->getSize().x, _win->getSize().y);
-							UIScene.create(_win->getSize().x, _win->getSize().y);
-						}
-					}
-				}
-			}*/
 
 			for(unsigned i=0;i<env->maxEntities();i++)
 			{
@@ -91,7 +85,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 							shaderObj[i].data = new sf::Texture();
 						//	PRINT_DEBUG(std::cout<<"Texture: "<<shaderObj[i].data<<"  Source: "<<env->get<StdComponent<sf::Texture>>()[i].data<<std::endl, HI_DEBUG, GFXSYS);
 							shaderObj[i].data->create(_win->getSize().x, _win->getSize().y);
-							shaderObj[i].data = (sf::Texture*)&GameScene.getTexture();
+							shaderObj[i].set((sf::Texture*)&GameScene.getTexture());
 						}
 						
 						bool validShader = blur[i].data != nullptr;

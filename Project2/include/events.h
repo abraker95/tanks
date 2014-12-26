@@ -3,7 +3,7 @@
 
 struct CollisionEvent : public Event<CollisionEvent>
 {
-	CollisionEvent(unsigned entity1, unsigned entity2) : entity1(entity1), entity2(entity2) {}
+	CollisionEvent(unsigned _entity1, unsigned _entity2) : entity1(_entity1), entity2(_entity2) {}
 
 	unsigned entity1;
 	unsigned entity2;
@@ -11,7 +11,7 @@ struct CollisionEvent : public Event<CollisionEvent>
 
 struct DestroyEvent : public Event<DestroyEvent>
 {
-	DestroyEvent(unsigned entity) : entity(entity) {}
+	DestroyEvent(unsigned _entity) : entity(_entity) {}
 
 	unsigned entity;
 };
@@ -19,4 +19,11 @@ struct DestroyEvent : public Event<DestroyEvent>
 struct MenuEvent: public Event<MenuEvent>
 {
 	MenuEvent() {}
+};
+
+struct WindowModeEvent: public Event<WindowModeEvent>
+{
+	WindowModeEvent(bool* _fullscreen): fullscreen(_fullscreen) {}
+
+	bool* fullscreen;
 };
