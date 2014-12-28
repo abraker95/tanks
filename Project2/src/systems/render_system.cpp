@@ -24,13 +24,19 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	auto vertex_array = env->get<VertexArray>();
 	auto view_controller = env->get<ViewController>();
 
+	auto WindowMode = env->getEvents<WindowModeEvent>();
+	if(WindowMode.size()>1)
+		fullscreen = *WindowMode[0].fullscreen;
+
 	if(prevFullscreen != fullscreen)
 	{
 		GameScene.create(_win->getSize().x, _win->getSize().y);
 		UIScene.create(_win->getSize().x, _win->getSize().y);
 	}
 	prevFullscreen = fullscreen;
-	env->emit(new WindowModeEvent(&fullscreen));
+
+	//if(GameScene.getSize() != _win->getSize())
+		//env->emit(new WindowModeEvent(&fullscreen));
 
 	for(unsigned k=0;k<env->maxEntities();k++)
 	{

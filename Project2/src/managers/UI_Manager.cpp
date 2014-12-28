@@ -59,12 +59,16 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 	{
 		auto WindowMode = _env->getEvents<WindowModeEvent>();
 
-		if(*WindowMode[0].fullscreen == false)
-			_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
-		else
-			_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
+		//if(WindowMode.size()>1)
+		{
+			if(*WindowMode[0].fullscreen==false)
+				_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
+			else
+				_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
 
-		*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
+			*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
+			_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
+		}
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(200.f, 120.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button");
