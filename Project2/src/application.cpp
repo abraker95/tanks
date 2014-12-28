@@ -95,13 +95,11 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	input_system->update(&main_env, &entity_manager, &texture_manager);
-	ui_system->update(&main_env);
-	expiring_system->update(&main_env, dt);
-	physics_system->update(&main_env, dt);
-	damage_system->update(&main_env);
-	view_system->update(&main_env, window, dt);
-	render_system->update(&main_env, window);
-
-	main_env.clearEvents();
+	main_env.updateWrapper(input_system, &entity_manager, &texture_manager);
+	main_env.updateWrapper(ui_system);
+	main_env.updateWrapper(expiring_system, dt);
+	main_env.updateWrapper(physics_system, dt);
+	main_env.updateWrapper(damage_system);
+	main_env.updateWrapper(view_system, window, dt);
+	main_env.updateWrapper(render_system, window);
 }

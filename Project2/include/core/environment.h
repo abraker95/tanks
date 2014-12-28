@@ -7,6 +7,7 @@
 #include <array>
 #include <vector>
 #include <iostream>
+#include <typeinfo>
 #include "DEBUG.h"
 
 #define MAX_COMPONENTS 64
@@ -78,6 +79,9 @@ struct StdComponent: public Component<T>
 // Same concept as components but for events
 class EventBase 
 {
+	friend class Environment;
+	void* emitter;
+
 	public:
 		virtual ~EventBase() {}
 };
@@ -101,6 +105,7 @@ class Event : public EventBase
 
 	public:
 		virtual ~Event() {}
+		
 };
 
 // the Environment class holds the entities' informations
@@ -252,14 +257,13 @@ public:
 	void emit(T* t)
 	{
 		int id = Event<T>::bitpos();
-		eventExec[id] = false;
+		t->emitter = current_system;
 		events_queue[id].push_back(t);
 	}
 
 	template<typename T>
 	EventIterator<T> getEvents()
 	{
-		eventExec[Event<T>::bitpos()] = true;
 		return EventIterator<T>(this);
 	}
 
@@ -278,21 +282,38 @@ public:
 		return static_cast<T*>(events_queue[Event<T>::bitpos()][index]);
 	}
 
-	void clearEvents()
+	// wrapper function
+	template<typename T, typename... Args>
+	void updateWrapper(T* sys, Args&&... args)
+	{
+		/* Note(Sherushe): you can do all the monitoring here */
+		/* You can get the name of the system like this: */
+		/* std::cout<<"executing "<<typeid(T).name()<<std::endl */
+
+		clearEvents(reinterpret_cast<void*>(sys));
+		current_system = reinterpret_cast<void*>(sys);
+
+		sys->update(this, args...);
+	}
+
+	void clearEvents(void* emitter)
 	{
 		//PRINT_DEBUG(cout<<"Clear Events "<<endl, HI_DEBUG, GFXSYS);
 		for(unsigned i=0;i<MAX_EVENTS;i++)
 		{
 			//PRINT_DEBUG(cout<<" eventExec: "<<eventExec[i]<<"      events_queue: "<<i<<endl, HI_DEBUG, ENVSYS);
-
-			if(eventExec[i]==true)
+			for(unsigned j = 0; j<events_queue[i].size(); j++)
 			{
-				for(unsigned j = 0; j<events_queue[i].size(); j++)
+				if(events_queue[i][j]->emitter == emitter)
 				{
 					delete events_queue[i][j];
+					events_queue[i].erase(events_queue[i].begin() + j);
 				}
 
-				events_queue[i].clear();
+				else
+				{
+					j++;
+				}
 			}
 		}
 	}
@@ -322,7 +343,8 @@ private:
 	std::vector<std::string> entityName;
 	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
 	std::array<std::vector<EventBase*>, MAX_EVENTS> events_queue;
-	std::array<bool, MAX_EVENTS> eventExec;
+
+	void* current_system;
 };
 
 // The iterator is a wrapper class for the environment component getter
