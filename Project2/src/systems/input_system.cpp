@@ -41,7 +41,7 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 	}
 
 	auto menuEvent = env->getEvents<MenuEvent>();
-	bool updateGameEntities = true;
+	static bool updateGameEntities = false;
 
 	if(menuEvent.size()>=1)
 		updateGameEntities = !menuEvent[0].menuVisible;
