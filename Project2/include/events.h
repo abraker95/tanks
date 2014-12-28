@@ -18,12 +18,19 @@ struct DestroyEvent : public Event<DestroyEvent>
 
 struct MenuEvent: public Event<MenuEvent>
 {
-	MenuEvent() {}
+	MenuEvent(bool _menuVisible): menuVisible(_menuVisible) {}
+
+	bool menuVisible;
 };
 
 struct WindowModeEvent: public Event<WindowModeEvent>
 {
 	WindowModeEvent(bool* _fullscreen): fullscreen(_fullscreen) {}
 
-	bool* fullscreen;
+	bool *fullscreen; // needs to be pointer to pass value across systems and the UI Manager
+};
+
+struct NewGameEvent: public Event<NewGameEvent>
+{
+	NewGameEvent() {}
 };

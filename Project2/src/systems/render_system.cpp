@@ -8,12 +8,12 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win)
 	GameScene.create(_win->getSize().x, _win->getSize().y);
 	UIScene.create(_win->getSize().x, _win->getSize().y);
 	shader = nullptr;
-	fullscreen = new bool(false);
+	//fullscreen = new bool(false);
 }
 
 RenderSystem::~RenderSystem()
 {
-	delete fullscreen;
+	//delete fullscreen;
 }
 
 void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
@@ -24,14 +24,13 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	auto vertex_array = env->get<VertexArray>();
 	auto view_controller = env->get<ViewController>();
 
-	/// \NOTE: fullscreen is a pointer, while prevFullscreen isn't
-	if(prevFullscreen != *fullscreen)
+	if(prevFullscreen != fullscreen)
 	{
 		GameScene.create(_win->getSize().x, _win->getSize().y);
 		UIScene.create(_win->getSize().x, _win->getSize().y);
 	}
-	prevFullscreen = *fullscreen;
-	env->emit(new WindowModeEvent(fullscreen));
+	prevFullscreen = fullscreen;
+	env->emit(new WindowModeEvent(&fullscreen));
 
 	for(unsigned k=0;k<env->maxEntities();k++)
 	{

@@ -24,4 +24,8 @@ public:
 		Environment* env, 
 		sf::FloatRect& borders, sf::FloatRect& viewport, 
 		std::vector<unsigned> focusedObjects);
+
+	void NewGame(Environment* env, TextureManager* _textmgr);
+	void EndGame(Environment* _env);
+	void ResetGame(Environment* _env, TextureManager* _textmgr);
 };

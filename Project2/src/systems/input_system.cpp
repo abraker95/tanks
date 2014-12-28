@@ -3,6 +3,7 @@
 #include "systems/input_system.h"
 #include "systems/physics_system.h"
 #include "Components.h"
+#include "events.h"
 
 InputSystem::InputSystem() {}
 
@@ -39,39 +40,49 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 		}
 	}
 
-	for(unsigned i = 0; i<env->maxEntities(); i++)
+	auto menuEvent = env->getEvents<MenuEvent>();
+	bool updateGameEntities = true;
+
+	if(menuEvent.size()>=1)
+		updateGameEntities = !menuEvent[0].menuVisible;
+
+	/// \TODO: Refactor events so that they are system use dependent. Then get this to work.
+	if(updateGameEntities)
 	{
-  		  if(env->hasComponents<TankControls, Velocity>(i))
-		  {
-			// update the keystate bitmask
-			std::array<sf::Keyboard::Key,5>& keys = tank_controls[i].keys;
-			std::bitset<5>& state = tank_controls[i].state;
-
-			state.reset();
-			for(int j = 0; j<5; j++)
-				if(sf::Keyboard::isKeyPressed(keys[j]))
-					state.set(j, true);
-
-			// update the values based on keystate
-			     if(state.test(TankControls::TURN_RIGHT)) velocity[i].vrot = +300.f;
-			else if(state.test(TankControls::TURN_LEFT))  velocity[i].vrot = -300.f;
-			else										  velocity[i].vrot =    0.f;
-
-			     if(state.test(TankControls::GO_FORWARD))  velocity[i].speed = +300.f;
-			else if(state.test(TankControls::GO_BACKWARD)) velocity[i].speed = -300.f;
-			else									       velocity[i].speed =    0.f;
-
-			if(state.test(TankControls::FIRE))
+		for(unsigned i = 0; i<env->maxEntities(); i++)
+		{
+			if(env->hasComponents<TankControls, Velocity>(i))
 			{
-				if(env->hasComponents<Gun, Transform>(i))
-				{
-					auto gun = env->get<Gun>();
-					auto transform = env->get<Transform>();
+				// update the keystate bitmask
+				std::array<sf::Keyboard::Key, 5>& keys = tank_controls[i].keys;
+				std::bitset<5>& state = tank_controls[i].state;
 
-					if(gun[i].fireClock.getElapsedTime().asSeconds() > gun[i].fireCooldown)
+				state.reset();
+				for(int j = 0; j<5; j++)
+					if(sf::Keyboard::isKeyPressed(keys[j]))
+						state.set(j, true);
+
+				// update the values based on keystate
+				if(state.test(TankControls::TURN_RIGHT))	  velocity[i].vrot = +300.f;
+				else if(state.test(TankControls::TURN_LEFT))  velocity[i].vrot = -300.f;
+				else										  velocity[i].vrot = 0.f;
+
+				if(state.test(TankControls::GO_FORWARD))	   velocity[i].speed = +300.f;
+				else if(state.test(TankControls::GO_BACKWARD)) velocity[i].speed = -300.f;
+				else									       velocity[i].speed = 0.f;
+
+				if(state.test(TankControls::FIRE))
+				{
+					if(env->hasComponents<Gun, Transform>(i))
 					{
-						gun[i].fireClock.restart();
-						entity_manager->spawnBullet("", env, texture_manager, i);
+						auto gun = env->get<Gun>();
+						auto transform = env->get<Transform>();
+
+						if(gun[i].fireClock.getElapsedTime().asSeconds()>gun[i].fireCooldown)
+						{
+							gun[i].fireClock.restart();
+							entity_manager->spawnBullet("", env, texture_manager, i);
+						}
 					}
 				}
 			}

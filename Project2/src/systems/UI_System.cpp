@@ -32,10 +32,14 @@ UISystem::UISystem(Environment* env)
 UISystem::~UISystem() {}
 
 
-void UISystem::update(Environment* env)
+void UISystem::update(Environment* env, EntityManager* _entMgr, TextureManager* _texMgr)
 {
 	auto ui = env->get<UserInterface>();
 	auto GUIobjs = env->get<GUIObj>();
+
+	auto newGameEvent = env->getEvents<NewGameEvent>();
+	if(newGameEvent.size()>0)
+		_entMgr->ResetGame(env, _texMgr);
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
@@ -44,8 +48,8 @@ void UISystem::update(Environment* env)
 			auto visible = env->get<StdComponent<bool>>();
 			if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 			{
-				env->emit(new MenuEvent());
 				*visible[i].data = !*visible[i].data;
+				env->emit(new MenuEvent(*visible[i].data));
 			}
 			//PRINT_DEBUG(cout<<"menuHides size: "<<env->getEvents<MenuEvent>().size()<<endl, HI_DEBUG, GFXSYS);
 		}
@@ -57,10 +61,10 @@ void UISystem::update(Environment* env)
 			if(GUIobjs[i].type!=GUIObj::VOID)
 			{
 				//PRINT_DEBUG(cout<<"BUTTON "<<env->getEvents<MenuEvent>().size()<<endl, HI_DEBUG, GFXSYS);
-				auto menuHide = env->getEvents<MenuEvent>();
+				auto menuEvent = env->getEvents<MenuEvent>();
 
-				if(menuHide.size()>=1)
-					ui[i].show = !ui[i].show;
+				if(menuEvent.size()>=1)
+					ui[i].show = menuEvent[0].menuVisible;
 
 				if(ui[i].show)
 				{

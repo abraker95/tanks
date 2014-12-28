@@ -14,17 +14,7 @@ Application::Application() : main_env(128)
 // [ENTITY CREATION]
 	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
 
-	// double-braces init because of std::array
-	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = entity_manager.spawnTankPlayer("tank1", &main_env, &texture_manager, 200.f, 300.f, p1_keys);
-	
-	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
-	unsigned tank2 = entity_manager.spawnTankPlayer("tank2", &main_env, &texture_manager, 400.f, 300.f, p2_keys);
-	
-	// camera
-	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
-	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	entity_manager.createCamera("mainCamera", &main_env, borders, viewport, {tank1, tank2});
+	entity_manager.NewGame(&main_env, &texture_manager);
 
 	/// \TODO: Put the button creation code into its own funtion
 
@@ -71,7 +61,6 @@ Application::~Application()
 	delete damage_system;
 
 	if(window)	delete window;
-	//if(fullscreen) delete fullscreen;
 }
 
 int Application::run()
@@ -96,7 +85,7 @@ int Application::run()
 void Application::update(float dt)
 {
 	input_system->update(&main_env, &entity_manager, &texture_manager);
-	ui_system->update(&main_env);
+	ui_system->update(&main_env, &entity_manager, &texture_manager);
 	expiring_system->update(&main_env, dt);
 	physics_system->update(&main_env, dt);
 	damage_system->update(&main_env);

@@ -83,9 +83,7 @@ unsigned EntityManager::spawnBullet(std::string _name,
 		new Sprite()
 	);
 
-	
 	sprite[new_bullet].sprite.setOrigin(origin.x, origin.y);
-
 	return new_bullet;
 }
 
@@ -97,4 +95,32 @@ unsigned EntityManager::createCamera(std::string _name,
 	return env->createEntity(_name,
 		new ViewController(borders, viewport, 400.f, 1200.f, 0.4f, focusedObjects)
 	);
+}
+
+void EntityManager::NewGame(Environment* _env, TextureManager* _textmgr)
+{
+	// double-braces init because of std::array
+	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
+	unsigned tank1 = spawnTankPlayer("tank1", _env, _textmgr, 200.f, 300.f, p1_keys);
+
+	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
+	unsigned tank2 = spawnTankPlayer("tank2", _env, _textmgr, 400.f, 300.f, p2_keys);
+
+	// camera
+	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
+	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
+	createCamera("mainCamera", _env, borders, viewport, {tank1, tank2});
+}
+
+void EntityManager::EndGame(Environment* _env)
+{
+	_env->destroyEntity(_env->getID("tank1"));
+	_env->destroyEntity(_env->getID("tank2"));
+	_env->destroyEntity(_env->getID("mainCamera"));
+}
+
+void EntityManager::ResetGame(Environment* _env, TextureManager* _textmgr)
+{
+	EndGame(_env);
+	NewGame(_env, _textmgr);
 }
