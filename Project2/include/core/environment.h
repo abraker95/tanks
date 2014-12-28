@@ -256,6 +256,7 @@ public:
 	template<typename T>
 	void emit(T* t)
 	{
+		PRINT_DEBUG(cout<<"[SET] Emmiter: "<<current_system<<endl, HI_DEBUG, GFXSYS);
 		int id = Event<T>::bitpos();
 		t->emitter = current_system;
 		events_queue[id].push_back(t);
@@ -290,15 +291,17 @@ public:
 		/* You can get the name of the system like this: */
 		/* std::cout<<"executing "<<typeid(T).name()<<std::endl */
 
-		clearEvents(reinterpret_cast<void*>(sys));
+	//	PRINT_DEBUG(cout<<"Executing: "<<typeid(T).name()<<endl, HI_DEBUG, GFXSYS);
+		
 		current_system = reinterpret_cast<void*>(sys);
+		clearEvents(current_system);
 
 		sys->update(this, args...);
 	}
 
 	void clearEvents(void* emitter)
 	{
-		//PRINT_DEBUG(cout<<"Clear Events "<<endl, HI_DEBUG, GFXSYS);
+	//	PRINT_DEBUG(cout<<"Clear Events: "<<endl, HI_DEBUG, GFXSYS);
 		for(unsigned i=0;i<MAX_EVENTS;i++)
 		{
 			//PRINT_DEBUG(cout<<" eventExec: "<<eventExec[i]<<"      events_queue: "<<i<<endl, HI_DEBUG, ENVSYS);
@@ -306,6 +309,7 @@ public:
 			{
 				if(events_queue[i][j]->emitter == emitter)
 				{
+					PRINT_DEBUG(cout<<"\t[CLEAR] Emmiter: "<<emitter<<endl, HI_DEBUG, GFXSYS);
 					delete events_queue[i][j];
 					events_queue[i].erase(events_queue[i].begin() + j);
 				}

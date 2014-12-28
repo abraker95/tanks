@@ -37,10 +37,6 @@ void UISystem::update(Environment* env, EntityManager* _entMgr, TextureManager* 
 	auto ui = env->get<UserInterface>();
 	auto GUIobjs = env->get<GUIObj>();
 
-	auto newGameEvent = env->getEvents<NewGameEvent>();
-	if(newGameEvent.size()>0)
-		_entMgr->ResetGame(env, _texMgr);
-
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
 		if(env->hasComponents<UserInterface, GUIObj, StdComponent<bool>>(i))
@@ -49,11 +45,14 @@ void UISystem::update(Environment* env, EntityManager* _entMgr, TextureManager* 
 			if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 			{
 				*visible[i].data = !*visible[i].data;
+				PRINT_DEBUG(cout<<"Emit MenuEvent "<<endl, HI_DEBUG, GFXSYS);
 				env->emit(new MenuEvent(*visible[i].data));
 			}
-			//PRINT_DEBUG(cout<<"menuHides size: "<<env->getEvents<MenuEvent>().size()<<endl, HI_DEBUG, GFXSYS);
 		}
+	}
 
+	for(unsigned i = 0; i<env->maxEntities(); i++)
+	{
 		// \TODO: Should the press flag be still on if the cursor moves from the object while user is still
 		//        holding the button or not?
 		if(env->hasComponents<UserInterface, GUIObj>(i))
@@ -93,4 +92,8 @@ void UISystem::update(Environment* env, EntityManager* _entMgr, TextureManager* 
 			}
 		}
 	}
+
+	auto newGameEvent = env->getEvents<NewGameEvent>();
+	if(newGameEvent.size()>0)
+		_entMgr->ResetGame(env, _texMgr);
 }
