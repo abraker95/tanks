@@ -24,7 +24,6 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	Vec2u size = texture->getSize();
 	if(texture)
 	{
-
 		origin.x = (float)size.x/2.f; 
 		origin.y = (float)size.y/2.f;
 	}

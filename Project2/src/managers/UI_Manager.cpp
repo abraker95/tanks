@@ -72,9 +72,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 
 	auto NewGame = [_env]()->void*
 	{
-		/* \TODO: Implement game reset code */ 
 		_env->emit(new NewGameEvent());
-		
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(800.f, 120.f), NewGame, "New Game", "New_Game_Button");

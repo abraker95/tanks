@@ -3,7 +3,7 @@ project(tank)
 
 include_directories(include)
 
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -std=c++11 $(CMAKE_CXX_FLAGS)")
+set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -std=c++11")
 
 set(component_files "")
 set(manager_files "")
@@ -37,6 +37,8 @@ foreach(manager
 	texture_manager
 	entity_manager
 	map_loader
+	InputControls_Mgr
+	UI_Manager
 )
 	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
 endforeach(manager)
