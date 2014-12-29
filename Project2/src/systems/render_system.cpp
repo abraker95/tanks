@@ -25,7 +25,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	auto view_controller = env->get<ViewController>();
 
 	auto WindowMode = env->getEvents<WindowModeEvent>();
-	if(WindowMode.size()>1)
+	if(WindowMode.size()>0)
 		fullscreen = *WindowMode[0].fullscreen;
 
 	if(prevFullscreen != fullscreen)
@@ -36,7 +36,7 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	prevFullscreen = fullscreen;
 
 	//if(GameScene.getSize() != _win->getSize())
-		//env->emit(new WindowModeEvent(&fullscreen));
+	env->emit(new WindowModeEvent(&fullscreen));
 
 	for(unsigned k=0;k<env->maxEntities();k++)
 	{
@@ -124,7 +124,6 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 			
 			if(ui[i].show)
 			{
-			//	auto mouse = env->get<MouseControls>();
 				auto labels = env->get<Label>();
 				auto button = env->get<StdComponent<sf::RectangleShape>>();
 
@@ -165,6 +164,20 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 
 				UIScene.draw(labels[i].label);
 			}
+		}
+
+		if(env->hasComponents<Transform, Label>(i))
+		{
+			if(env->getEntityName(i)=="CPU")
+			{
+				if(*env->get<StdComponent<bool>>()[i].data)
+				{
+					auto labels = env->get<Label>();
+					UIScene.draw(labels[i].label);
+				}
+				
+			}
+			
 		}
 	}
 

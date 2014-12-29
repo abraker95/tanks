@@ -18,14 +18,15 @@ Application::Application() : main_env(128)
 	
 	/// \TODO: Put the button creation code into its own funtion
 
-	// testing button
-	main_env.createEntity("Test_Button",
-		new Transform(Vec2f(200.f, 300.f), 0.f),
-		new GUIObj(GUIObj::BUTTON, [this]()->void* { main_env.emit(new DestroyEvent(main_env.getID("tank1"))); main_env.destroyEntity(main_env.getID("tank1"));  return nullptr; }),
-		new Label("Click to destory tank!")
-	);
-
 	UI_manager.CreateMenu(&main_env, window);
+
+	unsigned id = main_env.createEntity
+	(
+		"CPU",
+		new Transform(Vec2f(100, 100)),
+		new Label(""),
+		Component(bool, "visible", new bool(false))
+	);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -48,6 +49,7 @@ Application::Application() : main_env(128)
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
 	damage_system = new DamageSystem();
+	cpu_system = new CPUSystem(&main_env, window);
 }
 
 Application::~Application()
@@ -59,6 +61,7 @@ Application::~Application()
 	delete physics_system;
 	delete view_system;
 	delete damage_system;
+	delete cpu_system;
 
 	if(window)	delete window;
 }
@@ -77,6 +80,7 @@ int Application::run()
 
 		sf::Time elapsed = clock.restart();
 		update(elapsed.asSeconds());
+		PRINT_DEBUG(cout<<"Elapsed time: "<<elapsed.asMilliseconds()<<" ms\t"<<1/elapsed.asSeconds()<<" FPS"<<endl<<endl<<endl, HI_DEBUG, GFXSYS);
 	}
 
 	return EXIT_SUCCESS;
@@ -91,4 +95,6 @@ void Application::update(float dt)
 	main_env.updateWrapper(damage_system);
 	main_env.updateWrapper(view_system, window, dt);
 	main_env.updateWrapper(render_system, window);
+
+	main_env.updateWrapper(cpu_system);
 }

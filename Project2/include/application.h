@@ -27,6 +27,7 @@ private:
 	UISystem* ui_system;
 	ViewSystem* view_system;
 	DamageSystem* damage_system;
+	CPUSystem* cpu_system;
 
 	// Managers
 	EntityManager entity_manager;

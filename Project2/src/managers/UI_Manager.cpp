@@ -33,7 +33,7 @@ void UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*
 
 	/// \TODO: This is DANGEROUS if label is not a component of this entity
 	/// \TODO: Figure out why the font files is not being found
-	if(labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+	if(!labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 	labels[button].label.setFont(labels[button].font);
 
 	int charSize = 24;
@@ -42,8 +42,8 @@ void UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*
 
 
 	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
-		bounds[button].data->setPosition(_pos.x, _pos.y);
-		bounds[button].data->setSize(sf::Vector2f(dim.width, dim.height));
+		 bounds[button].data->setPosition(_pos.x, _pos.y);
+		 bounds[button].data->setSize(sf::Vector2f(dim.width, dim.height));
 }
 
 void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
@@ -53,13 +53,13 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 	 exit(0);  
 	 return nullptr; 
 	};
-	CreateButton(_env, Vec2f(200.f, 30.f), quitAction, "Quit", "Quit_Button");
+	CreateButton(_env, Vec2f(200.f, 100.f), quitAction, "Quit", "Quit_Button");
 
 	std::function<void*()> ToggleFullscreen = [_env, _win]()->void*
 	{
 		auto WindowMode = _env->getEvents<WindowModeEvent>();
 
-		//if(WindowMode.size()>1)
+		if(WindowMode.size() > 0)
 		{
 			if(*WindowMode[0].fullscreen==false)
 				_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
@@ -67,11 +67,11 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 				_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
 
 			*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
-			_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
+			//_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
 		}
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(200.f, 120.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button");
+	CreateButton(_env, Vec2f(200.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button");
 
 
 	auto NewGame = [_env]()->void*
@@ -79,7 +79,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 		_env->emit(new NewGameEvent());
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(800.f, 120.f), NewGame, "New Game", "New_Game_Button");
+	CreateButton(_env, Vec2f(800.f, 220.f), NewGame, "New Game", "New_Game_Button");
 
 
 	_env->createEntity("ESC UI",

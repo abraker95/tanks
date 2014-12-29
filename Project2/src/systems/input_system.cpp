@@ -14,6 +14,8 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 	auto tank_controls = env->get<TankControls>();
 	auto velocity = env->get<Velocity>();
 
+/// \TODO: This is taking up too much CPU time. Think of another solution. Consider making it a bitfield.
+
 	// update the mouse state
 	std::bitset<3> prevMousePressState =  input_manager.mousePressState; // not a ref; copy
 	input_manager.mousePressState.reset();  input_manager.mouseClickState.reset();
@@ -40,13 +42,21 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 		}
 	}
 
+	for(unsigned i = 0; i<env->maxEntities(); i++)
+	{
+		if(env->getEntityName(i)=="CPU")
+		{
+			if(input_manager.keyClickState[sf::Keyboard::F2])
+				*env->get<StdComponent<bool>>()[i].data = !*env->get<StdComponent<bool>>()[i].data;
+		}
+	}
+
 	auto menuEvent = env->getEvents<MenuEvent>();
 	static bool updateGameEntities = false;
 
 	if(menuEvent.size()>=1)
 		updateGameEntities = !menuEvent[0].menuVisible;
 
-	/// \TODO: Refactor events so that they are system use dependent. Then get this to work.
 	if(updateGameEntities)
 	{
 		for(unsigned i = 0; i<env->maxEntities(); i++)

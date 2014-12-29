@@ -63,6 +63,7 @@ struct StdComponent: public Component<T>
 {
 	public:
 		StdComponent(T* _data, std::string _name = "") { data = _data; name = _name;  del = true; }
+		StdComponent(std::string _name = "") { data = nullptr; name = _name;  del = false; }
 		virtual ~StdComponent() { if(del) delete data; }
 
 		void set(T* _data) { if(data) delete data;  data = _data; del = false; }
@@ -256,7 +257,7 @@ public:
 	template<typename T>
 	void emit(T* t)
 	{
-		PRINT_DEBUG(cout<<"[SET] Emmiter: "<<current_system<<endl, HI_DEBUG, GFXSYS);
+		//PRINT_DEBUG(cout<<"[SET] Emmiter: "<<current_system<<endl, HI_DEBUG, GFXSYS);
 		int id = Event<T>::bitpos();
 		t->emitter = current_system;
 		events_queue[id].push_back(t);
@@ -291,12 +292,26 @@ public:
 		/* You can get the name of the system like this: */
 		/* std::cout<<"executing "<<typeid(T).name()<<std::endl */
 
-	//	PRINT_DEBUG(cout<<"Executing: "<<typeid(T).name()<<endl, HI_DEBUG, GFXSYS);
+		sf::Clock clock;
+		sf::Time elapsed;
 		
 		current_system = reinterpret_cast<void*>(sys);
 		clearEvents(current_system);
 
 		sys->update(this, args...);
+		elapsed = clock.restart();
+		
+		/// \TODO: Is there a better way or is this fine?
+		for(unsigned i = 0; i<maxEntities(); i++)
+		{
+			if(hasComponents<Label>(i) && getEntityName(i)=="CPU")
+			{
+				auto labels = get<Label>();
+				labels[i].label.setString(labels[i].label.getString()+"\n["+std::string(typeid(T).name())+"]\t\t      Elapsed time : "+std::to_string((long)elapsed.asMicroseconds())+" us");
+			}
+		}
+
+		//PRINT_DEBUG(cout<<"["<<typeid(T).name()<<"]\t\t      Elapsed time : "<<elapsed.asMicroseconds()<<" us"<<endl, HI_DEBUG, GFXSYS);
 	}
 
 	void clearEvents(void* emitter)
@@ -309,7 +324,7 @@ public:
 			{
 				if(events_queue[i][j]->emitter == emitter)
 				{
-					PRINT_DEBUG(cout<<"\t[CLEAR] Emmiter: "<<emitter<<endl, HI_DEBUG, GFXSYS);
+					//PRINT_DEBUG(cout<<"\t[CLEAR] Emmiter: "<<emitter<<endl, HI_DEBUG, GFXSYS);
 					delete events_queue[i][j];
 					events_queue[i].erase(events_queue[i].begin() + j);
 				}
