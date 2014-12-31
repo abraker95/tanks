@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics/Text.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <bitset>
@@ -121,6 +122,8 @@ public:
 		entity_mask.resize(num_entities);
 		components_pointer.resize(num_entities);
 		entityName.resize(num_entities);
+
+		cpuData = nullptr;
 	}
 
 	virtual ~Environment() 
@@ -291,25 +294,15 @@ public:
 		/* Note(Sherushe): you can do all the monitoring here */
 		/* You can get the name of the system like this: */
 		/* std::cout<<"executing "<<typeid(T).name()<<std::endl */
-
-		sf::Clock clock;
-		sf::Time elapsed;
-		
 		current_system = reinterpret_cast<void*>(sys);
 		clearEvents(current_system);
 
+		sf::Clock clock;
 		sys->update(this, args...);
-		elapsed = clock.restart();
+		sf::Time elapsed = clock.restart();
 		
-		/// \TODO: Is there a better way or is this fine?
-		for(unsigned i = 0; i<maxEntities(); i++)
-		{
-			if(hasComponents<Label>(i) && getEntityName(i)=="CPU")
-			{
-				auto labels = get<Label>();
-				labels[i].label.setString(labels[i].label.getString()+"\n["+std::string(typeid(T).name())+"]\t\t      Elapsed time : "+std::to_string((long)elapsed.asMicroseconds())+" us");
-			}
-		}
+		if(cpuData != nullptr)
+			cpuData->setString(cpuData->getString()+"\n["+std::string(typeid(T).name())+"]\t\t      Elapsed time : "+std::to_string((long)elapsed.asMicroseconds())+" us");
 
 		//PRINT_DEBUG(cout<<"["<<typeid(T).name()<<"]\t\t      Elapsed time : "<<elapsed.asMicroseconds()<<" us"<<endl, HI_DEBUG, GFXSYS);
 	}
@@ -336,6 +329,13 @@ public:
 			}
 		}
 	}
+
+public:
+
+	// Note(ABraker): I hope this solution is good enough. Only 
+	// application can touch managers, and this is the only 
+	// workaround I can think of.
+	sf::Text* cpuData;
 
 private:
 	unsigned requestID()

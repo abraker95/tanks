@@ -156,7 +156,10 @@
     <ClInclude Include="include\managers\UI_Manager.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\systems\CPU_System.h">
+    <ClInclude Include="include\systems\CPU_Manager.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\managers\CPU_Manager.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
@@ -199,9 +202,6 @@
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\systems\UI_System.cpp">
-      <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\components\UserInterface.cpp">
       <Filter>Source Files\Components</Filter>
@@ -254,7 +254,10 @@
     <ClCompile Include="src\managers\UI_Manager.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="src\systems\CPU_System.cpp">
+    <ClCompile Include="src\systems\UI_System.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\managers\CPU_Manager.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>

@@ -83,6 +83,7 @@
     <ClInclude Include="include\components\ViewController.h" />
     <ClInclude Include="include\events.h" />
     <ClInclude Include="include\Managers.h" />
+    <ClInclude Include="include\managers\CPU_Manager.h" />
     <ClInclude Include="include\managers\entity_manager.h" />
     <ClInclude Include="include\managers\InputControls_Mgr.h" />
     <ClInclude Include="include\managers\map_loader.h" />
@@ -90,7 +91,7 @@
     <ClInclude Include="include\managers\UI_Manager.h" />
     <ClInclude Include="include\math\vector.h" />
     <ClInclude Include="include\Systems.h" />
-    <ClInclude Include="include\systems\CPU_System.h" />
+    <ClInclude Include="include\systems\CPU_Manager.h" />
     <ClInclude Include="include\systems\damage_system.h" />
     <ClInclude Include="include\systems\UI_System.h" />
     <ClInclude Include="include\systems\view_system.h" />
@@ -133,12 +134,12 @@
     <ClCompile Include="src\components\VertexArray.cpp" />
     <ClCompile Include="src\components\ViewController.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\managers\CPU_Manager.cpp" />
     <ClCompile Include="src\managers\entity_manager.cpp" />
     <ClCompile Include="src\managers\InputControls_Mgr.cpp" />
     <ClCompile Include="src\managers\map_loader.cpp" />
     <ClCompile Include="src\managers\texture_manager.cpp" />
     <ClCompile Include="src\managers\UI_Manager.cpp" />
-    <ClCompile Include="src\systems\CPU_System.cpp" />
     <ClCompile Include="src\systems\damage_system.cpp" />
     <ClCompile Include="src\systems\expiring_system.cpp" />
     <ClCompile Include="src\systems\input_system.cpp" />

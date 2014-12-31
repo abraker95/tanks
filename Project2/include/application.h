@@ -27,11 +27,12 @@ private:
 	UISystem* ui_system;
 	ViewSystem* view_system;
 	DamageSystem* damage_system;
-	CPUSystem* cpu_system;
+	
 
 	// Managers
 	EntityManager entity_manager;
 	TextureManager texture_manager;
 	MapLoader map_loader;
 	UI_Manager UI_manager;
+	CPUManager cpu_manager;
 };

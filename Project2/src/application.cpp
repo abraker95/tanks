@@ -13,20 +13,10 @@ Application::Application() : main_env(128)
 
 // [ENTITY CREATION]
 	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
-
 	entity_manager.NewGame(&main_env, &texture_manager);
-	
-	/// \TODO: Put the button creation code into its own funtion
 
 	UI_manager.CreateMenu(&main_env, window);
-
-	unsigned id = main_env.createEntity
-	(
-		"CPU",
-		new Transform(Vec2f(100, 100)),
-		new Label(""),
-		Component(bool, "visible", new bool(false))
-	);
+	cpu_manager.createCPUMgr(&main_env, window);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -49,7 +39,6 @@ Application::Application() : main_env(128)
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
 	damage_system = new DamageSystem();
-	cpu_system = new CPUSystem(&main_env, window);
 }
 
 Application::~Application()
@@ -61,14 +50,12 @@ Application::~Application()
 	delete physics_system;
 	delete view_system;
 	delete damage_system;
-	delete cpu_system;
 
 	if(window)	delete window;
 }
 
 int Application::run()
 {
-	sf::Clock clock;
 	while(window->isOpen())
 	{
 		sf::Event event;
@@ -78,9 +65,8 @@ int Application::run()
 				window->close();
 		}
 
-		sf::Time elapsed = clock.restart();
+		sf::Time elapsed = cpu_manager.update();
 		update(elapsed.asSeconds());
-		PRINT_DEBUG(cout<<"Elapsed time: "<<elapsed.asMilliseconds()<<" ms\t"<<1/elapsed.asSeconds()<<" FPS"<<endl<<endl<<endl, HI_DEBUG, GFXSYS);
 	}
 
 	return EXIT_SUCCESS;
@@ -95,6 +81,4 @@ void Application::update(float dt)
 	main_env.updateWrapper(damage_system);
 	main_env.updateWrapper(view_system, window, dt);
 	main_env.updateWrapper(render_system, window);
-
-	main_env.updateWrapper(cpu_system);
 }
