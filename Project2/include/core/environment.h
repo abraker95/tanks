@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <bitset>
