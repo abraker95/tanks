@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <array>
 #include <bitset>
 
@@ -21,7 +22,7 @@ class InputControls_Mgr
 		std::bitset<3> mousePressState, mouseClickState;
 
 		int numKeys;
-		std::bitset<256> keyPressState, keyClickState;
+		std::bitset<sf::Keyboard::KeyCount> keyPressState, keyClickState;
 };
 
 extern InputControls_Mgr input_manager;

@@ -27,14 +27,14 @@ void UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*
 	_env->addComponents(button, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS),
 						&GUIobjs[button].action));
 
-	const float margin = 50;
-	sf::FloatRect dim = sf::FloatRect(_pos.x, _pos.y,
-		labels[button].label.getLocalBounds().width+margin, labels[button].label.getLocalBounds().height+margin);
-
 	/// \TODO: This is DANGEROUS if label is not a component of this entity
 	/// \TODO: Figure out why the font files is not being found
 	if(!labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 	labels[button].label.setFont(labels[button].font);
+
+	const float margin = 50;
+	sf::Text text = labels[button].label;
+	sf::FloatRect textSize = text.getLocalBounds();
 
 	int charSize = 24;
 	labels[button].label.setCharacterSize(charSize);
@@ -43,7 +43,7 @@ void UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*
 
 	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
 		 bounds[button].data->setPosition(_pos.x, _pos.y);
-		 bounds[button].data->setSize(sf::Vector2f(dim.width, dim.height));
+		 bounds[button].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
 }
 
 void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)

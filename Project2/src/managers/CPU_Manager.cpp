@@ -13,7 +13,7 @@ void CPUManager::createCPUMgr(Environment* _env, sf::RenderWindow* _win)
 		"CPU",
 		new Transform(Vec2f(100, 100)),
 		new Label(""),
-		Component(bool, "visible", new bool(false))
+		Component(bool, "visible", new bool(true))
 	);
 
 	if(_env->hasComponents<Label>(id))
@@ -32,6 +32,8 @@ void CPUManager::createCPUMgr(Environment* _env, sf::RenderWindow* _win)
 sf::Time CPUManager::update()
 {
 	sf::Time elapsed = clock.restart();
-	label->setString("Elapsed time: "+std::to_string(elapsed.asMilliseconds())+" ms\t"+std::to_string(1.0/elapsed.asSeconds())+" FPS\n");
+	std::string renderSys = label->getString();
+
+	label->setString("Elapsed time: "+std::to_string(elapsed.asMicroseconds()/1000.0)+" ms\t"+std::to_string(1.0/elapsed.asSeconds())+" FPS\n");
 	return elapsed;
 }

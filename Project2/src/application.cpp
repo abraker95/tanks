@@ -9,7 +9,6 @@ Application::Application() : main_env(128)
 // [CORE DECLARATIONS]
 
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
-	//fullscreen = new bool(false);
 
 // [ENTITY CREATION]
 	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");

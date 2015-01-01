@@ -30,10 +30,10 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 	}
 		
 	// update the key states  
-	std::bitset<256> prevKeyPressState = input_manager.keyPressState; // not a ref
+	std::bitset<sf::Keyboard::KeyCount> prevKeyPressState = input_manager.keyPressState; // not a ref
 	input_manager.keyPressState.reset();  input_manager.keyClickState.reset();
 	
-	for(int j = 0; j<256; j++)
+	for(int j = 0; j<sf::Keyboard::KeyCount; j++)
 	{
 		if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key(j))))
 		{
