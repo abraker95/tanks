@@ -9,8 +9,9 @@ Application::Application() : main_env(128)
 // [CORE DECLARATIONS]
 
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
-
-// [ENTITY CREATION]
+	window->setFramerateLimit(60);
+	
+	// [ENTITY CREATION]
 	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
 	entity_manager.NewGame(&main_env, &texture_manager);
 
