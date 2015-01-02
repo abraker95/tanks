@@ -35,13 +35,11 @@ sf::Time CPUManager::update()
 	std::string renderSys = label->getString();
 
 	int i = renderSys.size()-1;
-	
 	if(i>0)
 	{
 		for(; renderSys[i-1]!='\n'; --i);
 		renderSys = renderSys.substr(i, renderSys.size());
 	}
-	
 
 	label->setString("Elapsed time: "+std::to_string(elapsed.asMicroseconds()/1000.0)+" ms\t"+std::to_string(1.0/elapsed.asSeconds())+" FPS\n"+renderSys);
 	return elapsed;
