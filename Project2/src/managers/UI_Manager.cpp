@@ -66,6 +66,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 			else
 				_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
 
+			_win->setFramerateLimit(60);
 			*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
 			//_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
 		}
