@@ -77,6 +77,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 		for(int i = 0; i<mainMenu.size(); i++)	  UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
 		for(int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 
+		currMenu = OPTIONS_MENU;
 		return nullptr;
 	};
 	mainMenu.push_back(CreateButton(_env, Vec2f(100.f, 340.f), Options, "Options", "Options_Button"));
@@ -106,14 +107,31 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 		for(int i = 0; i<mainMenu.size(); i++)	  UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
 		for(int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 
+		currMenu = MAIN_MENU;
 		return nullptr;
 	};
 	optionsMenu.push_back(CreateButton(_env, Vec2f(200.f, 220.f), Back, "Back", "Back_Button", false));
 
-	_env->createEntity("ESC UI",
-		new GUIObj(GUIObj::VOID, [this]()->void* { return nullptr; }),
+
+	std::function<void*()> ESC = [_env, this]()->void*
+	{
+		auto UI = _env->get<UserInterface>();
+		
+		if(currMenu == OPTIONS_MENU)
+			for(int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
+		else if(currMenu==MAIN_MENU)
+			for(int i = 0; i<mainMenu.size(); i++)	  UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+		
+		*visible = UI[optionsMenu[0]].show || UI[mainMenu[0]].show;
+		return nullptr;
+	};
+	int esc_UI = _env->createEntity("ESC UI",
+		new GUIObj(GUIObj::VOID, ESC),
 		Component(bool, "visible", new bool(true)),
 		Component(sf::Texture, "shader_filter", nullptr),
 		Component(sf::Shader, "blur_shader", nullptr)
 		);
+
+	currMenu = MAIN_MENU;
+	visible = _env->get<StdComponent<bool>>()[esc_UI].data;
 }

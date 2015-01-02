@@ -9,4 +9,5 @@
 #define COND(_cond, _a, _b) (_cond? _a: _b)
 #define LIMIT(_a, _x, _b) COND(_x>MAX(_a, _b), MAX(_a, _b), COND(_x<MIN(_a, _b), MIN(_a, _b), _x))
 #define DELTA(_a, _b) (MAX(_a, _b) - MIN(_a, _b))
+#define INV(x) x = !x
 #define token2string(x) #x

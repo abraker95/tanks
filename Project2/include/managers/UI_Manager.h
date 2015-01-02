@@ -15,6 +15,14 @@ class UI_Manager
 
 
 	private:
+		enum MENU
+		{
+			MAIN_MENU = 0,
+			OPTIONS_MENU
+		};
+
 		vector<int> mainMenu, optionsMenu;
+		short currMenu;
+		bool* visible;
 };
 

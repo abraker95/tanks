@@ -51,6 +51,7 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 		}
 	}
 
+	/// \TODO: See if it's possible to get rid of the menu event
 	auto menuEvent = env->getEvents<MenuEvent>();
 	static bool updateGameEntities = false;
 

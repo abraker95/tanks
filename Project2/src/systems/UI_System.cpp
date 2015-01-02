@@ -39,56 +39,43 @@ void UISystem::update(Environment* env, EntityManager* _entMgr, TextureManager* 
 
 	for(unsigned i = 0; i<env->maxEntities(); i++)
 	{
-		if(env->hasComponents<UserInterface, GUIObj, StdComponent<bool>>(i))
-		{
-			auto visible = env->get<StdComponent<bool>>();
-			if(input_manager.keyClickState.test(sf::Keyboard::Escape))
-			{
-				*visible[i].data = !*visible[i].data;
-				PRINT_DEBUG(cout<<"Emit MenuEvent "<<endl, HI_DEBUG, GFXSYS);
-				env->emit(new MenuEvent(*visible[i].data));
-			}
-		}
-	}
-
-	for(unsigned i = 0; i<env->maxEntities(); i++)
-	{
 		// \TODO: Should the press flag be still on if the cursor moves from the object while user is still
 		//        holding the button or not?
 		if(env->hasComponents<UserInterface, GUIObj>(i))
 		{
-			if(GUIobjs[i].type!=GUIObj::VOID)
+			if(GUIobjs[i].type==GUIObj::VOID)
 			{
-				//PRINT_DEBUG(cout<<"BUTTON "<<env->getEvents<MenuEvent>().size()<<endl, HI_DEBUG, GFXSYS);
-				auto menuEvent = env->getEvents<MenuEvent>();
-
-				if(menuEvent.size()>=1)
-					ui[i].show = menuEvent[0].menuVisible;
-
-				if(ui[i].show)
+				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 				{
-					// save the drag state if the button is pressed since it is going to be reset. 
-					// This is needed for the logic handeling the case where the cursor goes fast
-					// enough to escape the object's bounds
-					bool drag = ui[i].enable.test(UserInterface::DRAG),
-					     toggle = ui[i].enable.test(UserInterface::TOGGLE);
+					auto visible = env->get<StdComponent<bool>>()[i].data;
+					if(ui[i].action) (*ui[i].action)(); 
+					env->emit(new MenuEvent(*visible));
+				}		
+			}
 
-					ui[i].state.reset();
-					if(ui[i].cursorOnThis)
+			if(ui[i].show)
+			{
+				// save the drag state if the button is pressed since it is going to be reset. 
+				// This is needed for the logic handeling the case where the cursor goes fast
+				// enough to escape the object's bounds
+				bool drag = ui[i].enable.test(UserInterface::DRAG),
+					 toggle = ui[i].enable.test(UserInterface::TOGGLE);
+
+				ui[i].state.reset();
+				if(ui[i].cursorOnThis)
+				{
+					if(ui[i].enable.test(UserInterface::HIGHLIGHT)) ui[i].state.set(UserInterface::HIGHLIGHT);
+					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT))
 					{
-						if(ui[i].enable.test(UserInterface::HIGHLIGHT)) ui[i].state.set(UserInterface::HIGHLIGHT);
-						if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT))
-						{
-							if(ui[i].enable.test(UserInterface::TOGGLE)&&!toggle) ui[i].state.set(UserInterface::TOGGLE);
-							if(ui[i].enable.test(UserInterface::PRESS)) ui[i].state.set(UserInterface::PRESS);
-							if(ui[i].enable.test(UserInterface::DRAG))  ui[i].state.set(UserInterface::DRAG);
-							if(input_manager.mouseClickState.test(InputControls_Mgr::MOUSE::LEFT)) if(ui[i].action) (*ui[i].action)();
-						}
+						if(ui[i].enable.test(UserInterface::TOGGLE)&&!toggle) ui[i].state.set(UserInterface::TOGGLE);
+						if(ui[i].enable.test(UserInterface::PRESS)) ui[i].state.set(UserInterface::PRESS);
+						if(ui[i].enable.test(UserInterface::DRAG))  ui[i].state.set(UserInterface::DRAG);
+						if(input_manager.mouseClickState.test(InputControls_Mgr::MOUSE::LEFT)) if(ui[i].action) (*ui[i].action)();
 					}
-
-					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT) && drag)
-						ui[i].state.set(UserInterface::DRAG);
 				}
+
+				if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT) && drag)
+					ui[i].state.set(UserInterface::DRAG);
 			}
 		}
 	}
