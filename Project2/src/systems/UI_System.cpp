@@ -67,10 +67,14 @@ void UISystem::update(Environment* env, EntityManager* _entMgr, TextureManager* 
 					if(ui[i].enable.test(UserInterface::HIGHLIGHT)) ui[i].state.set(UserInterface::HIGHLIGHT);
 					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT))
 					{
-						if(ui[i].enable.test(UserInterface::TOGGLE)&&!toggle) ui[i].state.set(UserInterface::TOGGLE);
-						if(ui[i].enable.test(UserInterface::PRESS)) ui[i].state.set(UserInterface::PRESS);
-						if(ui[i].enable.test(UserInterface::DRAG))  ui[i].state.set(UserInterface::DRAG);
-						if(input_manager.mouseClickState.test(InputControls_Mgr::MOUSE::LEFT)) if(ui[i].action) (*ui[i].action)();
+						if(ui[i].enable.test(UserInterface::TOGGLE) && !toggle) ui[i].state.set(UserInterface::TOGGLE);
+						if(ui[i].enable.test(UserInterface::PRESS))				ui[i].state.set(UserInterface::PRESS);
+						if(ui[i].enable.test(UserInterface::DRAG))				ui[i].state.set(UserInterface::DRAG);
+						if(input_manager.mouseClickState.test(InputControls_Mgr::MOUSE::LEFT))
+						{
+							input_manager.mouseClickState.set(InputControls_Mgr::MOUSE::LEFT, false);
+							if(ui[i].action) (*ui[i].action)();
+						}
 					}
 				}
 

@@ -23,14 +23,13 @@ int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*(
 	auto GUIobjs = _env->get<GUIObj>();
 	auto labels = _env->get<Label>();
 
-	/// \NOTE: I have ABSOLUTELY no idea why &GUIobjs[button].action works while creating this component with &action in the createEntity funtion creates a wierd pointer error.
+	/// \NOTE (abraker): I have ABSOLUTELY no idea why &GUIobjs[button].action works while creating this component with &action in the createEntity funtion creates a wierd pointer error.
 	_env->addComponents(button, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS),
 						&GUIobjs[button].action));
 
 	auto UI = _env->get<UserInterface>();
 	UI[button].show = _visible;
 
-	/// \TODO: This is DANGEROUS if label is not a component of this entity
 	if(!labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 	labels[button].label.setFont(labels[button].font);
 
@@ -72,15 +71,25 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 		  /// \TODO:  
 			Implement Player tank colors, Volume, and key Controls buttons
 		*/
-
 		auto UI = _env->get<UserInterface>();
-		for(int i = 0; i<mainMenu.size(); i++)	  UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
-		for(int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
+		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+		for(unsigned int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 
-		currMenu = OPTIONS_MENU;
+		currMenu = OPTIONS_MENU;		
 		return nullptr;
 	};
-	mainMenu.push_back(CreateButton(_env, Vec2f(100.f, 340.f), Options, "Options", "Options_Button"));
+	mainMenu.push_back(CreateButton(_env, Vec2f(600.f, 220.f), Options, "Options", "Options_Button"));
+
+	std::function<void*()> About = [_env, this]()->void*
+	{
+		auto UI = _env->get<UserInterface>();
+		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+		for(unsigned int i = 0; i<aboutMenu.size(); i++)   UI[aboutMenu[i]].show = !UI[aboutMenu[i]].show;
+
+		currMenu = ABOUT_MENU;
+		return nullptr;
+	};
+	mainMenu.push_back(CreateButton(_env, Vec2f(100.f, 340.f), About, "About", "About_Button"));
 
 	std::function<void*()> ToggleFullscreen = [_env, _win]()->void*
 	{
@@ -93,7 +102,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 			else
 				_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
 
-			_win->setFramerateLimit(60);
+			//_win->setFramerateLimit(60);
 			*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
 			//_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
 		}
@@ -101,26 +110,38 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 	};
 	optionsMenu.push_back(CreateButton(_env, Vec2f(600.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button", false));
 
-	std::function<void*()> Back = [_env, this]()->void*
+	std::function<void*()> optionsBack = [_env, this]()->void*
 	{
 		auto UI = _env->get<UserInterface>();
-		for(int i = 0; i<mainMenu.size(); i++)	  UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
-		for(int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
+		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+		for(unsigned int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 
 		currMenu = MAIN_MENU;
 		return nullptr;
 	};
-	optionsMenu.push_back(CreateButton(_env, Vec2f(200.f, 220.f), Back, "Back", "Back_Button", false));
+	optionsMenu.push_back(CreateButton(_env, Vec2f(200.f, 220.f), optionsBack, "Back", "optionsBack_Button", false));
 
+	std::function<void*()> aboutBack = [_env, this]()->void*
+	{
+		auto UI = _env->get<UserInterface>();
+		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+		for(unsigned int i = 0; i<aboutMenu.size(); i++)   UI[aboutMenu[i]].show = !UI[aboutMenu[i]].show;
 
-	std::function<void*()> ESC = [_env, this]()->void*
+		currMenu = MAIN_MENU;
+		return nullptr;
+	};
+	aboutMenu.push_back(CreateButton(_env, Vec2f(450.f, 620.f), aboutBack, "Back", "aboutBack_Button", false));
+
+	std::function<void*()> ESC = [_env, this, &aboutBack]()->void*
 	{
 		auto UI = _env->get<UserInterface>();
 		
 		if(currMenu == OPTIONS_MENU)
-			for(int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
+			for(unsigned int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 		else if(currMenu==MAIN_MENU)
-			for(int i = 0; i<mainMenu.size(); i++)	  UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+			for(unsigned int i = 0; i<mainMenu.size(); i++)    UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
+		else if(currMenu==ABOUT_MENU)
+			aboutBack();
 		
 		*visible = UI[optionsMenu[0]].show || UI[mainMenu[0]].show;
 		return nullptr;

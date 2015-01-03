@@ -18,10 +18,11 @@ class UI_Manager
 		enum MENU
 		{
 			MAIN_MENU = 0,
-			OPTIONS_MENU
+			OPTIONS_MENU,
+			ABOUT_MENU
 		};
 
-		vector<int> mainMenu, optionsMenu;
+		vector<unsigned int> mainMenu, optionsMenu, aboutMenu;
 		short currMenu;
 		bool* visible;
 };
