@@ -46,6 +46,44 @@ int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*(
 	return button;
 }
 
+int UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, bool _visible)
+{
+	unsigned int pane = _env->createEntity
+	(
+		_name,
+		new Transform(_pos),
+		new GUIObj(GUIObj::PANE, nullptr),
+		new Label(_lable),
+		new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
+		new UserInterface(std::bitset<UIstates>(NULL), nullptr)
+	);
+
+	auto GUIobjs = _env->get<GUIObj>();
+	auto labels = _env->get<Label>();
+	auto UI = _env->get<UserInterface>();
+
+	UI[pane].show = _visible;
+
+	if(!labels[pane].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+	labels[pane].label.setFont(labels[pane].font);
+
+	const float margin = 50;
+	sf::Text text = labels[pane].label;
+	sf::FloatRect textSize = text.getLocalBounds();
+
+	int charSize = 24;
+	labels[pane].label.setCharacterSize(charSize);
+	labels[pane].label.setPosition(sf::Vector2f(_pos.x+margin/2, _pos.y+margin/2-charSize/2));
+	labels[pane].label.setColor(sf::Color::Black);
+
+
+	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
+	bounds[pane].data->setPosition(_pos.x, _pos.y);
+	bounds[pane].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
+
+	return pane;
+}
+
 void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 {
 	std::function<void*()> quitAction = [this]()->void*
@@ -128,6 +166,11 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 		return nullptr;
 	};
 	aboutMenu.push_back(CreateButton(_env, Vec2f(450.f, 620.f), aboutBack, "Back", "aboutBack_Button", false));
+
+	std::string aboutInfo =
+		" Tank Game \n"\
+		" Created by: ABraker and Sherushe";
+	aboutMenu.push_back(CreatePane(_env, Vec2f(300.f, 200.f), aboutInfo, "About Text", false));
 
 	std::function<void*()> ESC = [_env, this, &aboutBack]()->void*
 	{

@@ -11,6 +11,7 @@ class GUIObj: public Component<GUIObj>
 			SLIDER,
 			RADIO,
 			SCROLLBAR,
+			PANE,
 			VOID
 		};
 
