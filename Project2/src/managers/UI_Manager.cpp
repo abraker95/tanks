@@ -17,17 +17,14 @@ int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*(
 		new Transform(_pos),
 		new GUIObj(GUIObj::BUTTON, _action),
 		new Label(_lable),
-		new StdComponent<sf::RectangleShape>(new sf::RectangleShape())
+		new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
+		new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), _action)
 	);
 
 	auto GUIobjs = _env->get<GUIObj>();
 	auto labels = _env->get<Label>();
-
-	/// \NOTE (abraker): I have ABSOLUTELY no idea why &GUIobjs[button].action works while creating this component with &action in the createEntity funtion creates a wierd pointer error.
-	_env->addComponents(button, new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS),
-						&GUIobjs[button].action));
-
 	auto UI = _env->get<UserInterface>();
+
 	UI[button].show = _visible;
 
 	if(!labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;

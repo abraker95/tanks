@@ -22,7 +22,7 @@ UISystem::UISystem(Environment* env)
 			if(GUIobjs[i].type==GUIObj::VOID)
 			{
 				assert(!env->hasComponents<UserInterface>(i));
-				env->addComponents(i, new UserInterface(std::bitset<UIstates>(), &GUIobjs[i].action));
+				env->addComponents(i, new UserInterface(std::bitset<UIstates>(), GUIobjs[i].action));
 				//env->removeComponents<GUIObj>(i);
 			}
 		}
