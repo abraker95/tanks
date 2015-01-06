@@ -6,8 +6,8 @@ class UISystem
 {
 	public:
 		UISystem();
-		UISystem(Environment* env);
+		UISystem(Environment* _env);
 		~UISystem();
 
-		void update(Environment* env, EntityManager* _entMgr, TextureManager* _texMgr);
+		void update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr);
 };

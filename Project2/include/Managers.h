@@ -6,3 +6,4 @@
 #include "managers/InputControls_Mgr.h"
 #include "managers/UI_Manager.h"
 #include "managers/CPU_Manager.h"
+#include "managers/HUD_Manager.h"

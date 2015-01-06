@@ -17,6 +17,7 @@ Application::Application() : main_env(128)
 
 	UI_manager.CreateMenu(&main_env, window);
 	cpu_manager.createCPUMgr(&main_env, window);
+	hud_manager.createHUD(&main_env);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -39,6 +40,7 @@ Application::Application() : main_env(128)
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
 	damage_system = new DamageSystem();
+	hud_system = new HUDSystem();
 }
 
 Application::~Application()
@@ -75,10 +77,11 @@ int Application::run()
 void Application::update(float dt)
 {
 	main_env.updateWrapper(input_system, &entity_manager, &texture_manager);
-	main_env.updateWrapper(ui_system, &entity_manager, &texture_manager);
+	main_env.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
 	main_env.updateWrapper(expiring_system, dt);
 	main_env.updateWrapper(physics_system, dt);
 	main_env.updateWrapper(damage_system);
 	main_env.updateWrapper(view_system, window, dt);
-	main_env.updateWrapper(render_system, window);
+	main_env.updateWrapper(hud_system);
+	main_env.updateWrapper(render_system, window, &entity_manager, &UI_manager, &map_loader);
 }

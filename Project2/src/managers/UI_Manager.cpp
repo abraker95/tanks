@@ -43,6 +43,7 @@ int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*(
 		 bounds[button].data->setPosition(_pos.x, _pos.y);
 		 bounds[button].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
 
+	IDs.push_back(button);
 	return button;
 }
 
@@ -81,6 +82,7 @@ int UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, st
 	bounds[pane].data->setPosition(_pos.x, _pos.y);
 	bounds[pane].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
 
+	IDs.push_back(pane);
 	return pane;
 }
 
@@ -172,7 +174,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 		" Created by: ABraker and Sherushe";
 	aboutMenu.push_back(CreatePane(_env, Vec2f(300.f, 200.f), aboutInfo, "About Text", false));
 
-	std::function<void*()> ESC = [_env, this, &aboutBack]()->void*
+	std::function<void*()> ESC = [_env, this, aboutBack]()->void*
 	{
 		auto UI = _env->get<UserInterface>();
 		
@@ -189,10 +191,16 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 	int esc_UI = _env->createEntity("ESC UI",
 		new GUIObj(GUIObj::VOID, ESC),
 		Component(bool, "visible", new bool(true)),
-		Component(sf::Texture, "shader_filter", nullptr),
-		Component(sf::Shader, "blur_shader", nullptr)
+		Component(sf::Shader, "blur_shader", new sf::Shader())
 		);
+		_env->addComponents(esc_UI, new UserInterface(std::bitset<UIstates>(), ESC));
 
+		sf::Shader* shader = _env->get<StdComponent<sf::Shader>>()[esc_UI].data;
+			if(!shader->loadFromFile("res/blur.vert", "res/blur.frag"))
+				std::cout<<"ERROR: Could not load shader"<<std::endl;
+			shader->setParameter("intensity", 0.004f);
+	
 	currMenu = MAIN_MENU;
 	visible = _env->get<StdComponent<bool>>()[esc_UI].data;
+	IDs.push_back(esc_UI);
 }

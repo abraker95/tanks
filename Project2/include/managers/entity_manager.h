@@ -7,25 +7,30 @@
 
 class EntityManager
 {
-public:
-	EntityManager();
-	~EntityManager();
+	friend class RenderSystem;
 
-	unsigned spawnTankPlayer(std::string _name,
-		Environment* env, TextureManager* tex_man, 
-		float x, float y, 
-		std::array<sf::Keyboard::Key, 5> keys);
+	public:
+		EntityManager();
+		~EntityManager();
 
-	unsigned spawnBullet(std::string _name,
-		Environment* env, TextureManager* tex_man, 
-		unsigned tank_id);
+		unsigned spawnTankPlayer(std::string _name,
+			Environment* env, TextureManager* tex_man, 
+			float x, float y, 
+			std::array<sf::Keyboard::Key, 5> keys);
 
-	unsigned createCamera(std::string _name,
-		Environment* env, 
-		sf::FloatRect& borders, sf::FloatRect& viewport, 
-		std::vector<unsigned> focusedObjects);
+		unsigned spawnBullet(std::string _name,
+			Environment* env, TextureManager* tex_man, 
+			unsigned tank_id);
 
-	void NewGame(Environment* env, TextureManager* _textmgr);
-	void EndGame(Environment* _env);
-	void ResetGame(Environment* _env, TextureManager* _textmgr);
+		unsigned createCamera(std::string _name,
+			Environment* env, 
+			sf::FloatRect& borders, sf::FloatRect& viewport, 
+			std::vector<unsigned> focusedObjects);
+
+		void NewGame(Environment* env, TextureManager* _textmgr);
+		void EndGame(Environment* _env);
+		void ResetGame(Environment* _env, TextureManager* _textmgr);
+
+	private:
+		std::vector<unsigned int> IDs;
 };

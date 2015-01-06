@@ -22,7 +22,7 @@ void CPUManager::createCPUMgr(Environment* _env, sf::RenderWindow* _win)
 			if(!labels[id].font.loadFromFile("res/arial.ttf")) { cout<<"ERROR: FONT NOT FOUND"<<endl; exit(2); }
 			labels[id].label.setFont(labels[id].font);
 			labels[id].label.setCharacterSize(12);
-			labels[id].label.setColor(sf::Color(sf::Color::Black));
+			labels[id].label.setColor(sf::Color(sf::Color::Blue));
 			labels[id].label.setStyle(sf::Text::Style::Bold);
 			labels[id].label.setPosition(sf::Vector2f(_win->getSize().x-400, 10));
 		label = _env->cpuData = &labels[id].label;

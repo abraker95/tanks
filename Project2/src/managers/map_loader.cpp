@@ -35,10 +35,13 @@ unsigned MapLoader::createMap(Environment* env, TextureManager* tex_man, std::st
 
 	arrays.push_back(array);
 
-	return env->createEntity("map",
+	unsigned int id = env->createEntity("map",
 		new VertexArray(array),
 		new Texture(tileset),
 		new Tilemap());
+
+	IDs.push_back(id);
+	return id;
 }
 
 bool MapLoader::readMap(

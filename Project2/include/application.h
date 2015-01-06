@@ -27,6 +27,7 @@ private:
 	UISystem* ui_system;
 	ViewSystem* view_system;
 	DamageSystem* damage_system;
+	HUDSystem* hud_system;
 	
 
 	// Managers
@@ -35,4 +36,5 @@ private:
 	MapLoader map_loader;
 	UI_Manager UI_manager;
 	CPUManager cpu_manager;
+	HUD_Manager hud_manager;
 };

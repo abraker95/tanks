@@ -1,5 +1,5 @@
-#include "Components.h"
 #include "systems/render_system.h"
+#include "Components.h"
 #include "utils.h"
 #include "events.h"
 
@@ -16,7 +16,7 @@ RenderSystem::~RenderSystem()
 	//delete fullscreen;
 }
 
-void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
+void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManager* _entMgr, UI_Manager* _uiMgr, MapLoader* _mapLdr)
 {
 	auto sprites = env->get<Sprite>();
 	auto trans = env->get<Transform>();
@@ -38,38 +38,38 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 	//if(GameScene.getSize() != _win->getSize())
 	env->emit(new WindowModeEvent(&fullscreen));
 
-	for(unsigned k=0;k<env->maxEntities();k++)
+	for(unsigned i=0;i<env->maxEntities();i++)
 	{
-		if(env->hasComponents<ViewController>(k))
+		if(env->hasComponents<ViewController>(i))
 		{
-			GameScene.setView(view_controller[k].view);
-			for(unsigned i=0;i<env->maxEntities();i++)
+			GameScene.setView(view_controller[i].view);
+			for(unsigned k=0;k<_mapLdr->IDs.size();k++)
 			{
-				if(env->hasComponents<VertexArray, Texture, Tilemap>(i))
+				unsigned int ID = _mapLdr->IDs[k];
+				if(env->hasComponents<VertexArray, Texture, Tilemap>(ID))
 				{
-					GameScene.draw(*vertex_array[i].array, textures[i].texture);
+					GameScene.draw(*vertex_array[ID].array, textures[ID].texture);
 					break; // should only be one map
 				}
 			}
 
-			for(unsigned i=0;i<env->maxEntities();i++)
+			for(unsigned k = 0; k<_entMgr->IDs.size(); k++)
 			{
 				// temporary fix
-				if(env->hasComponents<Transform, Sprite, Texture>(i) &&
-					!env->hasComponents<GUIObj>(i))
+				unsigned int ID = _entMgr->IDs[k];
+				if(env->hasComponents<Transform, Sprite, Texture>(ID)&&
+					!env->hasComponents<GUIObj>(ID))
 				{
-					sf::Sprite& sprite = sprites[i].sprite;
-						sprite.setPosition(trans[i].pos.x, trans[i].pos.y);
-						sprite.setRotation(trans[i].rot);
-						sprite.setTexture(*textures[i].texture);
+					sf::Sprite& sprite = sprites[ID].sprite;
+						sprite.setPosition(trans[ID].pos.x, trans[ID].pos.y);
+						sprite.setRotation(trans[ID].rot);
+						sprite.setTexture(*textures[ID].texture);
 						GameScene.draw(sprite);
 				}
 			}
 		}
-	}
+	
 
-	for(unsigned i=0;i<env->maxEntities();i++)
-	{
 		// blur the contents behind the menu
 		if(sf::Shader::isAvailable())
 		{
@@ -77,40 +77,14 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 			{
 				auto GUIobjs = env->get<GUIObj>();
 				auto visible = env->get<StdComponent<bool>>();  /// \TODO: keep teack of this when breating other stdcomponent bools
-				auto shaderObj = env->get<StdComponent<sf::Texture>>();
 				auto blur = env->get<StdComponent<sf::Shader>>();
 
 				if(GUIobjs[i].type==GUIObj::VOID)
 				{
 					if(*visible[i].data && visible[i].name == "visible")
 					{
-						if(shaderObj[i].data == nullptr)
-						{
-							//PRINT_DEBUG(std::cout<<"Texture:"<<shaderObj[i].data<<std::endl, HI_DEBUG, GFXSYS);
-							shaderObj[i].data = new sf::Texture();
-						//	PRINT_DEBUG(std::cout<<"Texture: "<<shaderObj[i].data<<"  Source: "<<env->get<StdComponent<sf::Texture>>()[i].data<<std::endl, HI_DEBUG, GFXSYS);
-							shaderObj[i].data->create(_win->getSize().x, _win->getSize().y);
-							shaderObj[i].set((sf::Texture*)&GameScene.getTexture());
-						}
-						
-						bool validShader = blur[i].data != nullptr;
-						if(blur[i].data == nullptr)
-						{
-						//	PRINT_DEBUG(std::cout<<"shader"<<std::endl, HI_DEBUG, GFXSYS);
-							blur[i].data = new sf::Shader();
-						//	PRINT_DEBUG(std::cout<<"Shader: "<<shaderObj[i].data<<"  Source: "<<env->get<StdComponent<sf::Shader>>()[i].data<<std::endl, HI_DEBUG, GFXSYS);
-							validShader = blur[i].data->loadFromFile("res/blur.vert", "res/blur.frag");
-						}
-						
-						if(validShader)
-						{
-							blur[i].data->setParameter("tex0", *shaderObj[i].data);
-							blur[i].data->setParameter("intensity", 0.004f);
-
-							shader = blur[i].data;
-						//	GameScene.draw(sf::Sprite(*shaderObj[i].data), blur[i].data);
-						}
-						else PRINT_DEBUG(std::cout<<"ERROR: Could not load shader"<<std::endl, HI_DEBUG, GFXSYS);	
+						blur[i].data->setParameter("tex0", GameScene.getTexture());
+						shader = blur[i].data;	
 					}
 					else shader = nullptr;
 				}
@@ -196,7 +170,6 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win)
 					auto labels = env->get<Label>();
 					UIScene.draw(labels[i].label);
 				}
-				
 			}
 			
 		}

@@ -42,6 +42,7 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 
 	sprite[new_tank].sprite.setOrigin(origin.x, origin.y);
 
+	IDs.push_back(new_tank);
 	return new_tank;
 }
 
@@ -83,6 +84,7 @@ unsigned EntityManager::spawnBullet(std::string _name,
 	);
 
 	sprite[new_bullet].sprite.setOrigin(origin.x, origin.y);
+	IDs.push_back(new_bullet);
 	return new_bullet;
 }
 

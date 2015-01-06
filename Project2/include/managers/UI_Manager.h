@@ -5,6 +5,9 @@
 
 class UI_Manager
 {
+	friend class UISystem;
+	friend class RenderSystem;
+
 	public:
 		UI_Manager();
 		virtual ~UI_Manager();
@@ -12,7 +15,7 @@ class UI_Manager
 		int CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, bool _visible = true);
 		int CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, bool _visible);
 		void CreateMenu(Environment* _env, sf::RenderWindow* _win);
-		
+
 	private:
 		enum MENU
 		{
@@ -21,7 +24,8 @@ class UI_Manager
 			ABOUT_MENU
 		};
 
-		vector<unsigned int> mainMenu, optionsMenu, aboutMenu;
+		std::vector<unsigned int> mainMenu, optionsMenu, aboutMenu;
+		std::vector<unsigned int> IDs;
 		short currMenu;
 		bool* visible;
 };

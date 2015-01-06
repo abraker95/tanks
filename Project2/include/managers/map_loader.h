@@ -8,28 +8,31 @@
 
 class MapLoader
 {
-public:
-	MapLoader();
-	~MapLoader();
+	friend class RenderSystem;
 
-	unsigned createMap(Environment* env, TextureManager* tex_man, std::string filename);
+	public:
+		MapLoader();
+		~MapLoader();
 
-private:
-	sf::VertexArray* buildVA(
-		Environment* env,
-		sf::Texture* tilesheet,
-		int tileWidth, int tileHeight,
-		int tileCountX, int tileCountY,
-		int numLayers,
-		char* mapData);
+		unsigned createMap(Environment* env, TextureManager* tex_man, std::string filename);
 
-	bool readMap(
-		const std::string& filename, 
-		std::string& tilesheet,
-		char& tileWidth, char& tileHeight,
-		char& tileCountX, char& tileCountY,
-		char& numLayers,
-		char*& mapData);
+	private:
+		sf::VertexArray* buildVA(
+			Environment* env,
+			sf::Texture* tilesheet,
+			int tileWidth, int tileHeight,
+			int tileCountX, int tileCountY,
+			int numLayers,
+			char* mapData);
+
+		bool readMap(
+			const std::string& filename, 
+			std::string& tilesheet,
+			char& tileWidth, char& tileHeight,
+			char& tileCountX, char& tileCountY,
+			char& numLayers,
+			char*& mapData);
 	
-	std::vector<sf::VertexArray*> arrays;
+		std::vector<sf::VertexArray*> arrays;
+		std::vector<unsigned int> IDs;
 };
