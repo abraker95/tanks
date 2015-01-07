@@ -17,7 +17,7 @@ private:
 	sf::RenderWindow* window;
 
 	// Environments
-	Environment main_env;
+	Environment main_env, uiEnv;
 
 	// Systems
 	InputSystem* input_system;

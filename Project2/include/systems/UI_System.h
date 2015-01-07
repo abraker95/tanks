@@ -8,5 +8,5 @@ class UISystem
 		UISystem();
 		~UISystem();
 
-		void update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr);
+		void update(Environment* _env, Environment* _uiEnv, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr);
 };

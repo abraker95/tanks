@@ -4,7 +4,7 @@
 #include "events.h"
 #include "utils.h"
 
-Application::Application() : main_env(128)
+Application::Application(): main_env(128), uiEnv(128)
 {
 // [CORE DECLARATIONS]
 
@@ -15,7 +15,7 @@ Application::Application() : main_env(128)
 	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
 	entity_manager.NewGame(&main_env, &texture_manager);
 
-	UI_manager.CreateMenu(&main_env, window);
+	UI_manager.CreateMenu(&uiEnv, window);
 	cpu_manager.createCPUMgr(&main_env, window);
 	hud_manager.createHUD(&main_env);
 
@@ -76,12 +76,12 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	main_env.updateWrapper(input_system, &entity_manager, &texture_manager, &cpu_manager, &UI_manager);
-	main_env.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
+	main_env.updateWrapper(input_system, &uiEnv, &entity_manager, &texture_manager, &cpu_manager);
+	uiEnv.updateWrapper(ui_system, &uiEnv, &UI_manager, &entity_manager, &texture_manager);
 	main_env.updateWrapper(expiring_system, dt);
 	main_env.updateWrapper(physics_system, dt);
 	main_env.updateWrapper(damage_system);
 	main_env.updateWrapper(view_system, window, dt);
 	main_env.updateWrapper(hud_system);
-	main_env.updateWrapper(render_system, window, &entity_manager, &UI_manager, &cpu_manager, &map_loader);
+	main_env.updateWrapper(render_system, &uiEnv, window, &entity_manager, &cpu_manager, &map_loader);
 }

@@ -8,20 +8,18 @@ UISystem::UISystem() {}
 UISystem::~UISystem() {}
 
 
-void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
+void UISystem::update(Environment* _env, Environment* _uiEnv, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
 {
-	auto ui = _env->get<UserInterface>();
-	auto GUIobjs = _env->get<GUIObj>();
+	auto ui = _uiEnv->get<UserInterface>();
+	auto GUIobjs = _uiEnv->get<GUIObj>();
 
 	if(*_uiMgr->visible)
 	{
-		for(unsigned i = 0; i<_uiMgr->IDs.size(); i++)
+		for(unsigned ID = 0; ID<_uiEnv->maxEntities(); ID++)
 		{
-			unsigned int ID = _uiMgr->IDs[i];
-
 			// \TODO: Should the press flag be still on if the cursor moves from the object while user is still
 			//        holding the button or not?
-			if(_env->hasComponents<UserInterface, GUIObj>(ID))
+			if(_uiEnv->hasComponents<UserInterface, GUIObj>(ID))
 			{
 				if(ui[ID].show)
 				{
@@ -29,7 +27,7 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 					// This is needed for the logic handeling the case where the cursor goes fast
 					// enough to escape the object's bounds
 					bool drag = ui[ID].enable.test(UserInterface::DRAG),
-						toggle = ui[ID].enable.test(UserInterface::TOGGLE);
+						 toggle = ui[ID].enable.test(UserInterface::TOGGLE);
 
 					ui[ID].state.reset();
 					if(ui[ID].cursorOnThis)
@@ -51,7 +49,7 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 						}
 					}
 
-					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT)&&drag)
+					if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT) && drag)
 						ui[ID].state.set(UserInterface::DRAG);
 				}
 			}

@@ -8,18 +8,16 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win)
 	GameScene.create(_win->getSize().x, _win->getSize().y);
 	UIScene.create(_win->getSize().x, _win->getSize().y);
 	shader = nullptr;
-	//fullscreen = new bool(false);
 }
 
 RenderSystem::~RenderSystem()
-{
-	//delete fullscreen;
-}
+{}
 
-void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManager* _entMgr, UI_Manager* _uiMgr, CPUManager* _cpuMgr, MapLoader* _mapLdr)
+void RenderSystem::update(Environment* env, Environment* _uiEnv, sf::RenderWindow* _win, EntityManager* _entMgr, CPUManager* _cpuMgr, MapLoader* _mapLdr)
 {
 	auto sprites = env->get<Sprite>();
-	auto trans = env->get<Transform>();
+	auto Gametrans = env->get<Transform>();
+	auto uiTrans = _uiEnv->get<Transform>();
 	auto textures = env->get<Texture>();
 	auto vertex_array = env->get<VertexArray>();
 	auto view_controller = env->get<ViewController>();
@@ -62,8 +60,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManage
 					!env->hasComponents<GUIObj>(ID))
 				{
 					sf::Sprite& sprite = sprites[ID].sprite;
-					sprite.setPosition(trans[ID].pos.x, trans[ID].pos.y);
-					sprite.setRotation(trans[ID].rot);
+					sprite.setPosition(Gametrans[ID].pos.x, Gametrans[ID].pos.y);
+					sprite.setRotation(Gametrans[ID].rot);
 					sprite.setTexture(*textures[ID].texture);
 					GameScene.draw(sprite);
 				}
@@ -75,8 +73,8 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManage
 					!env->hasComponents<GUIObj>(ID))
 				{
 					sf::Sprite& sprite = sprites[ID].sprite;
-					sprite.setPosition(trans[ID].pos.x, trans[ID].pos.y);
-					sprite.setRotation(trans[ID].rot);
+					sprite.setPosition(Gametrans[ID].pos.x, Gametrans[ID].pos.y);
+					sprite.setRotation(Gametrans[ID].rot);
 					sprite.setTexture(*textures[ID].texture);
 					GameScene.draw(sprite);
 				}
@@ -84,18 +82,17 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManage
 		}
 	}
 
-	for(unsigned i = 0; i<_uiMgr->IDs.size(); i++)
+	for(unsigned ID = 0; ID<_uiEnv->maxEntities(); ID++)
 	{
-		unsigned int ID = _uiMgr->IDs[i];
-		auto GUIobjs = env->get<GUIObj>();
+		auto GUIobjs = _uiEnv->get<GUIObj>();
 
 		// blur the contents behind the menu
 		if(sf::Shader::isAvailable())
 		{
-			if(env->getEntityName(ID)=="ESC UI") /// \NOTE: If there is a memory error within this scope, check getEntityName for bugs
+			if(_uiEnv->getEntityName(ID)=="ESC UI") /// \NOTE: If there is a memory error within this scope, check getEntityName for bugs
 			{
-				auto visible = env->get<StdComponent<bool>>();  /// \TODO: keep teack of this when breating other stdcomponent bools
-				auto blur = env->get<StdComponent<sf::Shader>>();
+				auto visible = _uiEnv->get<StdComponent<bool>>();  /// \TODO: keep teack of this when breating other stdcomponent bools
+				auto blur = _uiEnv->get<StdComponent<sf::Shader>>();
 
 				if(GUIobjs[ID].type==GUIObj::VOID)
 				{
@@ -110,19 +107,19 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManage
 		}
 
 		/// \TODO: have the button's dimentions update when window size changes
-		if(env->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(ID))
+		if(_uiEnv->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(ID))
 		{
-			auto ui = env->get<UserInterface>();
+			auto ui = _uiEnv->get<UserInterface>();
 
 			if(ui[ID].show)
 			{
 				if(GUIobjs[ID].type==GUIObj::BUTTON)
 				{
-					auto labels = env->get<Label>();
-					auto button = env->get<StdComponent<sf::RectangleShape>>();
+					auto labels = _uiEnv->get<Label>();
+					auto button = _uiEnv->get<StdComponent<sf::RectangleShape>>();
 
 					const float margin = 50;
-					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
+					sf::FloatRect dim = sf::FloatRect(uiTrans[ID].pos.x, uiTrans[ID].pos.y,
 						labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
 
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
@@ -153,18 +150,18 @@ void RenderSystem::update(Environment* env, sf::RenderWindow* _win, EntityManage
 
 					if(ui[ID].state.test(UserInterface::DRAG))
 					{
-						trans[ID].pos = sf::Mouse::getPosition();
+						uiTrans[ID].pos = sf::Mouse::getPosition();
 					}
 
 					UIScene.draw(labels[ID].label);
 				}
 				else if(GUIobjs[ID].type==GUIObj::PANE)
 				{
-					auto labels = env->get<Label>();
-					auto button = env->get<StdComponent<sf::RectangleShape>>();
+					auto labels = _uiEnv->get<Label>();
+					auto button = _uiEnv->get<StdComponent<sf::RectangleShape>>();
 
 					const float margin = 50;
-					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
+					sf::FloatRect dim = sf::FloatRect(uiTrans[ID].pos.x, uiTrans[ID].pos.y,
 						labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
 
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));

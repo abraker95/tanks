@@ -9,5 +9,5 @@ class InputSystem
 		InputSystem();
 		~InputSystem();
 
-		void update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr, UI_Manager* _uiMgr);
+		void update(Environment* _env, Environment* _uiEnv, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr);
 };

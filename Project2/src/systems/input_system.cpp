@@ -9,7 +9,7 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr, UI_Manager* _uiMgr)
+void InputSystem::update(Environment* env, Environment* _uiEnv, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr)
 {
 	auto tank_controls = env->get<TankControls>();
 	auto velocity = env->get<Velocity>();
@@ -45,25 +45,24 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 	for(unsigned i = 0; i<_cpuMgr->IDs.size(); i++)
 	{
 		unsigned int ID = _cpuMgr->IDs[i];
-		if(env->getEntityName(i)=="CPU")
+		if(env->getEntityName(ID)=="CPU")
 		{
 			if(input_manager.keyClickState[sf::Keyboard::F2])
-				*env->get<StdComponent<bool>>()[i].data = !*env->get<StdComponent<bool>>()[i].data;
+				*env->get<StdComponent<bool>>()[ID].data = !*env->get<StdComponent<bool>>()[ID].data;
 		}
 	}
 
-	for(unsigned i = 0; i<_uiMgr->IDs.size(); i++)
+	for(unsigned ID = 0; ID<_uiEnv->maxEntities(); ID++)
 	{
-		unsigned int ID = _uiMgr->IDs[i];
-		if(env->hasComponents<UserInterface, GUIObj>(ID))
+		if(_uiEnv->hasComponents<UserInterface, GUIObj>(ID))
 		{
-			auto GUIobjs = env->get<GUIObj>();
+			auto GUIobjs = _uiEnv->get<GUIObj>();
 			if(GUIobjs[ID].type==GUIObj::VOID)
 			{
 				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 				{
-					auto ui = env->get<UserInterface>();
-					auto visible = env->get<StdComponent<bool>>()[ID].data;
+					auto ui = _uiEnv->get<UserInterface>();
+					auto visible = _uiEnv->get<StdComponent<bool>>()[ID].data;
 
 					if(ui[ID].action) (*ui[ID].action)();
 					env->emit(new MenuEvent(*visible));

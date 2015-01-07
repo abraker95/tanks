@@ -13,9 +13,9 @@ class UI_Manager
 		UI_Manager();
 		virtual ~UI_Manager();
 
-		int CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, bool _visible = true);
-		int CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, bool _visible);
-		void CreateMenu(Environment* _env, sf::RenderWindow* _win);
+		int CreateButton(Environment* _uiEnv, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, bool _visible = true);
+		int CreatePane(Environment* _uiEnv, Vec2f _pos, std::string _lable, std::string _name, bool _visible);
+		void CreateMenu(Environment* _uiEnv, sf::RenderWindow* _win);
 
 	private:
 		enum MENU
