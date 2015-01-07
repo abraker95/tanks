@@ -33,7 +33,7 @@ Application::Application() : main_env(128)
 		);*/
 
 // [FACTORY CONSTRUCTS]
-	ui_system = new UISystem(&main_env);
+	ui_system = new UISystem();
 	input_system = new InputSystem();
 	render_system = new RenderSystem(window);
 	expiring_system = new ExpiringSystem();
@@ -76,12 +76,12 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	main_env.updateWrapper(input_system, &entity_manager, &texture_manager);
+	main_env.updateWrapper(input_system, &entity_manager, &texture_manager, &cpu_manager, &UI_manager);
 	main_env.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
 	main_env.updateWrapper(expiring_system, dt);
 	main_env.updateWrapper(physics_system, dt);
 	main_env.updateWrapper(damage_system);
 	main_env.updateWrapper(view_system, window, dt);
 	main_env.updateWrapper(hud_system);
-	main_env.updateWrapper(render_system, window, &entity_manager, &UI_manager, &map_loader);
+	main_env.updateWrapper(render_system, window, &entity_manager, &UI_manager, &cpu_manager, &map_loader);
 }

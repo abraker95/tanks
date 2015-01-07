@@ -27,6 +27,8 @@ void CPUManager::createCPUMgr(Environment* _env, sf::RenderWindow* _win)
 			labels[id].label.setPosition(sf::Vector2f(_win->getSize().x-400, 10));
 		label = _env->cpuData = &labels[id].label;
 	}
+
+	IDs.push_back(id);
 }
 
 sf::Time CPUManager::update()

@@ -93,9 +93,13 @@ unsigned EntityManager::createCamera(std::string _name,
 	sf::FloatRect& borders, sf::FloatRect& viewport, 
 	std::vector<unsigned> focusedObjects)
 {
-	return env->createEntity(_name,
+	
+	unsigned int new_view = env->createEntity(_name,
 		new ViewController(borders, viewport, 400.f, 1200.f, 0.4f, focusedObjects)
 	);
+
+	IDs.push_back(new_view);
+	return new_view;
 }
 
 void EntityManager::NewGame(Environment* _env, TextureManager* _textmgr)

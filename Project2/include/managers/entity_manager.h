@@ -8,6 +8,7 @@
 class EntityManager
 {
 	friend class RenderSystem;
+	friend class InputSystem;
 
 	public:
 		EntityManager();

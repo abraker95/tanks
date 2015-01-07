@@ -7,6 +7,7 @@ class UI_Manager
 {
 	friend class UISystem;
 	friend class RenderSystem;
+	friend class InputSystem;
 
 	public:
 		UI_Manager();

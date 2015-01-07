@@ -141,6 +141,8 @@ sf::VertexArray* MapLoader::buildVA(
 					sprites[new_wall].sprite.setOrigin((float)tileWidth/2.f, (float)tileHeight/2.f);
 					sprites[new_wall].sprite.setTextureRect(
 						sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight));
+					
+					IDs.push_back(new_wall);
 				}
 			}
 		}

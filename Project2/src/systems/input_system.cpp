@@ -9,7 +9,7 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* env, EntityManager* entity_manager, TextureManager* texture_manager)
+void InputSystem::update(Environment* env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr, UI_Manager* _uiMgr)
 {
 	auto tank_controls = env->get<TankControls>();
 	auto velocity = env->get<Velocity>();
@@ -42,12 +42,33 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 		}
 	}
 
-	for(unsigned i = 0; i<env->maxEntities(); i++)
+	for(unsigned i = 0; i<_cpuMgr->IDs.size(); i++)
 	{
+		unsigned int ID = _cpuMgr->IDs[i];
 		if(env->getEntityName(i)=="CPU")
 		{
 			if(input_manager.keyClickState[sf::Keyboard::F2])
 				*env->get<StdComponent<bool>>()[i].data = !*env->get<StdComponent<bool>>()[i].data;
+		}
+	}
+
+	for(unsigned i = 0; i<_uiMgr->IDs.size(); i++)
+	{
+		unsigned int ID = _uiMgr->IDs[i];
+		if(env->hasComponents<UserInterface, GUIObj>(ID))
+		{
+			auto GUIobjs = env->get<GUIObj>();
+			if(GUIobjs[ID].type==GUIObj::VOID)
+			{
+				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
+				{
+					auto ui = env->get<UserInterface>();
+					auto visible = env->get<StdComponent<bool>>()[ID].data;
+
+					if(ui[ID].action) (*ui[ID].action)();
+					env->emit(new MenuEvent(*visible));
+				}
+			}
 		}
 	}
 
@@ -60,13 +81,14 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 
 	if(updateGameEntities)
 	{
-		for(unsigned i = 0; i<env->maxEntities(); i++)
+		for(unsigned i = 0; i<entity_manager->IDs.size(); i++)
 		{
-			if(env->hasComponents<TankControls, Velocity>(i))
+			unsigned int ID = entity_manager->IDs[i];
+			if(env->hasComponents<TankControls, Velocity>(ID))
 			{
 				// update the keystate bitmask
-				std::array<sf::Keyboard::Key, 5>& keys = tank_controls[i].keys;
-				std::bitset<5>& state = tank_controls[i].state;
+				std::array<sf::Keyboard::Key, 5>& keys = tank_controls[ID].keys;
+				std::bitset<5>& state = tank_controls[ID].state;
 
 				state.reset();
 				for(int j = 0; j<5; j++)
@@ -74,25 +96,25 @@ void InputSystem::update(Environment* env, EntityManager* entity_manager, Textur
 						state.set(j, true);
 
 				// update the values based on keystate
-				if(state.test(TankControls::TURN_RIGHT))	  velocity[i].vrot = +300.f;
-				else if(state.test(TankControls::TURN_LEFT))  velocity[i].vrot = -300.f;
-				else										  velocity[i].vrot = 0.f;
+				if(state.test(TankControls::TURN_RIGHT))	  velocity[ID].vrot = +300.f;
+				else if(state.test(TankControls::TURN_LEFT))  velocity[ID].vrot = -300.f;
+				else										  velocity[ID].vrot = 0.f;
 
-				if(state.test(TankControls::GO_FORWARD))	   velocity[i].speed = +300.f;
-				else if(state.test(TankControls::GO_BACKWARD)) velocity[i].speed = -300.f;
-				else									       velocity[i].speed = 0.f;
+				if(state.test(TankControls::GO_FORWARD))	   velocity[ID].speed = +300.f;
+				else if(state.test(TankControls::GO_BACKWARD)) velocity[ID].speed = -300.f;
+				else									       velocity[ID].speed = 0.f;
 
 				if(state.test(TankControls::FIRE))
 				{
-					if(env->hasComponents<Gun, Transform>(i))
+					if(env->hasComponents<Gun, Transform>(ID))
 					{
 						auto gun = env->get<Gun>();
 						auto transform = env->get<Transform>();
 
-						if(gun[i].fireClock.getElapsedTime().asSeconds()>gun[i].fireCooldown)
+						if(gun[ID].fireClock.getElapsedTime().asSeconds()>gun[ID].fireCooldown)
 						{
-							gun[i].fireClock.restart();
-							entity_manager->spawnBullet("", env, texture_manager, i);
+							gun[ID].fireClock.restart();
+							entity_manager->spawnBullet("", env, texture_manager, ID);
 						}
 					}
 				}

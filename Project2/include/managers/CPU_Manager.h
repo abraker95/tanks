@@ -4,6 +4,9 @@
 
 class CPUManager
 {
+	friend class RenderSystem;
+	friend class InputSystem;
+
 	public:
 		CPUManager();
 		virtual ~CPUManager();
@@ -14,5 +17,6 @@ class CPUManager
 	private:
 		sf::Clock clock;
 		sf::Text* label;
+		std::vector<unsigned int> IDs;
 };
 
