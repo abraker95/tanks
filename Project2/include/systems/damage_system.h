@@ -9,5 +9,5 @@ public:
 	void update(Environment* env);
 
 private:
-	void handleProjectiles(Environment* env, const CollisionEvent& collision);
+	void handleProjectiles(Environment* _gameEnv, const CollisionEvent& collision);
 };

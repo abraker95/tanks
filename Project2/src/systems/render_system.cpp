@@ -13,16 +13,16 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win)
 RenderSystem::~RenderSystem()
 {}
 
-void RenderSystem::update(Environment* env, Environment* _uiEnv, sf::RenderWindow* _win, EntityManager* _entMgr, CPUManager* _cpuMgr, MapLoader* _mapLdr)
+void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environment* _gameEnv, sf::RenderWindow* _win, CPUManager* _cpuMgr)
 {
-	auto sprites = env->get<Sprite>();
-	auto Gametrans = env->get<Transform>();
+	auto sprites = _gameEnv->get<Sprite>();
+	auto Gametrans = _gameEnv->get<Transform>();
 	auto uiTrans = _uiEnv->get<Transform>();
-	auto textures = env->get<Texture>();
-	auto vertex_array = env->get<VertexArray>();
-	auto view_controller = env->get<ViewController>();
+	auto textures = _gameEnv->get<Texture>();
+	auto vertex_array = _gameEnv->get<VertexArray>();
+	auto view_controller = _gameEnv->get<ViewController>();
 
-	auto WindowMode = env->getEvents<WindowModeEvent>();
+	auto WindowMode = _mainEnv->getEvents<WindowModeEvent>();
 	if(WindowMode.size()>0)
 		fullscreen = *WindowMode[0].fullscreen;
 
@@ -34,18 +34,16 @@ void RenderSystem::update(Environment* env, Environment* _uiEnv, sf::RenderWindo
 	prevFullscreen = fullscreen;
 
 	//if(GameScene.getSize() != _win->getSize())
-	env->emit(new WindowModeEvent(&fullscreen));
+	_mainEnv->emit(new WindowModeEvent(&fullscreen));
 
-	for(unsigned i = 0; i<_entMgr->IDs.size(); i++)
+	for(unsigned viewID = 0; viewID<_gameEnv->maxEntities(); viewID++)
 	{
-		unsigned int entID = _entMgr->IDs[i];
-		if(env->hasComponents<ViewController>(entID))
+		if(_gameEnv->hasComponents<ViewController>(viewID))
 		{
-			GameScene.setView(view_controller[entID].view);
-			for(unsigned k = 0; k<_mapLdr->IDs.size(); k++)
+			GameScene.setView(view_controller[viewID].view);
+			for(unsigned mapID = 0; mapID<_gameEnv->maxEntities(); mapID++)
 			{
-				unsigned int mapID = _mapLdr->IDs[k];
-				if(env->hasComponents<VertexArray, Texture, Tilemap>(mapID))
+				if(_gameEnv->hasComponents<VertexArray, Texture, Tilemap>(mapID))
 				{
 					GameScene.draw(*vertex_array[mapID].array, textures[mapID].texture);
 					break; // should only be one map
@@ -53,29 +51,14 @@ void RenderSystem::update(Environment* env, Environment* _uiEnv, sf::RenderWindo
 			}
 
 			// temporary fix
-			for(unsigned k = 0; k<_entMgr->IDs.size(); k++)
+			for(unsigned spriteID = 0; spriteID<_gameEnv->maxEntities(); spriteID++)
 			{
-				unsigned int ID = _entMgr->IDs[k];
-				if(env->hasComponents<Transform, Sprite, Texture>(ID)&&
-					!env->hasComponents<GUIObj>(ID))
+				if(_gameEnv->hasComponents<Transform, Sprite, Texture>(spriteID))
 				{
-					sf::Sprite& sprite = sprites[ID].sprite;
-					sprite.setPosition(Gametrans[ID].pos.x, Gametrans[ID].pos.y);
-					sprite.setRotation(Gametrans[ID].rot);
-					sprite.setTexture(*textures[ID].texture);
-					GameScene.draw(sprite);
-				}
-			}
-			for(unsigned k = 0; k<_mapLdr->IDs.size(); k++)
-			{
-				unsigned int ID = _mapLdr->IDs[k];
-				if(env->hasComponents<Transform, Sprite, Texture>(ID)&&
-					!env->hasComponents<GUIObj>(ID))
-				{
-					sf::Sprite& sprite = sprites[ID].sprite;
-					sprite.setPosition(Gametrans[ID].pos.x, Gametrans[ID].pos.y);
-					sprite.setRotation(Gametrans[ID].rot);
-					sprite.setTexture(*textures[ID].texture);
+					sf::Sprite& sprite = sprites[spriteID].sprite;
+					sprite.setPosition(Gametrans[spriteID].pos.x, Gametrans[spriteID].pos.y);
+					sprite.setRotation(Gametrans[spriteID].rot);
+					sprite.setTexture(*textures[spriteID].texture);
 					GameScene.draw(sprite);
 				}
 			}
@@ -180,13 +163,13 @@ void RenderSystem::update(Environment* env, Environment* _uiEnv, sf::RenderWindo
 	for(unsigned i = 0; i<_cpuMgr->IDs.size(); i++)
 	{
 		unsigned int ID = _cpuMgr->IDs[i];
-		if(env->hasComponents<Transform, Label>(ID))
+		if(_mainEnv->hasComponents<Transform, Label>(ID))
 		{
-			if(env->getEntityName(ID)=="CPU")
+			if(_mainEnv->getEntityName(ID)=="CPU")
 			{
-				if(*env->get<StdComponent<bool>>()[ID].data)
+				if(*_mainEnv->get<StdComponent<bool>>()[ID].data)
 				{
-					auto labels = env->get<Label>();
+					auto labels = _mainEnv->get<Label>();
 					UIScene.draw(labels[ID].label);
 				}
 			}

@@ -8,7 +8,7 @@ UISystem::UISystem() {}
 UISystem::~UISystem() {}
 
 
-void UISystem::update(Environment* _env, Environment* _uiEnv, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
+void UISystem::update(Environment* _mainEnv, Environment* _uiEnv, Environment* _gameEnv, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
 {
 	auto ui = _uiEnv->get<UserInterface>();
 	auto GUIobjs = _uiEnv->get<GUIObj>();
@@ -56,7 +56,7 @@ void UISystem::update(Environment* _env, Environment* _uiEnv, UI_Manager* _uiMgr
 		}
 	}
 
-	auto newGameEvent = _env->getEvents<NewGameEvent>();
+	auto newGameEvent = _mainEnv->getEvents<NewGameEvent>();
 	if(newGameEvent.size()>0)
-		_entMgr->ResetGame(_env, _texMgr);
+		_entMgr->ResetGame(_gameEnv, _texMgr);
 }

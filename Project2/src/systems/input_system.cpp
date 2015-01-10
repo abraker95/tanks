@@ -9,10 +9,10 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* env, Environment* _uiEnv, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr)
+void InputSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environment* _gameEnv, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr)
 {
-	auto tank_controls = env->get<TankControls>();
-	auto velocity = env->get<Velocity>();
+	auto tank_controls = _gameEnv->get<TankControls>();
+	auto velocity = _gameEnv->get<Velocity>();
 
 /// \TODO: This is taking up too much CPU time. Think of another solution. Consider making it a bitfield.
 
@@ -45,10 +45,10 @@ void InputSystem::update(Environment* env, Environment* _uiEnv, EntityManager* e
 	for(unsigned i = 0; i<_cpuMgr->IDs.size(); i++)
 	{
 		unsigned int ID = _cpuMgr->IDs[i];
-		if(env->getEntityName(ID)=="CPU")
+		if(_mainEnv->getEntityName(ID)=="CPU")
 		{
 			if(input_manager.keyClickState[sf::Keyboard::F2])
-				*env->get<StdComponent<bool>>()[ID].data = !*env->get<StdComponent<bool>>()[ID].data;
+				*_mainEnv->get<StdComponent<bool>>()[ID].data = !*_mainEnv->get<StdComponent<bool>>()[ID].data;
 		}
 	}
 
@@ -65,14 +65,14 @@ void InputSystem::update(Environment* env, Environment* _uiEnv, EntityManager* e
 					auto visible = _uiEnv->get<StdComponent<bool>>()[ID].data;
 
 					if(ui[ID].action) (*ui[ID].action)();
-					env->emit(new MenuEvent(*visible));
+					_mainEnv->emit(new MenuEvent(*visible));
 				}
 			}
 		}
 	}
 
 	/// \TODO: See if it's possible to get rid of the menu event
-	auto menuEvent = env->getEvents<MenuEvent>();
+	auto menuEvent = _mainEnv->getEvents<MenuEvent>();
 	static bool updateGameEntities = false;
 
 	if(menuEvent.size()>=1)
@@ -80,10 +80,9 @@ void InputSystem::update(Environment* env, Environment* _uiEnv, EntityManager* e
 
 	if(updateGameEntities)
 	{
-		for(unsigned i = 0; i<entity_manager->IDs.size(); i++)
+		for(unsigned ID = 0; ID<_gameEnv->maxEntities(); ID++)
 		{
-			unsigned int ID = entity_manager->IDs[i];
-			if(env->hasComponents<TankControls, Velocity>(ID))
+			if(_gameEnv->hasComponents<TankControls, Velocity>(ID))
 			{
 				// update the keystate bitmask
 				std::array<sf::Keyboard::Key, 5>& keys = tank_controls[ID].keys;
@@ -105,15 +104,15 @@ void InputSystem::update(Environment* env, Environment* _uiEnv, EntityManager* e
 
 				if(state.test(TankControls::FIRE))
 				{
-					if(env->hasComponents<Gun, Transform>(ID))
+					if(_gameEnv->hasComponents<Gun, Transform>(ID))
 					{
-						auto gun = env->get<Gun>();
-						auto transform = env->get<Transform>();
+						auto gun = _gameEnv->get<Gun>();
+						auto transform = _gameEnv->get<Transform>();
 
 						if(gun[ID].fireClock.getElapsedTime().asSeconds()>gun[ID].fireCooldown)
 						{
 							gun[ID].fireClock.restart();
-							entity_manager->spawnBullet("", env, texture_manager, ID);
+							entity_manager->spawnBullet("", _gameEnv, texture_manager, ID);
 						}
 					}
 				}

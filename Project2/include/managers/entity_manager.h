@@ -15,22 +15,22 @@ class EntityManager
 		~EntityManager();
 
 		unsigned spawnTankPlayer(std::string _name,
-			Environment* env, TextureManager* tex_man, 
+			Environment* _gameEnv, TextureManager* tex_man,
 			float x, float y, 
 			std::array<sf::Keyboard::Key, 5> keys);
 
 		unsigned spawnBullet(std::string _name,
-			Environment* env, TextureManager* tex_man, 
+			Environment* _gameEnv, TextureManager* tex_man,
 			unsigned tank_id);
 
 		unsigned createCamera(std::string _name,
-			Environment* env, 
+			Environment* _gameEnv,
 			sf::FloatRect& borders, sf::FloatRect& viewport, 
 			std::vector<unsigned> focusedObjects);
 
-		void NewGame(Environment* env, TextureManager* _textmgr);
-		void EndGame(Environment* _env);
-		void ResetGame(Environment* _env, TextureManager* _textmgr);
+		void NewGame(Environment* _gameEnv, TextureManager* _textmgr);
+		void EndGame(Environment* _gameEnv);
+		void ResetGame(Environment* _gameEnv, TextureManager* _textmgr);
 
 	private:
 		std::vector<unsigned int> IDs;

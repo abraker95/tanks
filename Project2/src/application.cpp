@@ -4,7 +4,7 @@
 #include "events.h"
 #include "utils.h"
 
-Application::Application(): main_env(128), uiEnv(128)
+Application::Application(): mainEnv(128), uiEnv(128), gameEnv(128)
 {
 // [CORE DECLARATIONS]
 
@@ -12,12 +12,12 @@ Application::Application(): main_env(128), uiEnv(128)
 	//window->setFramerateLimit(60);
 	
 	// [ENTITY CREATION]
-	map_loader.createMap(&main_env, &texture_manager, "maps/dev1.map");
-	entity_manager.NewGame(&main_env, &texture_manager);
+	map_loader.createMap(&gameEnv, &texture_manager, "maps/dev1.map");
+	entity_manager.NewGame(&gameEnv, &texture_manager);
 
-	UI_manager.CreateMenu(&uiEnv, window);
-	cpu_manager.createCPUMgr(&main_env, window);
-	hud_manager.createHUD(&main_env);
+	UI_manager.CreateMenu(&mainEnv, &uiEnv, window);
+	cpu_manager.createCPUMgr(&mainEnv, &uiEnv, &gameEnv, window);
+	hud_manager.createHUD(&mainEnv);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -76,12 +76,12 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	main_env.updateWrapper(input_system, &uiEnv, &entity_manager, &texture_manager, &cpu_manager);
-	uiEnv.updateWrapper(ui_system, &uiEnv, &UI_manager, &entity_manager, &texture_manager);
-	main_env.updateWrapper(expiring_system, dt);
-	main_env.updateWrapper(physics_system, dt);
-	main_env.updateWrapper(damage_system);
-	main_env.updateWrapper(view_system, window, dt);
-	main_env.updateWrapper(hud_system);
-	main_env.updateWrapper(render_system, &uiEnv, window, &entity_manager, &cpu_manager, &map_loader);
+	mainEnv.updateWrapper(input_system, &uiEnv, &gameEnv, &entity_manager, &texture_manager, &cpu_manager);
+	uiEnv.updateWrapper(ui_system, &uiEnv, &gameEnv, &UI_manager, &entity_manager, &texture_manager);
+	gameEnv.updateWrapper(expiring_system, dt);
+	gameEnv.updateWrapper(physics_system, dt);
+	gameEnv.updateWrapper(damage_system);
+	gameEnv.updateWrapper(view_system, window, dt);
+	mainEnv.updateWrapper(hud_system);
+	mainEnv.updateWrapper(render_system, &uiEnv, &gameEnv, window, &cpu_manager);
 }

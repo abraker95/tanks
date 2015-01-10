@@ -12,11 +12,11 @@ EntityManager::~EntityManager()
 }
 
 unsigned EntityManager::spawnTankPlayer(std::string _name,
-	Environment* env, TextureManager* tex_man, 
+	Environment* _gameEnv, TextureManager* tex_man, 
 	float x, float y, 
 	std::array<sf::Keyboard::Key, 5> keys)
 {
-	auto sprite = env->get<Sprite>();
+	auto sprite = _gameEnv->get<Sprite>();
 
 	sf::Texture* texture = tex_man->load("res/Tank_0.png");
 	Vec2f origin;
@@ -28,7 +28,7 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		origin.y = (float)size.y/2.f;
 	}
 
-	unsigned new_tank = env->createEntity(_name,
+	unsigned new_tank = _gameEnv->createEntity(_name,
 		new Transform(Vec2f(x, y), 0.f),
 		new Velocity(0.f, 0.f),
 		new Texture(texture),
@@ -47,14 +47,14 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 }
 
 unsigned EntityManager::spawnBullet(std::string _name,
-	Environment* env, TextureManager* tex_man, 
+	Environment* _gameEnv, TextureManager* tex_man,
 	unsigned tank_id)
 {
-	auto transform = env->get<Transform>();
-	auto bounding_box = env->get<BoundingBox>();
-	auto sprite = env->get<Sprite>();
+	auto transform = _gameEnv->get<Transform>();
+	auto bounding_box = _gameEnv->get<BoundingBox>();
+	auto sprite = _gameEnv->get<Sprite>();
 
-	if(!env->hasComponents<Transform, BoundingBox>(tank_id))
+	if(!_gameEnv->hasComponents<Transform, BoundingBox>(tank_id))
 		return 0;
 	
 	float start_x = 
@@ -72,7 +72,7 @@ unsigned EntityManager::spawnBullet(std::string _name,
 		origin.y = (float)size.y/2.f;
 	}
 
-	unsigned new_bullet = env->createEntity(_name,
+	unsigned new_bullet = _gameEnv->createEntity(_name,
 		new Transform(Vec2f(start_x, start_y), transform[tank_id].rot),
 		new Velocity(500.f, 0.f),
 		new Texture(texture),
@@ -89,12 +89,12 @@ unsigned EntityManager::spawnBullet(std::string _name,
 }
 
 unsigned EntityManager::createCamera(std::string _name,
-	Environment* env, 
+	Environment* _gameEnv,
 	sf::FloatRect& borders, sf::FloatRect& viewport, 
 	std::vector<unsigned> focusedObjects)
 {
 	
-	unsigned int new_view = env->createEntity(_name,
+	unsigned int new_view = _gameEnv->createEntity(_name,
 		new ViewController(borders, viewport, 400.f, 1200.f, 0.4f, focusedObjects)
 	);
 
@@ -102,30 +102,30 @@ unsigned EntityManager::createCamera(std::string _name,
 	return new_view;
 }
 
-void EntityManager::NewGame(Environment* _env, TextureManager* _textmgr)
+void EntityManager::NewGame(Environment* _gameEnv, TextureManager* _textmgr)
 {
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = spawnTankPlayer("tank1", _env, _textmgr, 200.f, 300.f, p1_keys);
+	unsigned tank1 = spawnTankPlayer("tank1", _gameEnv, _textmgr, 200.f, 300.f, p1_keys);
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
-	unsigned tank2 = spawnTankPlayer("tank2", _env, _textmgr, 400.f, 300.f, p2_keys);
+	unsigned tank2 = spawnTankPlayer("tank2", _gameEnv, _textmgr, 400.f, 300.f, p2_keys);
 
 	// camera
 	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	createCamera("mainCamera", _env, borders, viewport, {tank1, tank2});
+	createCamera("mainCamera", _gameEnv, borders, viewport, {tank1, tank2});
 }
 
-void EntityManager::EndGame(Environment* _env)
+void EntityManager::EndGame(Environment* _gameEnv)
 {
-	_env->destroyEntity(_env->getID("tank1"));
-	_env->destroyEntity(_env->getID("tank2"));
-	_env->destroyEntity(_env->getID("mainCamera"));
+	_gameEnv->destroyEntity(_gameEnv->getID("tank1"));
+	_gameEnv->destroyEntity(_gameEnv->getID("tank2"));
+	_gameEnv->destroyEntity(_gameEnv->getID("mainCamera"));
 }
 
-void EntityManager::ResetGame(Environment* _env, TextureManager* _textmgr)
+void EntityManager::ResetGame(Environment* _gameEnv, TextureManager* _textmgr)
 {
-	EndGame(_env);
-	NewGame(_env, _textmgr);
+	EndGame(_gameEnv);
+	NewGame(_gameEnv, _textmgr);
 }

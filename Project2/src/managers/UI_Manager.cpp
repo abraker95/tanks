@@ -86,7 +86,7 @@ int UI_Manager::CreatePane(Environment* _uiEnv, Vec2f _pos, std::string _lable, 
 	return pane;
 }
 
-void UI_Manager::CreateMenu(Environment* _uiEnv, sf::RenderWindow* _win)
+void UI_Manager::CreateMenu(Environment* _mainEnv, Environment* _uiEnv, sf::RenderWindow* _win)
 {
 	std::function<void*()> quitAction = [this]()->void*
 	{ 
@@ -95,9 +95,9 @@ void UI_Manager::CreateMenu(Environment* _uiEnv, sf::RenderWindow* _win)
 	};
 	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(600.f, 340.f), quitAction, "Quit", "Quit_Button"));
 
-	auto NewGame = [_uiEnv]()->void*
+	auto NewGame = [_mainEnv]()->void*
 	{
-		_uiEnv->emit(new NewGameEvent());
+		_mainEnv->emit(new NewGameEvent());
 		return nullptr;
 	};
 	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(100.f, 220.f), NewGame, "New Game", "New_Game_Button"));
@@ -128,9 +128,9 @@ void UI_Manager::CreateMenu(Environment* _uiEnv, sf::RenderWindow* _win)
 	};
 	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(100.f, 340.f), About, "About", "About_Button"));
 
-	std::function<void*()> ToggleFullscreen = [_uiEnv, _win]()->void*
+	std::function<void*()> ToggleFullscreen = [_mainEnv, _win]()->void*
 	{
-		auto WindowMode = _uiEnv->getEvents<WindowModeEvent>();
+		auto WindowMode = _mainEnv->getEvents<WindowModeEvent>();
 
 		if(WindowMode.size() > 0)
 		{

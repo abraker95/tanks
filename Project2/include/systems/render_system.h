@@ -9,7 +9,7 @@ class RenderSystem : public Component<RenderSystem>
 		RenderSystem(sf::RenderWindow* _win);
 		~RenderSystem();
 
-		void update(Environment* _env, Environment* _uiEnv, sf::RenderWindow* _win, EntityManager* _entMgr, CPUManager* _cpuMgr, MapLoader* _mapLdr);
+		void update(Environment* _env, Environment* _uiEnv, Environment* _gameEnv, sf::RenderWindow* _win, CPUManager* _cpuMgr);
 
 	private:
 		sf::Shader* shader;

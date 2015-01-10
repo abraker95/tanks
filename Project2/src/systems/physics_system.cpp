@@ -13,19 +13,19 @@ PhysicsSystem::~PhysicsSystem()
 {
 }
 
-void PhysicsSystem::update(Environment* env, float dt)
+void PhysicsSystem::update(Environment* _gameEnv, float dt)
 {
-	auto velocity = env->get<Velocity>();
-	auto transform = env->get<Transform>();
-	auto bounding_box = env->get<BoundingBox>();
+	auto velocity = _gameEnv->get<Velocity>();
+	auto transform = _gameEnv->get<Transform>();
+	auto bounding_box = _gameEnv->get<BoundingBox>();
 
-	for(unsigned i=0;i<env->maxEntities();i++)
+	for(unsigned i = 0; i<_gameEnv->maxEntities(); i++)
 	{
-		if(env->hasComponents<Transform, Velocity>(i))
+		if(_gameEnv->hasComponents<Transform, Velocity>(i))
 		{
 			Vec2f vel = Vec2f::Polar(transform[i].rot + 90.f, velocity[i].speed);
 
-			if(velocity[i].speed != 0.f && env->hasComponents<Solid, BoundingBox>(i))
+			if(velocity[i].speed!=0.f && _gameEnv->hasComponents<Solid, BoundingBox>(i))
 			{
 				while(true)
 				{
@@ -33,9 +33,9 @@ void PhysicsSystem::update(Environment* env, float dt)
 					unsigned min_toi_entity;
 					Vec2f min_toi_vel;
 
-					for(unsigned j=0;j<env->maxEntities();j++)
+					for(unsigned j = 0; j<_gameEnv->maxEntities(); j++)
 					{
-						if(env->hasComponents<Transform, Solid, BoundingBox>(j))
+						if(_gameEnv->hasComponents<Transform, Solid, BoundingBox>(j))
 						{
 							Vec2f vel_corrected = vel;
 							toi = avoidCollisionAABB(
@@ -53,7 +53,7 @@ void PhysicsSystem::update(Environment* env, float dt)
 
 					if(min_toi > 0.f)
 					{
-						env->emit(new CollisionEvent(i, min_toi_entity));
+						_gameEnv->emit(new CollisionEvent(i, min_toi_entity));
 						vel = min_toi_vel;
 					}
 					else

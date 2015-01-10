@@ -6,9 +6,9 @@ CPUManager::CPUManager() {}
 
 CPUManager::~CPUManager() {}
 
-void CPUManager::createCPUMgr(Environment* _env, sf::RenderWindow* _win)
+void CPUManager::createCPUMgr(Environment* _mainEnv, Environment* _gameEnv, Environment* _uiEnv, sf::RenderWindow* _win)
 {
-	unsigned id = _env->createEntity
+	unsigned id = _mainEnv->createEntity
 	(
 		"CPU",
 		new Transform(Vec2f(100, 100)),
@@ -16,16 +16,16 @@ void CPUManager::createCPUMgr(Environment* _env, sf::RenderWindow* _win)
 		Component(bool, "visible", new bool(true))
 	);
 
-	if(_env->hasComponents<Label>(id))
+	if(_mainEnv->hasComponents<Label>(id))
 	{
-		auto labels = _env->get<Label>();
+		auto labels = _mainEnv->get<Label>();
 			if(!labels[id].font.loadFromFile("res/arial.ttf")) { cout<<"ERROR: FONT NOT FOUND"<<endl; exit(2); }
 			labels[id].label.setFont(labels[id].font);
 			labels[id].label.setCharacterSize(12);
 			labels[id].label.setColor(sf::Color(sf::Color::Blue));
 			labels[id].label.setStyle(sf::Text::Style::Bold);
 			labels[id].label.setPosition(sf::Vector2f(_win->getSize().x-400, 10));
-		label = _env->cpuData = &labels[id].label;
+		label = _mainEnv->cpuData = _gameEnv->cpuData = _uiEnv->cpuData = &labels[id].label;
 	}
 
 	IDs.push_back(id);
