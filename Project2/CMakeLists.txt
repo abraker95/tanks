@@ -3,6 +3,7 @@ project(tank)
 
 include_directories(include)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -std=c++11")
 
 set(component_files "")
@@ -40,6 +41,7 @@ foreach(manager
 	InputControls_Mgr
 	UI_Manager
 	CPU_Manager
+	HUD_Manager
 )
 	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
 endforeach(manager)
@@ -52,10 +54,10 @@ foreach(system
 	UI_System
 	view_system	
 	damage_system
+	HUD_System
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
 endforeach(system)
-
 
 add_executable(tank 
 	include/core/environment.h
@@ -70,4 +72,9 @@ add_executable(tank
 	src/main.cpp
 )
 
-target_link_libraries(tank sfml-graphics sfml-window sfml-system)
+set(SFML2_LOCATION "~/Documents/My Libraries/SFML-2.2")
+find_package(SFML2)
+
+include_directories(${SFML2_INCLUDE_DIRS})
+
+target_link_libraries(tank ${SFML2_LIBRARIES})
