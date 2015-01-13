@@ -163,11 +163,13 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
+cmake/
 
 # =========================
 # Output executable
 # =========================
 tank.exe
+*.dll
 
 # =========================
 # Vim temporary files
