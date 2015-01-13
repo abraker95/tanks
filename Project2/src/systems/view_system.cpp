@@ -3,15 +3,15 @@
 #include "components/ViewController.h"
 #include "events.h"
 
-void ViewSystem::update(Environment* _gameEnv, sf::RenderWindow* window, float dt)
+void ViewSystem::update(Environment* _env, sf::RenderWindow* window, float dt)
 {
-	auto view_controller = _gameEnv->get<ViewController>();
+	auto view_controller = _env->get<ViewController>();
 
-	for(unsigned i = 0; i < _gameEnv->maxEntities(); i++)
+	for(unsigned i = 0; i < _env->maxEntities(); i++)
 	{
-		if(_gameEnv->hasComponents<ViewController>(i))
+		if(_env->hasComponents<ViewController>(i))
 		{
-			auto destroyed = _gameEnv->getEvents<DestroyEvent>();
+			auto destroyed = _env->getEvents<DestroyEvent>();
 			std::vector<unsigned>& focusedObjects = view_controller[i].focusedObjects;
 			for(unsigned j=0;j<destroyed.size();j++)
 			{
@@ -42,7 +42,7 @@ void ViewSystem::update(Environment* _gameEnv, sf::RenderWindow* window, float d
 			sf::Vector2f& prevViewSize = view_controller[i].prevViewSize;
 			sf::Vector2f& prevViewCenter = view_controller[i].prevViewCenter;
 			
-			getMinimalView(_gameEnv, viewCenter, viewSize, focusedObjects);
+			getMinimalView(_env, viewCenter, viewSize, focusedObjects);
 
 			if(focusedObjects.size() == 1)
 			{
@@ -69,10 +69,10 @@ void ViewSystem::update(Environment* _gameEnv, sf::RenderWindow* window, float d
 }
 
 void ViewSystem::getMinimalView(
-	Environment* _gameEnv, sf::Vector2f& _viewCenter, sf::Vector2f& _viewSize,
+	Environment* _env, sf::Vector2f& _viewCenter, sf::Vector2f& _viewSize,
 	std::vector<unsigned>& focusedObjects)
 {
-	auto transform = _gameEnv->get<Transform>();
+	auto transform = _env->get<Transform>();
 
 	sf::Vector2f min = transform[focusedObjects[0]].pos.sfmlVector<float>();
 	sf::Vector2f max = min;

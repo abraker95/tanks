@@ -8,18 +8,18 @@ UISystem::UISystem() {}
 UISystem::~UISystem() {}
 
 
-void UISystem::update(Environment* _mainEnv, Environment* _uiEnv, Environment* _gameEnv, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
+void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
 {
-	auto ui = _uiEnv->get<UserInterface>();
-	auto GUIobjs = _uiEnv->get<GUIObj>();
+	auto ui = _env->get<UserInterface>();
+	auto GUIobjs = _env->get<GUIObj>();
 
 	if(*_uiMgr->visible)
 	{
-		for(unsigned ID = 0; ID<_uiEnv->maxEntities(); ID++)
+		for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 		{
 			// \TODO: Should the press flag be still on if the cursor moves from the object while user is still
 			//        holding the button or not?
-			if(_uiEnv->hasComponents<UserInterface, GUIObj>(ID))
+			if(_env->hasComponents<UserInterface, GUIObj>(ID))
 			{
 				if(ui[ID].show)
 				{
@@ -56,7 +56,7 @@ void UISystem::update(Environment* _mainEnv, Environment* _uiEnv, Environment* _
 		}
 	}
 
-	auto newGameEvent = _mainEnv->getEvents<NewGameEvent>();
+	auto newGameEvent = _env->getEvents<NewGameEvent>();
 	if(newGameEvent.size()>0)
-		_entMgr->ResetGame(_gameEnv, _texMgr);
+		_entMgr->ResetGame(_env, _texMgr);
 }

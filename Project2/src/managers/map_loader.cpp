@@ -14,7 +14,7 @@ MapLoader::~MapLoader()
 }
 
 
-unsigned MapLoader::createMap(Environment* env, TextureManager* tex_man, std::string filename)
+unsigned MapLoader::createMap(Environment* _env, TextureManager* tex_man, std::string filename)
 {
 	std::string tilesheet;
 	char tileWidth, tileHeight;
@@ -31,17 +31,14 @@ unsigned MapLoader::createMap(Environment* env, TextureManager* tex_man, std::st
 		return 0;
 
 	sf::VertexArray* array = buildVA(
-		env, tileset, (int)tileWidth, (int)tileHeight, (int)tileCountX, (int)tileCountY, (int)numLayers, mapData);
+		_env, tileset, (int)tileWidth, (int)tileHeight, (int)tileCountX, (int)tileCountY, (int)numLayers, mapData);
 
 	arrays.push_back(array);
 
-	unsigned int id = env->createEntity("map",
+	return _env->createEntity("map",
 		new VertexArray(array),
 		new Texture(tileset),
 		new Tilemap());
-
-	IDs.push_back(id);
-	return id;
 }
 
 bool MapLoader::readMap(
@@ -79,7 +76,7 @@ bool MapLoader::readMap(
 }
 
 sf::VertexArray* MapLoader::buildVA(
-	Environment* env,
+	Environment* _env,
 	sf::Texture* tileset,
 	int tileWidth, int tileHeight,
 	int tileCountX, int tileCountY,
@@ -127,9 +124,9 @@ sf::VertexArray* MapLoader::buildVA(
 				// 2nd layer
 				if(l == 1 && tileType != 0)
 				{
-					auto sprites = env->get<Sprite>();
+					auto sprites = _env->get<Sprite>();
 
-					unsigned new_wall = env->createEntity("",
+					unsigned new_wall = _env->createEntity("",
 						new Transform(Vec2f(
 							((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
 						new Texture(tileset),
@@ -141,8 +138,6 @@ sf::VertexArray* MapLoader::buildVA(
 					sprites[new_wall].sprite.setOrigin((float)tileWidth/2.f, (float)tileHeight/2.f);
 					sprites[new_wall].sprite.setTextureRect(
 						sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight));
-					
-					IDs.push_back(new_wall);
 				}
 			}
 		}

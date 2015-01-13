@@ -9,9 +9,9 @@ UI_Manager::UI_Manager()
 UI_Manager::~UI_Manager()
 {}
 
-int UI_Manager::CreateButton(Environment* _uiEnv, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, bool _visible)
+int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, bool _visible)
 {
-	unsigned int button = _uiEnv->createEntity
+	unsigned int button = _env->createEntity
 	(
 		_name,
 		new Transform(_pos),
@@ -21,9 +21,9 @@ int UI_Manager::CreateButton(Environment* _uiEnv, Vec2f _pos, std::function<void
 		new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), _action)
 	);
 
-	auto GUIobjs = _uiEnv->get<GUIObj>();
-	auto labels = _uiEnv->get<Label>();
-	auto UI = _uiEnv->get<UserInterface>();
+	auto GUIobjs = _env->get<GUIObj>();
+	auto labels = _env->get<Label>();
+	auto UI = _env->get<UserInterface>();
 
 	UI[button].show = _visible;
 
@@ -31,25 +31,23 @@ int UI_Manager::CreateButton(Environment* _uiEnv, Vec2f _pos, std::function<void
 	labels[button].label.setFont(labels[button].font);
 
 	const float margin = 50;
-	sf::Text text = labels[button].label;
-	sf::FloatRect textSize = text.getLocalBounds();
+	sf::FloatRect textSize = labels[button].label.getLocalBounds();
 
 	int charSize = 24;
 	labels[button].label.setCharacterSize(charSize);
 	labels[button].label.setPosition(sf::Vector2f(_pos.x+margin/2, _pos.y+margin/2-charSize/2));
 
 
-	auto bounds = _uiEnv->get<StdComponent<sf::RectangleShape>>();
+	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
 		 bounds[button].data->setPosition(_pos.x, _pos.y);
 		 bounds[button].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
 
-	IDs.push_back(button);
 	return button;
 }
 
-int UI_Manager::CreatePane(Environment* _uiEnv, Vec2f _pos, std::string _lable, std::string _name, bool _visible)
+int UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, bool _visible)
 {
-	unsigned int pane = _uiEnv->createEntity
+	unsigned int pane = _env->createEntity
 	(
 		_name,
 		new Transform(_pos),
@@ -59,9 +57,9 @@ int UI_Manager::CreatePane(Environment* _uiEnv, Vec2f _pos, std::string _lable, 
 		new UserInterface(std::bitset<UIstates>(NULL), nullptr)
 	);
 
-	auto GUIobjs = _uiEnv->get<GUIObj>();
-	auto labels = _uiEnv->get<Label>();
-	auto UI = _uiEnv->get<UserInterface>();
+	auto GUIobjs = _env->get<GUIObj>();
+	auto labels = _env->get<Label>();
+	auto UI = _env->get<UserInterface>();
 
 	UI[pane].show = _visible;
 
@@ -78,59 +76,58 @@ int UI_Manager::CreatePane(Environment* _uiEnv, Vec2f _pos, std::string _lable, 
 	labels[pane].label.setColor(sf::Color::Black);
 
 
-	auto bounds = _uiEnv->get<StdComponent<sf::RectangleShape>>();
+	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
 	bounds[pane].data->setPosition(_pos.x, _pos.y);
 	bounds[pane].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
 
-	IDs.push_back(pane);
 	return pane;
 }
 
-void UI_Manager::CreateMenu(Environment* _mainEnv, Environment* _uiEnv, sf::RenderWindow* _win)
+void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 {
 	std::function<void*()> quitAction = [this]()->void*
 	{ 
 	 exit(0);  
 	 return nullptr; 
 	};
-	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(600.f, 340.f), quitAction, "Quit", "Quit_Button"));
+	mainMenu.push_back(CreateButton(_env, Vec2f(600.f, 340.f), quitAction, "Quit", "Quit_Button"));
 
-	auto NewGame = [_mainEnv]()->void*
+	auto NewGame = [_env]()->void*
 	{
-		_mainEnv->emit(new NewGameEvent());
+		_env->emit(new NewGameEvent());
 		return nullptr;
 	};
-	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(100.f, 220.f), NewGame, "New Game", "New_Game_Button"));
+	mainMenu.push_back(CreateButton(_env, Vec2f(100.f, 220.f), NewGame, "New Game", "New_Game_Button"));
 
-	auto Options = [_uiEnv, this]()->void*
+	auto Options = [_env, this]()->void*
 	{
 		/*
 		  /// \TODO:  
 			Implement Player tank colors, Volume, and key Controls buttons
 		*/
-		auto UI = _uiEnv->get<UserInterface>();
+		auto UI = _env->get<UserInterface>();
 		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
 		for(unsigned int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 
 		currMenu = OPTIONS_MENU;		
 		return nullptr;
 	};
-	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(600.f, 220.f), Options, "Options", "Options_Button"));
+	mainMenu.push_back(CreateButton(_env, Vec2f(600.f, 220.f), Options, "Options", "Options_Button"));
 
-	std::function<void*()> About = [_uiEnv, this]()->void*
+	std::function<void*()> About = [_env, this]()->void*
 	{
-		auto UI = _uiEnv->get<UserInterface>();
+		auto UI = _env->get<UserInterface>();
 		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
 		for(unsigned int i = 0; i<aboutMenu.size(); i++)   UI[aboutMenu[i]].show = !UI[aboutMenu[i]].show;
 
 		currMenu = ABOUT_MENU;
 		return nullptr;
 	};
-	mainMenu.push_back(CreateButton(_uiEnv, Vec2f(100.f, 340.f), About, "About", "About_Button"));
+	mainMenu.push_back(CreateButton(_env, Vec2f(100.f, 340.f), About, "About", "About_Button"));
 
-	std::function<void*()> ToggleFullscreen = [_mainEnv, _win]()->void*
+	std::function<void*()> ToggleFullscreen = [_env, _win]()->void*
 	{
-		auto WindowMode = _mainEnv->getEvents<WindowModeEvent>();
+		auto WindowMode = _env->getEvents<WindowModeEvent>();
 
 		if(WindowMode.size() > 0)
 		{
@@ -145,38 +142,38 @@ void UI_Manager::CreateMenu(Environment* _mainEnv, Environment* _uiEnv, sf::Rend
 		}
 		return nullptr;
 	};
-	optionsMenu.push_back(CreateButton(_uiEnv, Vec2f(600.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button", false));
+	optionsMenu.push_back(CreateButton(_env, Vec2f(600.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button", false));
 
-	std::function<void*()> optionsBack = [_uiEnv, this]()->void*
+	std::function<void*()> optionsBack = [_env, this]()->void*
 	{
-		auto UI = _uiEnv->get<UserInterface>();
+		auto UI = _env->get<UserInterface>();
 		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
 		for(unsigned int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
 
 		currMenu = MAIN_MENU;
 		return nullptr;
 	};
-	optionsMenu.push_back(CreateButton(_uiEnv, Vec2f(200.f, 220.f), optionsBack, "Back", "optionsBack_Button", false));
+	optionsMenu.push_back(CreateButton(_env, Vec2f(200.f, 220.f), optionsBack, "Back", "optionsBack_Button", false));
 
-	std::function<void*()> aboutBack = [_uiEnv, this]()->void*
+	std::function<void*()> aboutBack = [_env, this]()->void*
 	{
-		auto UI = _uiEnv->get<UserInterface>();
+		auto UI = _env->get<UserInterface>();
 		for(unsigned int i = 0; i<mainMenu.size(); i++)	   UI[mainMenu[i]].show = !UI[mainMenu[i]].show;
 		for(unsigned int i = 0; i<aboutMenu.size(); i++)   UI[aboutMenu[i]].show = !UI[aboutMenu[i]].show;
 
 		currMenu = MAIN_MENU;
 		return nullptr;
 	};
-	aboutMenu.push_back(CreateButton(_uiEnv, Vec2f(450.f, 620.f), aboutBack, "Back", "aboutBack_Button", false));
+	aboutMenu.push_back(CreateButton(_env, Vec2f(450.f, 620.f), aboutBack, "Back", "aboutBack_Button", false));
 
 	std::string aboutInfo =
 		" Tank Game \n"\
 		" Created by: ABraker and Sherushe";
-	aboutMenu.push_back(CreatePane(_uiEnv, Vec2f(300.f, 200.f), aboutInfo, "About Text", false));
+	aboutMenu.push_back(CreatePane(_env, Vec2f(300.f, 200.f), aboutInfo, "About Text", false));
 
-	std::function<void*()> ESC = [_uiEnv, this, aboutBack]()->void*
+	std::function<void*()> ESC = [_env, this, aboutBack]()->void*
 	{
-		auto UI = _uiEnv->get<UserInterface>();
+		auto UI = _env->get<UserInterface>();
 		
 		if(currMenu == OPTIONS_MENU)
 			for(unsigned int i = 0; i<optionsMenu.size(); i++) UI[optionsMenu[i]].show = !UI[optionsMenu[i]].show;
@@ -188,19 +185,18 @@ void UI_Manager::CreateMenu(Environment* _mainEnv, Environment* _uiEnv, sf::Rend
 		*visible = UI[optionsMenu[0]].show || UI[mainMenu[0]].show;
 		return nullptr;
 	};
-	int esc_UI = _uiEnv->createEntity("ESC UI",
+	int esc_UI = _env->createEntity("ESC UI",
 		new GUIObj(GUIObj::VOID, ESC),
 		Component(bool, "visible", new bool(true)),
 		Component(sf::Shader, "blur_shader", new sf::Shader())
 		);
-		_uiEnv->addComponents(esc_UI, new UserInterface(std::bitset<UIstates>(), ESC));
+		_env->addComponents(esc_UI, new UserInterface(std::bitset<UIstates>(), ESC));
 
-		sf::Shader* shader = _uiEnv->get<StdComponent<sf::Shader>>()[esc_UI].data;
+		sf::Shader* shader = _env->get<StdComponent<sf::Shader>>()[esc_UI].data;
 			if(!shader->loadFromFile("res/blur.vert", "res/blur.frag"))
 				std::cout<<"ERROR: Could not load shader"<<std::endl;
 			shader->setParameter("intensity", 0.004f);
 	
 	currMenu = MAIN_MENU;
-	visible = _uiEnv->get<StdComponent<bool>>()[esc_UI].data;
-	IDs.push_back(esc_UI);
+	visible = _env->get<StdComponent<bool>>()[esc_UI].data;
 }

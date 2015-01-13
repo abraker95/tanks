@@ -8,7 +8,7 @@ public:
 	PhysicsSystem();
 	~PhysicsSystem();
 
-	void update(Environment* _gameEnv, float dt);
+	void update(Environment* _env, float dt);
 
 private:
 	float avoidCollisionAABB(Vec2f& origin1, Vec2f& size1, Vec2f& vel, Vec2f& origin2, Vec2f& size2, float elapsed);

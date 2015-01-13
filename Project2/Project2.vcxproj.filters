@@ -32,10 +32,10 @@
       <UniqueIdentifier>{c1e1e204-d16b-4cdb-8b97-6ad2a1e44de6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Managers">
-      <UniqueIdentifier>{461078cc-e88f-4f9a-8736-4b692a97119d}</UniqueIdentifier>
+      <UniqueIdentifier>{104ff530-6c06-4b79-87c9-7dd249b1664e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Managers">
-      <UniqueIdentifier>{cf3f7d90-ca42-4419-8c77-890f1f5b7f8e}</UniqueIdentifier>
+      <UniqueIdentifier>{9e47e161-5c59-4ffb-8ef6-78a751e046d7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,13 +147,7 @@
     <ClInclude Include="include\events.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="include\systems\HUD_System.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="include\managers\CPU_Manager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\managers\HUD_Manager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="include\managers\entity_manager.h">
@@ -162,14 +156,17 @@
     <ClInclude Include="include\managers\InputControls_Mgr.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="include\managers\map_loader.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
     <ClInclude Include="include\managers\texture_manager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="include\managers\UI_Manager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="include\managers\map_loader.h">
-      <Filter>Header Files\Managers</Filter>
+    <ClInclude Include="include\systems\HUD_System.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,9 +236,6 @@
     <ClCompile Include="src\components\Label.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\managers\texture_manager.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\bounding_box.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -257,22 +251,22 @@
     <ClCompile Include="src\systems\HUD_System.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\managers\UI_Manager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
     <ClCompile Include="src\managers\CPU_Manager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="src\managers\entity_manager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="src\managers\HUD_Manager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="src\managers\InputControls_Mgr.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="src\managers\UI_Manager.cpp">
+    <ClCompile Include="src\managers\map_loader.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="src\managers\map_loader.cpp">
+    <ClCompile Include="src\managers\texture_manager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>

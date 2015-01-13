@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
+#include "systems/HUD_System.h"
 #include "managers.h"
 
 class RenderSystem : public Component<RenderSystem>
@@ -9,7 +10,7 @@ class RenderSystem : public Component<RenderSystem>
 		RenderSystem(sf::RenderWindow* _win);
 		~RenderSystem();
 
-		void update(Environment* _env, Environment* _uiEnv, Environment* _gameEnv, sf::RenderWindow* _win, CPUManager* _cpuMgr);
+		void update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWindow* _win, CPUManager* _cpuMgr);
 
 	private:
 		sf::Shader* shader;

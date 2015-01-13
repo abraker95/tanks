@@ -85,7 +85,6 @@
     <ClInclude Include="include\Managers.h" />
     <ClInclude Include="include\managers\CPU_Manager.h" />
     <ClInclude Include="include\managers\entity_manager.h" />
-    <ClInclude Include="include\managers\HUD_Manager.h" />
     <ClInclude Include="include\managers\InputControls_Mgr.h" />
     <ClInclude Include="include\managers\map_loader.h" />
     <ClInclude Include="include\managers\texture_manager.h" />
@@ -137,7 +136,6 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\managers\CPU_Manager.cpp" />
     <ClCompile Include="src\managers\entity_manager.cpp" />
-    <ClCompile Include="src\managers\HUD_Manager.cpp" />
     <ClCompile Include="src\managers\InputControls_Mgr.cpp" />
     <ClCompile Include="src\managers\map_loader.cpp" />
     <ClCompile Include="src\managers\texture_manager.cpp" />

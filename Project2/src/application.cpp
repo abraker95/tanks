@@ -4,20 +4,18 @@
 #include "events.h"
 #include "utils.h"
 
-Application::Application(): mainEnv(128), uiEnv(128), gameEnv(128)
+Application::Application(): mainEnv(128)
 {
 // [CORE DECLARATIONS]
-
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 	//window->setFramerateLimit(60);
 	
 	// [ENTITY CREATION]
-	map_loader.createMap(&gameEnv, &texture_manager, "maps/dev1.map");
-	entity_manager.NewGame(&gameEnv, &texture_manager);
+	map_loader.createMap(&mainEnv, &texture_manager, "maps/dev1.map");
+	entity_manager.NewGame(&mainEnv, &texture_manager);
 
-	UI_manager.CreateMenu(&mainEnv, &uiEnv, window);
-	cpu_manager.createCPUMgr(&mainEnv, &uiEnv, &gameEnv, window);
-	hud_manager.createHUD(&mainEnv);
+	UI_manager.CreateMenu(&mainEnv, window);
+	cpu_manager.createCPUMgr(&mainEnv, window);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -40,7 +38,7 @@ Application::Application(): mainEnv(128), uiEnv(128), gameEnv(128)
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
 	damage_system = new DamageSystem();
-	hud_system = new HUDSystem();
+	hud_system = new HUDSystem(&mainEnv);
 }
 
 Application::~Application()
@@ -76,12 +74,11 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	mainEnv.updateWrapper(input_system, &uiEnv, &gameEnv, &entity_manager, &texture_manager, &cpu_manager);
-	uiEnv.updateWrapper(ui_system, &uiEnv, &gameEnv, &UI_manager, &entity_manager, &texture_manager);
-	gameEnv.updateWrapper(expiring_system, dt);
-	gameEnv.updateWrapper(physics_system, dt);
-	gameEnv.updateWrapper(damage_system);
-	gameEnv.updateWrapper(view_system, window, dt);
-	mainEnv.updateWrapper(hud_system);
-	mainEnv.updateWrapper(render_system, &uiEnv, &gameEnv, window, &cpu_manager);
+	mainEnv.updateWrapper(input_system, &entity_manager, &texture_manager, &cpu_manager);
+	mainEnv.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
+	mainEnv.updateWrapper(expiring_system, dt);
+	mainEnv.updateWrapper(physics_system, dt);
+	mainEnv.updateWrapper(damage_system);
+	mainEnv.updateWrapper(view_system, window, dt);
+	mainEnv.updateWrapper(render_system, hud_system, window, &cpu_manager);
 }

@@ -37,11 +37,11 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		new Health(100, 100),
 		new Gun(),
 		new Sprite(),
-		new Solid()
+		new Solid(),
+		new Label("")
 	);
 
 	sprite[new_tank].sprite.setOrigin(origin.x, origin.y);
-
 	IDs.push_back(new_tank);
 	return new_tank;
 }

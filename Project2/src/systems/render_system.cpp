@@ -1,4 +1,5 @@
 #include "systems/render_system.h"
+#include "systems/HUD_System.h"
 #include "Components.h"
 #include "utils.h"
 #include "events.h"
@@ -13,16 +14,15 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win)
 RenderSystem::~RenderSystem()
 {}
 
-void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environment* _gameEnv, sf::RenderWindow* _win, CPUManager* _cpuMgr)
+void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWindow* _win, CPUManager* _cpuMgr)
 {
-	auto sprites = _gameEnv->get<Sprite>();
-	auto Gametrans = _gameEnv->get<Transform>();
-	auto uiTrans = _uiEnv->get<Transform>();
-	auto textures = _gameEnv->get<Texture>();
-	auto vertex_array = _gameEnv->get<VertexArray>();
-	auto view_controller = _gameEnv->get<ViewController>();
+	auto sprites = _env->get<Sprite>();
+	auto trans = _env->get<Transform>();
+	auto textures = _env->get<Texture>();
+	auto vertex_array = _env->get<VertexArray>();
+	auto view_controller = _env->get<ViewController>();
 
-	auto WindowMode = _mainEnv->getEvents<WindowModeEvent>();
+	auto WindowMode = _env->getEvents<WindowModeEvent>();
 	if(WindowMode.size()>0)
 		fullscreen = *WindowMode[0].fullscreen;
 
@@ -34,16 +34,16 @@ void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environmen
 	prevFullscreen = fullscreen;
 
 	//if(GameScene.getSize() != _win->getSize())
-	_mainEnv->emit(new WindowModeEvent(&fullscreen));
+	_env->emit(new WindowModeEvent(&fullscreen));
 
-	for(unsigned viewID = 0; viewID<_gameEnv->maxEntities(); viewID++)
+	for(unsigned viewID = 0; viewID<_env->maxEntities(); viewID++)
 	{
-		if(_gameEnv->hasComponents<ViewController>(viewID))
+		if(_env->hasComponents<ViewController>(viewID))
 		{
 			GameScene.setView(view_controller[viewID].view);
-			for(unsigned mapID = 0; mapID<_gameEnv->maxEntities(); mapID++)
+			for(unsigned mapID = 0; mapID<_env->maxEntities(); mapID++)
 			{
-				if(_gameEnv->hasComponents<VertexArray, Texture, Tilemap>(mapID))
+				if(_env->hasComponents<VertexArray, Texture, Tilemap>(mapID))
 				{
 					GameScene.draw(*vertex_array[mapID].array, textures[mapID].texture);
 					break; // should only be one map
@@ -51,31 +51,32 @@ void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environmen
 			}
 
 			// temporary fix
-			for(unsigned spriteID = 0; spriteID<_gameEnv->maxEntities(); spriteID++)
+			for(unsigned spriteID = 0; spriteID<_env->maxEntities(); spriteID++)
 			{
-				if(_gameEnv->hasComponents<Transform, Sprite, Texture>(spriteID))
+				if(_env->hasComponents<Transform, Sprite, Texture>(spriteID))
 				{
 					sf::Sprite& sprite = sprites[spriteID].sprite;
-					sprite.setPosition(Gametrans[spriteID].pos.x, Gametrans[spriteID].pos.y);
-					sprite.setRotation(Gametrans[spriteID].rot);
+					sprite.setPosition(trans[spriteID].pos.x, trans[spriteID].pos.y);
+					sprite.setRotation(trans[spriteID].rot);
 					sprite.setTexture(*textures[spriteID].texture);
 					GameScene.draw(sprite);
 				}
 			}
+			_HUDSystem->update(_env, GameScene);
+			//_env->updateWrapper(_HUDSystem, GameScene);
 		}
 	}
 
-	for(unsigned ID = 0; ID<_uiEnv->maxEntities(); ID++)
+	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
-		auto GUIobjs = _uiEnv->get<GUIObj>();
-
+		auto GUIobjs = _env->get<GUIObj>();
+		auto visible = _env->get<StdComponent<bool>>();  /// \TODO: keep track of this when creating other stdcomponent bools
 		// blur the contents behind the menu
 		if(sf::Shader::isAvailable())
 		{
-			if(_uiEnv->getEntityName(ID)=="ESC UI") /// \NOTE: If there is a memory error within this scope, check getEntityName for bugs
+			if(_env->getEntityName(ID)=="ESC UI") /// \NOTE: If there is a memory error within this scope, check getEntityName for bugs
 			{
-				auto visible = _uiEnv->get<StdComponent<bool>>();  /// \TODO: keep teack of this when breating other stdcomponent bools
-				auto blur = _uiEnv->get<StdComponent<sf::Shader>>();
+				auto blur = _env->get<StdComponent<sf::Shader>>();
 
 				if(GUIobjs[ID].type==GUIObj::VOID)
 				{
@@ -90,19 +91,19 @@ void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environmen
 		}
 
 		/// \TODO: have the button's dimentions update when window size changes
-		if(_uiEnv->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(ID))
+		if(_env->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(ID))
 		{
-			auto ui = _uiEnv->get<UserInterface>();
+			auto ui = _env->get<UserInterface>();
 
 			if(ui[ID].show)
 			{
 				if(GUIobjs[ID].type==GUIObj::BUTTON)
 				{
-					auto labels = _uiEnv->get<Label>();
-					auto button = _uiEnv->get<StdComponent<sf::RectangleShape>>();
+					auto labels = _env->get<Label>();
+					auto button = _env->get<StdComponent<sf::RectangleShape>>();
 
 					const float margin = 50;
-					sf::FloatRect dim = sf::FloatRect(uiTrans[ID].pos.x, uiTrans[ID].pos.y,
+					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
 						labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
 
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
@@ -133,18 +134,18 @@ void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environmen
 
 					if(ui[ID].state.test(UserInterface::DRAG))
 					{
-						uiTrans[ID].pos = sf::Mouse::getPosition();
+						trans[ID].pos = sf::Mouse::getPosition();
 					}
 
 					UIScene.draw(labels[ID].label);
 				}
 				else if(GUIobjs[ID].type==GUIObj::PANE)
 				{
-					auto labels = _uiEnv->get<Label>();
-					auto button = _uiEnv->get<StdComponent<sf::RectangleShape>>();
+					auto labels = _env->get<Label>();
+					auto button = _env->get<StdComponent<sf::RectangleShape>>();
 
 					const float margin = 50;
-					sf::FloatRect dim = sf::FloatRect(uiTrans[ID].pos.x, uiTrans[ID].pos.y,
+					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
 						labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
 
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
@@ -160,16 +161,15 @@ void RenderSystem::update(Environment* _mainEnv, Environment* _uiEnv, Environmen
 	}
 
 
-	for(unsigned i = 0; i<_cpuMgr->IDs.size(); i++)
+	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
-		unsigned int ID = _cpuMgr->IDs[i];
-		if(_mainEnv->hasComponents<Transform, Label>(ID))
+		if(_env->hasComponents<Transform, Label>(ID))
 		{
-			if(_mainEnv->getEntityName(ID)=="CPU")
+			if(_env->getEntityName(ID)=="CPU")
 			{
-				if(*_mainEnv->get<StdComponent<bool>>()[ID].data)
+				if(*_env->get<StdComponent<bool>>()[ID].data)
 				{
-					auto labels = _mainEnv->get<Label>();
+					auto labels = _env->get<Label>();
 					UIScene.draw(labels[ID].label);
 				}
 			}

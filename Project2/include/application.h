@@ -17,7 +17,7 @@ private:
 	sf::RenderWindow* window;
 
 	// Environments
-	Environment mainEnv, uiEnv, gameEnv;
+	Environment mainEnv;
 
 	// Systems
 	InputSystem* input_system;
@@ -36,5 +36,4 @@ private:
 	MapLoader map_loader;
 	UI_Manager UI_manager;
 	CPUManager cpu_manager;
-	HUD_Manager hud_manager;
 };

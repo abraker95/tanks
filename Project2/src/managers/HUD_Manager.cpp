@@ -14,13 +14,7 @@ HUD_Manager::~HUD_Manager()
 
 void HUD_Manager::createAmmoHUD(Environment* _env)
 {
-	unsigned id = _env->createEntity
-	(
-		"AmmoHUD",
-		new Sprite(),
-		new Transform(Vec2f(100, 100)),
-		Component(bool, "visible", new bool(true))
-	);
+	
 }
 
 void HUD_Manager::createHealthHUD(Environment* _env)

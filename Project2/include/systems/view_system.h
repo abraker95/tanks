@@ -7,7 +7,7 @@
 class ViewSystem
 {
 public:
-	void update(Environment* _gameEnv, sf::RenderWindow* window, float dt);
+	void update(Environment* _env, sf::RenderWindow* window, float dt);
 
 private:
 	void getMinimalView(
