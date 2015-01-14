@@ -29,9 +29,10 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 	if(prevFullscreen != fullscreen)
 	{
 		GameScene.create(_win->getSize().x, _win->getSize().y);
-		UIScene.create(_win->getSize().x, _win->getSize().y);
+		UIScene.create(_win->getSize().x, _win->getSize().y);    
 	}
 	prevFullscreen = fullscreen;
+
 
 	//if(GameScene.getSize() != _win->getSize())
 	_env->emit(new WindowModeEvent(&fullscreen));
@@ -62,10 +63,10 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					GameScene.draw(sprite);
 				}
 			}
-			_HUDSystem->update(_env, GameScene);
 			//_env->updateWrapper(_HUDSystem, GameScene);
 		}
 	}
+	_HUDSystem->update(_env, _win, GameScene);
 
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
@@ -103,8 +104,8 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					auto button = _env->get<StdComponent<sf::RectangleShape>>();
 
 					const float margin = 50;
-					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
-						labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
+					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
+												  UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin)));
 
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
 					button[ID].data->setFillColor(sf::Color(50, 50, 100, 255));

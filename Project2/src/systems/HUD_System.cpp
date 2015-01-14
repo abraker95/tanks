@@ -11,15 +11,7 @@ HUDSystem::HUDSystem(Environment* _env)
 	for(unsigned i = 0; i<numTanks; i++)
 	{
 		IDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
-		_env->getComponent<Label>(IDs[i]).label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks
-
-		auto label = _env->getComponent<Label>(IDs[i]);
-			if(!label.font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
-			label.label.setFont(label.font);
-			label.label.setCharacterSize(9);
-			label.label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks
-
-		cout<<"Set label ID: "<<IDs[i]<<endl;
+		_env->get<Label>()[IDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
 	}
 }
 
@@ -27,21 +19,15 @@ HUDSystem::HUDSystem(Environment* _env)
 HUDSystem::~HUDSystem()
 {}
 
-void HUDSystem::update(Environment* _env, sf::RenderTexture& _HUDScene)
+void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _HUDScene)
 {
 	// if the game got restarted, get the new tank ID's
 	if(_env->getEvents<NewGameEvent>().size()>0)
 	{
-		cout<<"test"<<endl;
 		for(unsigned i = 0; i<numTanks; i++)
 		{
 			IDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
-
-			auto label = _env->getComponent<Label>(IDs[i]);
-				if(!label.font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
-				label.label.setFont(label.font);
-				label.label.setCharacterSize(9);
-				label.label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
+			_env->get<Label>()[IDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
 		}
 	}
 
@@ -49,14 +35,14 @@ void HUDSystem::update(Environment* _env, sf::RenderTexture& _HUDScene)
 	for(unsigned i = 0; i<numTanks; i++)
 	{
 		unsigned ID = IDs[i];
-		auto trans = _env->getComponent<Transform>(ID);
-		auto sprites = _env->getComponent<Sprite>(ID);
-		auto health = _env->getComponent<Health>(ID);
-		auto gun = _env->getComponent<Gun>(ID);
-		auto labels = _env->getComponent<Label>(ID);
-		auto tankControls = _env->getComponent<TankControls>(ID);
+		auto& trans = _env->get<Transform>();
+		auto& sprites = _env->get<Sprite>();
+		auto& health = _env->get<Health>();
+		auto& gun = _env->get<Gun>();
+		auto& labels = _env->get<Label>();
+		auto& tankControls = _env->get<TankControls>();
 
-		if(ID!=0 && health.getHealth()!= 0) // if it exists and not dead
+		if(ID!=0 && health[ID].getHealth()!= 0) // if it exists and not dead
 		{
 			sf::Color barColor;
 			const float barThickness = 5,
@@ -65,8 +51,8 @@ void HUDSystem::update(Environment* _env, sf::RenderTexture& _HUDScene)
 			bar.setRotation(0);
 
 			// Healthbar
-			barHeight = health.getHealth()*(maxBarHeight/health.getMaxHealth()); // barHeight = Min(val*(maxHeight/maxVal), maxHeight)
-			bar.setPosition(trans.pos.x+sprites.sprite.getLocalBounds().width/2+20, trans.pos.y+sprites.sprite.getLocalBounds().height/2+5-barHeight);
+			barHeight = health[ID].getHealth()*(maxBarHeight/health[ID].getMaxHealth()); // barHeight = Min(val*(maxHeight/maxVal), maxHeight)
+			bar.setPosition(trans[ID].pos.x+sprites[ID].sprite.getLocalBounds().width/2+20, trans[ID].pos.y+sprites[ID].sprite.getLocalBounds().height/2+5-barHeight);
 			bar.setSize(sf::Vector2f(barThickness, barHeight));
 				 if(BTWN(maxBarHeight*0/4, bar.getSize().y, maxBarHeight*1/4)) barColor = sf::Color(sf::Color(255, 0,   0, 255));  // red 
 			else if(BTWN(maxBarHeight*1/4, bar.getSize().y, maxBarHeight*2/4)) barColor = sf::Color(sf::Color(255, 102, 0, 255));  // orange
@@ -77,48 +63,57 @@ void HUDSystem::update(Environment* _env, sf::RenderTexture& _HUDScene)
 			_HUDScene.draw(bar);
 
 			// Cooldown bar
-		    barHeight = MIN(gun.fireClock.getElapsedTime().asMilliseconds()*(maxBarHeight/(gun.fireCooldown*1000)), maxBarHeight);
-			bar.setPosition(trans.pos.x+sprites.sprite.getLocalBounds().width/2+30, trans.pos.y+sprites.sprite.getLocalBounds().height/2+5-barHeight);
+			barHeight = MIN(gun[ID].fireClock.getElapsedTime().asMilliseconds()*(maxBarHeight/(gun[ID].fireCooldown*1000)), maxBarHeight);
+			bar.setPosition(trans[ID].pos.x+sprites[ID].sprite.getLocalBounds().width/2+30, trans[ID].pos.y+sprites[ID].sprite.getLocalBounds().height/2+5-barHeight);
 			bar.setSize(sf::Vector2f(barThickness, barHeight)); 
 			bar.setFillColor(sf::Color(101, 153, 255, 255)); // light-blueish
 
 			_HUDScene.draw(bar);
 
+
 			// Tank stats
 			const int showTime = 5000;
 			int ms = clock.getElapsedTime().asMilliseconds();
 			float fadeTime = 255.0/showTime;
+			
+			sf::Vector2i tankPos = _HUDScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x-sprites[ID].sprite.getGlobalBounds().width/2, trans[ID].pos.y-sprites[ID].sprite.getGlobalBounds().height/2)),
+					     tankSizePos = _HUDScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x+sprites[ID].sprite.getGlobalBounds().width/2, trans[ID].pos.y+sprites[ID].sprite.getGlobalBounds().height/2));
+			sf::View prevView = _HUDScene.getView();
+			_HUDScene.setView(_HUDScene.getDefaultView()); // reset view for the stats
 
 			for(int j = 0; j<5; j++)
 			{
-				if(sf::Keyboard::isKeyPressed(tankControls.keys[j]))
-					if(tankControls.state.test(j))
+				if(sf::Keyboard::isKeyPressed(tankControls[ID].keys[j]))
+					if(tankControls[ID].state.test(j))
 						clock.restart();
 			}
 
 			/// \TODO: Make a function to convert view cordinates to screen coordinates
-			bool cursorOnTank = BTWN(sprites.sprite.getGlobalBounds().left, sf::Mouse::getPosition().x, sprites.sprite.getGlobalBounds().width)
-							 && BTWN(sprites.sprite.getGlobalBounds().top,  sf::Mouse::getPosition().y, sprites.sprite.getGlobalBounds().height);
+			bool cursorOnTank = BTWN(tankPos.x, sf::Mouse::getPosition().x-_win->getPosition().x, tankSizePos.x)
+							 && BTWN(tankPos.y, sf::Mouse::getPosition().y-_win->getPosition().y, tankSizePos.y);
 			bool show = (ms > showTime) || cursorOnTank;
 			if(show)
 			{
+				float shiftCorrX = prevView.getSize().x*40/_win->getSize().x,
+					  shiftCorrY = prevView.getSize().y*20/_win->getSize().y;
+
 				bar.setFillColor(sf::Color(51, 103, 205, MIN((ms-5000.0)*5*fadeTime, 255))); // dark-blueish
-				bar.setPosition(trans.pos.x+20, trans.pos.y-sprites.sprite.getLocalBounds().height);
-				bar.setSize(sf::Vector2f(2, 20));
+				bar.setPosition(tankPos.x-shiftCorrX+110, tankPos.y+shiftCorrY-70);
+				bar.setSize(sf::Vector2f(2, 40));
 				bar.setRotation(45);
 				_HUDScene.draw(bar);
-
-				bar.setPosition(trans.pos.x+80, trans.pos.y-sprites.sprite.getLocalBounds().height);
-				bar.setSize(sf::Vector2f(2, 60));
+				
+				bar.setPosition(tankPos.x-shiftCorrX+260, tankPos.y+shiftCorrY-70);
+				bar.setSize(sf::Vector2f(2, 150));
 				bar.setRotation(90);
 				_HUDScene.draw(bar);
 
-				labels.label.setPosition(sf::Vector2f(trans.pos.x+25, trans.pos.y-sprites.sprite.getLocalBounds().height-labels.label.getCharacterSize()-3));
-				labels.label.setColor(sf::Color(51, 103, 205, MIN((ms-5000.0)*5*fadeTime, 255)));
-
-				cout<<"Update label ID: "<<ID<<endl;
-				_HUDScene.draw(labels.label);  /// \TODO (abraker): figure out what is making this crash
+				labels[ID].label.setPosition(tankPos.x-shiftCorrX+130, tankPos.y+shiftCorrY-100);
+				labels[ID].label.setColor(sf::Color(51, 103, 205, MIN((ms-5000.0)*5*fadeTime, 255)));
+				_HUDScene.draw(labels[ID].label);
 			}
+
+			_HUDScene.setView(prevView);
 		}
 	}
 }

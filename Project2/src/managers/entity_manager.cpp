@@ -41,6 +41,11 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		new Label("")
 	);
 
+	auto label = _gameEnv->get<Label>();
+	if(!label[new_tank].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+	label[new_tank].label.setFont(label[new_tank].font);
+	label[new_tank].label.setCharacterSize(18);
+
 	sprite[new_tank].sprite.setOrigin(origin.x, origin.y);
 	IDs.push_back(new_tank);
 	return new_tank;
