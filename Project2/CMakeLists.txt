@@ -30,6 +30,7 @@ foreach(component
 	solid
 	bounding_box
 	KeyControls
+	Score
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
@@ -55,6 +56,7 @@ foreach(system
 	view_system	
 	damage_system
 	HUD_System
+	score_system
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
 endforeach(system)
