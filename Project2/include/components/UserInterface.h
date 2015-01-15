@@ -8,7 +8,7 @@ class UserInterface: public Component<UserInterface>
 
 	public:
 		UserInterface();
-		UserInterface(std::bitset<UIstates> _enable, std::function<void*()> _action);
+		UserInterface(std::bitset<UIstates> _enable, std::function<void*()> _action, short _subMenu);
 	//	UserInterface(std::function<void*()> _action, Type _type);
 		~UserInterface();
 
@@ -24,4 +24,5 @@ class UserInterface: public Component<UserInterface>
 		std::function<void*()>* action;
 		std::bitset<UIstates> enable, state; // enable: what states are allowed, state: current state
 		bool cursorOnThis, show;
+		short subMenu;
 };

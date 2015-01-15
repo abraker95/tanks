@@ -75,7 +75,7 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	mainEnv.updateWrapper(input_system, &entity_manager, &texture_manager, &cpu_manager);
+	mainEnv.updateWrapper(input_system, &entity_manager, &texture_manager, &cpu_manager, &UI_manager);
 	mainEnv.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
 	mainEnv.updateWrapper(expiring_system, dt);
 	mainEnv.updateWrapper(physics_system, dt);

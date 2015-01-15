@@ -9,7 +9,7 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr)
+void InputSystem::update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr, UI_Manager* _UImgr)
 {
 	auto tank_controls = _env->get<TankControls>();
 	auto velocity = _env->get<Velocity>();
@@ -51,6 +51,7 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 		}
 	}
 
+	bool updateGameEntities = false;
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
 		if(_env->hasComponents<UserInterface, GUIObj>(ID))
@@ -58,24 +59,14 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 			auto GUIobjs = _env->get<GUIObj>();
 			if(GUIobjs[ID].type==GUIObj::VOID)
 			{
-				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
-				{
-					auto ui = _env->get<UserInterface>();
-					auto visible = _env->get<StdComponent<bool>>()[ID].data;
+				auto ui = _env->get<UserInterface>();
+				updateGameEntities = _UImgr->isVisible(&ui[ID]);
 
+				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 					if(ui[ID].action) (*ui[ID].action)();
-					_env->emit(new MenuEvent(*visible));
-				}
 			}
 		}
 	}
-
-	/// \TODO: See if it's possible to get rid of the menu event
-	auto menuEvent = _env->getEvents<MenuEvent>();
-	static bool updateGameEntities = false;
-
-	if(menuEvent.size()>=1)
-		updateGameEntities = !menuEvent[0].menuVisible;
 
 	if(updateGameEntities)
 	{

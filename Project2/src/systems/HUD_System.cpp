@@ -36,13 +36,13 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 	for(unsigned i = 0; i<numTanks; i++)
 	{
 		unsigned ID = tankIDs[i];
-		auto& trans = _env->get<Transform>();
-		auto& sprites = _env->get<Sprite>();
-		auto& health = _env->get<Health>();
-		auto& gun = _env->get<Gun>();
-		auto& labels = _env->get<Label>();
-		auto& tankControls = _env->get<TankControls>();
-		auto& tankScore = _env->get<Score>();
+		auto trans = _env->get<Transform>();
+		auto sprites = _env->get<Sprite>();
+		auto health = _env->get<Health>();
+		auto gun = _env->get<Gun>();
+		auto labels = _env->get<Label>();
+		auto tankControls = _env->get<TankControls>();
+		auto tankScore = _env->get<Score>();
 
 		if(ID!=0 && health[ID].getHealth()!= 0) // if it exists and not dead
 		{

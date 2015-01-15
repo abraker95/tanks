@@ -25,17 +25,24 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 	auto WindowMode = _env->getEvents<WindowModeEvent>();
 	if(WindowMode.size()>0)
 		fullscreen = *WindowMode[0].fullscreen;
-
+	
 	if(prevFullscreen != fullscreen)
 	{
 		GameScene.create(_win->getSize().x, _win->getSize().y);
 		UIScene.create(_win->getSize().x, _win->getSize().y);    
 	}
 	prevFullscreen = fullscreen;
-
-
-	//if(GameScene.getSize() != _win->getSize())
 	_env->emit(new WindowModeEvent(&fullscreen));
+
+	sf::Event event;
+	while(_win->pollEvent(event))
+	{
+		if(event.type==sf::Event::Resized)
+		{
+			cout<<"resize"<<endl;
+			/// Help with UI resizing here
+		}
+	}	
 
 	for(unsigned viewID = 0; viewID<_env->maxEntities(); viewID++)
 	{
@@ -106,18 +113,21 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					const float margin = 50;
 					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
 												  UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin)));
-
+								
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
 					button[ID].data->setFillColor(sf::Color(50, 50, 100, 255));
 					UIScene.draw(*button[ID].data);
 
 					Vec2i pos = sf::Mouse::getPosition(*_win);
-
+					//dim.left += 1024-_win->getSize().x;
+					//dim.top += 720-_win->getSize().y;
+					//cout<<"dim.left: "<<dim.left<<endl;
+					
 					//	PRINT_DEBUG(std::cout<<" X pos view: "<<trans[i].x<<" X pos screen: "<<pos.x<<std::endl, HI_DEBUG, GFXSYS);
 					//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
 					//	PRINT_DEBUG(std::cout<<" Y range: "<<trans[i].y<<" "<<sf::Mouse::getPosition().y-window->getPosition().y<<" "<<bounds.height+trans[i].y<<std::endl<<endl, HI_DEBUG, GFXSYS);
 
-					if(BTWN(dim.left, pos.x, dim.width+dim.left)&&BTWN(dim.top, pos.y, dim.height+dim.top))
+					if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
 						ui[ID].cursorOnThis = true;
 					else
 						ui[ID].cursorOnThis = false;
