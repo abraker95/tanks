@@ -39,6 +39,7 @@ Application::Application(): mainEnv(128)
 	view_system = new ViewSystem();
 	damage_system = new DamageSystem();
 	hud_system = new HUDSystem(&mainEnv);
+	score_system = new ScoreSystem();
 }
 
 Application::~Application()
@@ -79,6 +80,7 @@ void Application::update(float dt)
 	mainEnv.updateWrapper(expiring_system, dt);
 	mainEnv.updateWrapper(physics_system, dt);
 	mainEnv.updateWrapper(damage_system);
+	mainEnv.updateWrapper(score_system);
 	mainEnv.updateWrapper(view_system, window, dt);
 	mainEnv.updateWrapper(render_system, hud_system, window, &cpu_manager);
 }

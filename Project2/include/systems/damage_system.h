@@ -5,9 +5,9 @@
 
 class DamageSystem
 {
-public:
-	void update(Environment* env);
+	public:		
+		void update(Environment* env);
 
-private:
-	void handleProjectiles(Environment* _gameEnv, const CollisionEvent& collision);
+	private:
+		void handleProjectiles(Environment* _gameEnv, const CollisionEvent& collision);
 };

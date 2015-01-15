@@ -41,6 +41,9 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		new Label("")
 	);
 
+	if(_gameEnv->getID(_name+"Score") == 0) // only if the tank doesn't have a respective score
+		_gameEnv->createEntity(_name+"Score", new Score(0, 0));
+
 	auto label = _gameEnv->get<Label>();
 	if(!label[new_tank].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 	label[new_tank].label.setFont(label[new_tank].font);
@@ -122,15 +125,28 @@ void EntityManager::NewGame(Environment* _gameEnv, TextureManager* _textmgr)
 	createCamera("mainCamera", _gameEnv, borders, viewport, {tank1, tank2});
 }
 
-void EntityManager::EndGame(Environment* _gameEnv)
+void EntityManager::EndGame(Environment* _gameEnv, bool _newScore)
 {
-	_gameEnv->destroyEntity(_gameEnv->getID("tank1"));
-	_gameEnv->destroyEntity(_gameEnv->getID("tank2"));
 	_gameEnv->destroyEntity(_gameEnv->getID("mainCamera"));
+
+	if(_newScore)
+	{
+		for(unsigned player = 1; player<=2; player++)
+		{
+			unsigned ID = _gameEnv->getID("tank"+to_string(player)+"Score");
+			_gameEnv->destroyEntity(ID);
+		}
+	}
+
+	for(unsigned player = 1; player<=2; player++)
+	{
+		unsigned ID = _gameEnv->getID("tank"+to_string(player));
+		_gameEnv->destroyEntity(ID);
+	}
 }
 
-void EntityManager::ResetGame(Environment* _gameEnv, TextureManager* _textmgr)
+void EntityManager::ResetGame(Environment* _gameEnv, TextureManager* _textmgr, bool _newScore)
 {
-	EndGame(_gameEnv);
+	EndGame(_gameEnv, _newScore);
 	NewGame(_gameEnv, _textmgr);
 }

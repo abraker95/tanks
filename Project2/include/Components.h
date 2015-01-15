@@ -16,3 +16,4 @@
 #include "components\Label.h"
 #include "components\solid.h"
 #include "components\bounding_box.h"
+#include "components\score.h"

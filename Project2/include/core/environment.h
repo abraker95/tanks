@@ -177,7 +177,9 @@ public:
 	int getID(std::string _entityName)
 	{
 		for(unsigned int i = 0; i<entityName.size(); i++)
-			if(entityName[i] == _entityName) return i;
+			if(entityName[i]==_entityName) return i;
+		
+		cout<<"[ENV]: An entity with the name \""<<_entityName<<"\" has not been found"<<endl; /// \NOTE (abraker): To avoid hours of misery due to a mispelling
 		return 0;
 	}
 

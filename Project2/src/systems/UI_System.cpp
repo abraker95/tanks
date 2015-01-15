@@ -56,7 +56,34 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 		}
 	}
 
+	auto scoreEvent = _env->getEvents<ScoreEvent>();
+	if(scoreEvent.size()>0)
+	{
+		cout<<"GameOver"<<endl;
+		// display Win/Loss message
+		/* Messages chossen at random:
+			"Player X has been shot to death by player 2!"
+			"Player X has been annhialited!"
+			"Player X won a cookie!"
+			"Player X just didn't have the guns!"
+			"Player X swallowed a bullet!"
+			"And then Player X took a bullet to the wheel" 
+			"OMG! You killed Player X! What's wrong with you?"
+			"Player X left this cruel world!"
+		*/
+		/*
+		  In case of a tie:
+		  "Player X and Player Y have died in a Mexican standoff!"
+		  "Player X and Player Y exchanged bullets!"
+		  "Player X and Player Y quit on life!"
+		  "Player X took Player Y down with it!"
+		  "Player X and Player Y got tied to the wrong game!"
+		  "At least nobody won nor lost..."
+		*/
+
+	}
+
 	auto newGameEvent = _env->getEvents<NewGameEvent>();
 	if(newGameEvent.size()>0)
-		_entMgr->ResetGame(_env, _texMgr);
+		_entMgr->ResetGame(_env, _texMgr, false); //  False for now
 }

@@ -12,7 +12,7 @@ class HUDSystem
 	private:
 		sf::RectangleShape bar;
 		const static unsigned numTanks = 2;
-		unsigned IDs[numTanks];
+		unsigned tankIDs[numTanks], scoreIDs[numTanks];
 		sf::Clock clock;
 
 		sf::Vector2i View2ScreenCor(sf::Vector2i _viewCor, sf::View* _view, sf::Window* _win);

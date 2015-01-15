@@ -75,6 +75,7 @@
     <ClInclude Include="include\components\GUIObj.h" />
     <ClInclude Include="include\components\Label.h" />
     <ClInclude Include="include\components\map_desc.h" />
+    <ClInclude Include="include\components\Score.h" />
     <ClInclude Include="include\components\solid.h" />
     <ClInclude Include="include\components\sprite.h" />
     <ClInclude Include="include\components\texture.h" />
@@ -93,6 +94,7 @@
     <ClInclude Include="include\Systems.h" />
     <ClInclude Include="include\systems\damage_system.h" />
     <ClInclude Include="include\systems\HUD_System.h" />
+    <ClInclude Include="include\systems\score_system.h" />
     <ClInclude Include="include\systems\UI_System.h" />
     <ClInclude Include="include\systems\view_system.h" />
     <ClInclude Include="include\application.h" />
@@ -123,6 +125,7 @@
     <ClCompile Include="src\components\health.cpp" />
     <ClCompile Include="src\components\Label.cpp" />
     <ClCompile Include="src\components\projectile.cpp" />
+    <ClCompile Include="src\components\Score.cpp" />
     <ClCompile Include="src\components\solid.cpp" />
     <ClCompile Include="src\components\sprite.cpp" />
     <ClCompile Include="src\components\tank_controls.cpp" />
@@ -146,6 +149,7 @@
     <ClCompile Include="src\systems\input_system.cpp" />
     <ClCompile Include="src\systems\physics_system.cpp" />
     <ClCompile Include="src\systems\render_system.cpp" />
+    <ClCompile Include="src\systems\score_system.cpp" />
     <ClCompile Include="src\systems\UI_System.cpp" />
     <ClCompile Include="src\systems\view_system.cpp" />
   </ItemGroup>

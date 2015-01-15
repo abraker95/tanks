@@ -53,7 +53,11 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 					{
 						std::cout<<" *BOOM*"<<std::endl;
 						
+						unsigned targetScoreID = _env->getID(_env->getEntityName(target_id)+"Score"),
+								 destroyerScoreID = _env->getID(_env->getEntityName(projectile[projectile_id].shooting_entity)+"Score");
+
 						_env->emit(new DestroyEvent(target_id));
+						_env->emit(new ScoreEvent(destroyerScoreID, targetScoreID));
 						_env->destroyEntity(target_id);
 					}
 				}

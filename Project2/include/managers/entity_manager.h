@@ -29,8 +29,8 @@ class EntityManager
 			std::vector<unsigned> focusedObjects);
 
 		void NewGame(Environment* _gameEnv, TextureManager* _textmgr);
-		void EndGame(Environment* _gameEnv);
-		void ResetGame(Environment* _gameEnv, TextureManager* _textmgr);
+		void EndGame(Environment* _gameEnv, bool _newScore);
+		void ResetGame(Environment* _gameEnv, TextureManager* _textmgr, bool _newScore);
 
 	private:
 		std::vector<unsigned int> IDs;

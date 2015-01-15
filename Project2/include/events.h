@@ -16,6 +16,13 @@ struct DestroyEvent : public Event<DestroyEvent>
 	unsigned entity;
 };
 
+struct ScoreEvent: public Event<ScoreEvent>
+{
+	ScoreEvent(unsigned _winner, unsigned _losser): winner(_winner), losser(_losser) {}
+
+	unsigned winner, losser;
+};
+
 struct MenuEvent: public Event<MenuEvent>
 {
 	MenuEvent(bool _menuVisible): menuVisible(_menuVisible) {}

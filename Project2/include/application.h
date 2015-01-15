@@ -28,6 +28,7 @@ private:
 	ViewSystem* view_system;
 	DamageSystem* damage_system;
 	HUDSystem* hud_system;
+	ScoreSystem* score_system;
 	
 
 	// Managers

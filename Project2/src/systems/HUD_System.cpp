@@ -10,8 +10,9 @@ HUDSystem::HUDSystem(Environment* _env)
 
 	for(unsigned i = 0; i<numTanks; i++)
 	{
-		IDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
-		_env->get<Label>()[IDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
+		tankIDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
+		_env->get<Label>()[tankIDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
+		scoreIDs[i] = _env->getID("tank"+std::to_string(i+1)+"Score");
 	}
 }
 
@@ -26,21 +27,22 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 	{
 		for(unsigned i = 0; i<numTanks; i++)
 		{
-			IDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
-			_env->get<Label>()[IDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
+			tankIDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
+			_env->get<Label>()[tankIDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
+			scoreIDs[i] = _env->getID("tank"+std::to_string(i+1)+"Score");
 		}
 	}
 
-
 	for(unsigned i = 0; i<numTanks; i++)
 	{
-		unsigned ID = IDs[i];
+		unsigned ID = tankIDs[i];
 		auto& trans = _env->get<Transform>();
 		auto& sprites = _env->get<Sprite>();
 		auto& health = _env->get<Health>();
 		auto& gun = _env->get<Gun>();
 		auto& labels = _env->get<Label>();
 		auto& tankControls = _env->get<TankControls>();
+		auto& tankScore = _env->get<Score>();
 
 		if(ID!=0 && health[ID].getHealth()!= 0) // if it exists and not dead
 		{
@@ -111,8 +113,16 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 				labels[ID].label.setPosition(tankPos.x-shiftCorrX+130, tankPos.y+shiftCorrY-100);
 				labels[ID].label.setColor(sf::Color(51, 103, 205, MIN((ms-5000.0)*5*fadeTime, 255)));
 				_HUDScene.draw(labels[ID].label);
-			}
 
+				sf::Text score;
+					score.setFont(labels[ID].font);
+					score.setColor(labels[ID].label.getColor());
+					score.setCharacterSize(labels[ID].label.getCharacterSize());
+				ID = scoreIDs[i];
+					score.setString("W: "+to_string(tankScore[ID].getWins())+"   L: "+to_string(tankScore[ID].getLosses()));
+					score.setPosition(tankPos.x-shiftCorrX+130, tankPos.y+shiftCorrY-60);
+				_HUDScene.draw(score);
+			}
 			_HUDScene.setView(prevView);
 		}
 	}
