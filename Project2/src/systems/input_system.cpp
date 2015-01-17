@@ -63,7 +63,7 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 				updateGameEntities = _UImgr->isVisible(&ui[ID]);
 
 				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
-					if(ui[ID].action) (*ui[ID].action)();
+					ui[ID].action();
 			}
 		}
 	}

@@ -2,13 +2,12 @@
 #include <functional>
 #include "core/environment.h"
 #include "components/UserInterface.h"
+#include "components/Label.h"
 #include "../math/vector.h"
 
 class UI_Manager
 {
 	friend class UISystem;
-	friend class RenderSystem;
-	friend class InputSystem;
 
 	enum MENU
 	{
@@ -16,6 +15,7 @@ class UI_Manager
 		MAIN_MENU,
 		OPTIONS_MENU,
 		ABOUT_MENU,
+		CHANGENAME_MENU,
 		GAME_OVER
 	};
 
@@ -31,13 +31,15 @@ class UI_Manager
 		short currMenu;
 		bool* visible;
 		
-		int CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, MENU _subMenu);
-		int CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu);
+		unsigned CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, MENU _subMenu);
+		unsigned CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu);
+		unsigned CreateTextField(Environment* _env, Vec2f _pos, Label* _input, std::string _name, MENU _subMenu);
 
 		void CreateMainSubMenu(Environment* _env);
 		void CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win);
 		void CreateAboutSubMenu(Environment* _env);
 		void CreateGameOverSubMenu(Environment* _env);
+		void CreateChangeNameSubMenu(Environment* _env);
 		void CreateVoidSubMenu(Environment* _env);
 };
 

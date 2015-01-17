@@ -12,6 +12,7 @@ class GUIObj: public Component<GUIObj>
 			RADIO,
 			SCROLLBAR,
 			PANE,
+			TEXTFIELD,
 			VOID
 		};
 

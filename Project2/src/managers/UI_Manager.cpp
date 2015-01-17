@@ -9,7 +9,7 @@ UI_Manager::UI_Manager()
 UI_Manager::~UI_Manager()
 {}
 
-int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, MENU _subMenu)
+unsigned UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, MENU _subMenu)
 {
 	unsigned int button = _env->createEntity
 	(
@@ -19,7 +19,7 @@ int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*(
 		new Label(_lable),
 		new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
 		new StdComponent<MENU>(new MENU(_subMenu)),
-		new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), _action, _subMenu)
+		new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), _subMenu, _action)
 	);
 
 	auto labels = _env->get<Label>();
@@ -41,7 +41,7 @@ int UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*(
 	return button;
 }
 
-int UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu)
+unsigned UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu)
 {
 	unsigned int pane = _env->createEntity
 	(
@@ -50,7 +50,7 @@ int UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, st
 		new GUIObj(GUIObj::PANE, nullptr),
 		new Label(_lable),
 		new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
-		new UserInterface(std::bitset<UIstates>(NULL), nullptr, _subMenu)
+		new UserInterface(std::bitset<UIstates>(NULL), _subMenu)
 	);
 
 	auto labels = _env->get<Label>();
@@ -68,10 +68,25 @@ int UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, st
 
 
 	auto bounds = _env->get<StdComponent<sf::RectangleShape>>();
-		bounds[pane].data->setPosition(_pos.x, _pos.y);
-		bounds[pane].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
+	     bounds[pane].data->setPosition(_pos.x, _pos.y);
+		 bounds[pane].data->setSize(sf::Vector2f(textSize.width+margin, textSize.height+margin));
 
 	return pane;
+}
+
+unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, Label* _input, std::string _name, MENU _subMenu)
+{
+	unsigned int textField = _env->createEntity
+	(
+		_name,
+		new Transform(_pos),
+		new GUIObj(GUIObj::TEXTFIELD, nullptr),
+		_input,
+		Component(sf::RectangleShape, "", new sf::RectangleShape()),
+		new UserInterface(std::bitset<UIstates>(1<<UserInterface::KEY |1<<UserInterface::CLICK | 1<<UserInterface::FOCUS), _subMenu)
+	);
+
+	return textField;
 }
 
 void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
@@ -81,7 +96,8 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 	CreateAboutSubMenu(_env);
 	CreateGameOverSubMenu(_env);
 	CreateVoidSubMenu(_env);
-	
+	CreateChangeNameSubMenu(_env);
+
 	currMenu = MAIN_MENU;
 }
 
@@ -152,14 +168,37 @@ void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win)
 		}
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(600.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "Full_Win_Button", UI_Manager::OPTIONS_MENU);
+	CreateButton(_env, Vec2f(600.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "fullWin_Button", UI_Manager::OPTIONS_MENU);
+
+	std::function<void*()> changeName = [_env, this]()->void*
+	{
+		currMenu = CHANGENAME_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(200.f, 220.f), changeName, "Player Names", "PlayerNames_Button", UI_Manager::OPTIONS_MENU);
 
 	std::function<void*()> optionsBack = [_env, this]()->void*
 	{
 		currMenu = MAIN_MENU;
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(200.f, 220.f), optionsBack, "Back", "optionsBack_Button", UI_Manager::OPTIONS_MENU);
+	CreateButton(_env, Vec2f(200.f, 420.f), optionsBack, "Back", "optionsBack_Button", UI_Manager::OPTIONS_MENU);
+}
+
+void UI_Manager::CreateChangeNameSubMenu(Environment* _env)
+{	
+	unsigned tank1ID = _env->getID("tank1"),
+			 tank2ID = _env->getID("tank2");
+	
+	CreateTextField(_env, Vec2f(200.f, 220.f), &_env->get<Label>()[tank1ID], "Player1Name_TextInput", UI_Manager::CHANGENAME_MENU);
+	CreateTextField(_env, Vec2f(600.f, 220.f), &_env->get<Label>()[tank1ID], "Player2Name_TextInput", UI_Manager::CHANGENAME_MENU);
+
+	std::function<void*()> Done = [_env, this]()->void*
+	{
+		currMenu = OPTIONS_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(400.f, 420.f), Done, "Done", "Done_Button", UI_Manager::CHANGENAME_MENU);
 }
 
 void UI_Manager::CreateAboutSubMenu(Environment* _env)
@@ -204,10 +243,11 @@ void UI_Manager::CreateVoidSubMenu(Environment* _env)
 	{
 		auto UI = _env->get<UserInterface>();
 
-			 if(currMenu==OPTIONS_MENU) currMenu = MAIN_MENU;
-		else if(currMenu==ABOUT_MENU)	currMenu = MAIN_MENU;
-		else if(currMenu==MAIN_MENU)	currMenu = NO_MENU;
-		else if(currMenu==NO_MENU)		currMenu = MAIN_MENU;
+			 if(currMenu==OPTIONS_MENU)		currMenu = MAIN_MENU;
+		else if(currMenu==ABOUT_MENU)		currMenu = MAIN_MENU;
+		else if(currMenu==MAIN_MENU)		currMenu = NO_MENU;
+		else if(currMenu==NO_MENU)			currMenu = MAIN_MENU;
+		else if(currMenu==CHANGENAME_MENU)  currMenu = OPTIONS_MENU;
 
 		return nullptr;
 	};
@@ -216,7 +256,7 @@ void UI_Manager::CreateVoidSubMenu(Environment* _env)
 		Component(bool, "visible", new bool(true)),
 		Component(sf::Shader, "blur_shader", new sf::Shader())
 		);
-	_env->addComponents(esc_UI, new UserInterface(std::bitset<UIstates>(), ESC, NO_MENU));
+	_env->addComponents(esc_UI, new UserInterface(std::bitset<UIstates>(), NO_MENU, ESC));
 
 	sf::Shader* shader = _env->get<StdComponent<sf::Shader>>()[esc_UI].data;
 	if(!shader->loadFromFile("res/blur.vert", "res/blur.frag"))

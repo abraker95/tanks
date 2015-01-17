@@ -78,6 +78,7 @@ struct StdComponent: public Component<T>
 };
 
 #define Component(type, name, val) new StdComponent<type>(val, name)
+//#define Component(type, val) new StdComponent<type>(val)
 
 // Same concept as components but for events
 class EventBase 

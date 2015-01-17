@@ -127,6 +127,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
 					//	PRINT_DEBUG(std::cout<<" Y range: "<<trans[i].y<<" "<<sf::Mouse::getPosition().y-window->getPosition().y<<" "<<bounds.height+trans[i].y<<std::endl<<endl, HI_DEBUG, GFXSYS);
 
+					/// \TODO: Make this apply to all GUI objects by putting this into a more general scope. This requires GUI entities to have a dim component
 					if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
 						ui[ID].cursorOnThis = true;
 					else
@@ -134,7 +135,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					
 					if(ui[ID].state.test(UserInterface::PRESS))
 					{
-						button[ID].data->setFillColor(sf::Color(50, 50, 50, 50));
+						button[ID].data->setFillColor(sf::Color(50, 50, 50, 50)); /// \NOTE: Fill color is overlayed ontop of the existing fill
 						UIScene.draw(*button[ID].data);
 					}
 					else if(ui[ID].state.test(UserInterface::HIGHLIGHT))  // Just because the cursor is on the UI, doesn't mean it will always highlight. e.i.: Highlight is not enabled
@@ -165,6 +166,44 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					button[ID].data->setOutlineThickness(2.0f);
 
 					UIScene.draw(*button[ID].data);
+					UIScene.draw(labels[ID].label);
+				}
+				else if(GUIobjs[ID].type==GUIObj::TEXTFIELD)
+				{
+					auto labels = _env->get<Label>();
+					auto trans = _env->get<Transform>();
+						labels[ID].label.setPosition(trans[ID].pos.x, trans[ID].pos.y);
+						labels[ID].label.setColor(sf::Color(sf::Color::Black));
+						labels[ID].label.setCharacterSize(24);
+
+					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
+												  UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width, labels[ID].label.getLocalBounds().height)));
+					Vec2i pos = sf::Mouse::getPosition(*_win);
+					if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
+						ui[ID].cursorOnThis = true;
+					else
+						ui[ID].cursorOnThis = false;
+
+					if(ui[ID].state.test(UserInterface::FOCUS))
+					{
+						cout<<"focus"<<endl;
+						sf::Event event;
+						sf:string str = labels[ID].label.getString();
+
+						while(_win->pollEvent(event))
+						{
+							if(event.type == sf::Event::TextEntered)
+							{
+								// Handle ASCII characters only
+								if(event.text.unicode < 128)
+								{
+									str += static_cast<char>(event.text.unicode);
+									//labels[ID].label.SetText(str);
+								}
+							}
+						}
+						
+					}
 					UIScene.draw(labels[ID].label);
 				}
 			}

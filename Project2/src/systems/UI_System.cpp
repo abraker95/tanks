@@ -31,10 +31,15 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 					// save the drag state if the button is pressed since it is going to be reset. 
 					// This is needed for the logic handeling the case where the cursor goes fast
 					// enough to escape the object's bounds
-					bool drag = ui[ID].enable.test(UserInterface::DRAG),
-						toggle = ui[ID].enable.test(UserInterface::TOGGLE);
+					bool drag   = ui[ID].enable.test(UserInterface::DRAG),
+						 toggle = ui[ID].enable.test(UserInterface::TOGGLE),
+						 focus  = ui[ID].enable.test(UserInterface::FOCUS);
 
 					ui[ID].state.reset();
+
+					if(focus)
+						ui[ID].state.set(UserInterface::FOCUS);
+					
 					if(ui[ID].cursorOnThis)
 					{
 						if(ui[ID].enable.test(UserInterface::HIGHLIGHT)) ui[ID].state.set(UserInterface::HIGHLIGHT);
@@ -47,10 +52,18 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 							{
 								if(input_manager.mouseClickState.test(InputControls_Mgr::MOUSE::LEFT))
 								{
+									ui[ID].state.set(UserInterface::CLICK);
 									input_manager.mouseClickState.set(InputControls_Mgr::MOUSE::LEFT, false);
-									if(ui[ID].action) (*ui[ID].action)();
+									ui[ID].action();
 								}
 							}
+						}
+					}
+					else if(!ui[ID].cursorOnThis)
+					{
+						if(input_manager.mousePressState.test(InputControls_Mgr::MOUSE::LEFT))
+						{
+							if(ui[ID].enable.test(UserInterface::FOCUS))	ui[ID].state.reset(UserInterface::FOCUS);
 						}
 					}
 
