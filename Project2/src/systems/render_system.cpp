@@ -172,9 +172,6 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 				{
 					auto labels = _env->get<Label>();
 					auto trans = _env->get<Transform>();
-						labels[ID].label.setPosition(trans[ID].pos.x, trans[ID].pos.y);
-						labels[ID].label.setColor(sf::Color(sf::Color::Black));
-						labels[ID].label.setCharacterSize(24);
 
 					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
 												  UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width, labels[ID].label.getLocalBounds().height)));
@@ -184,26 +181,6 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					else
 						ui[ID].cursorOnThis = false;
 
-					if(ui[ID].state.test(UserInterface::FOCUS))
-					{
-						cout<<"focus"<<endl;
-						sf::Event event;
-						sf:string str = labels[ID].label.getString();
-
-						while(_win->pollEvent(event))
-						{
-							if(event.type == sf::Event::TextEntered)
-							{
-								// Handle ASCII characters only
-								if(event.text.unicode < 128)
-								{
-									str += static_cast<char>(event.text.unicode);
-									//labels[ID].label.SetText(str);
-								}
-							}
-						}
-						
-					}
 					UIScene.draw(labels[ID].label);
 				}
 			}

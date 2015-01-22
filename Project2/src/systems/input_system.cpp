@@ -4,6 +4,7 @@
 #include "systems/physics_system.h"
 #include "Components.h"
 #include "events.h"
+#include "utils.h"
 
 InputSystem::InputSystem() {}
 
@@ -32,15 +33,42 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 	// update the key states  
 	std::bitset<sf::Keyboard::KeyCount> prevKeyPressState = input_manager.keyPressState; // not a ref
 	input_manager.keyPressState.reset();  input_manager.keyClickState.reset();
-	
-	for(int j = 0; j<sf::Keyboard::KeyCount; j++)
+	input_manager.key = -1;
+
+	for(unsigned short j = 0; j<sf::Keyboard::KeyCount; j++)
 	{
 		if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key(j))))
 		{
 			if(prevKeyPressState[j] ^ true) input_manager.keyClickState.set(j, true);
 			input_manager.keyPressState.set(j, true);
+
+			if(sf::Keyboard::Key(j)!=sf::Keyboard::Key::RShift && sf::Keyboard::Key(j)!=sf::Keyboard::Key::LShift)
+				input_manager.key = j;
 		}
 	}
+
+	bool supported = BTWN(sf::Keyboard::Key::A, input_manager.key, sf::Keyboard::Key::Z)||
+					 BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9)||
+					 input_manager.key==sf::Keyboard::Key::Space||input_manager.key==sf::Keyboard::Key::BackSpace;
+
+	if(input_manager.keyPressState.test(sf::Keyboard::Key::RShift)||input_manager.keyPressState.test(sf::Keyboard::Key::LShift))
+	{ 
+		if(BTWN(sf::Keyboard::Key::A, input_manager.key, sf::Keyboard::Key::Z))
+			input_manager.key += 65; // capital letter
+		else if(BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9))   
+			input_manager.key = 0;
+			// input_manager.key += 6;  // symbols  /// \TODO (abraker): Nope, no support for symbols until I feel like mapping them
+	}
+	else
+	{
+		if(BTWN(sf::Keyboard::Key::A, input_manager.key, sf::Keyboard::Key::Z))
+			input_manager.key += 97; // lower letter
+		else if(BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9))
+			input_manager.key += 22;  // numbers
+	}
+	if(input_manager.key==sf::Keyboard::Key::Space) input_manager.key = 32;
+	if(!supported) input_manager.key = 0;
+	/// \NOTE: keep backspace as for now is to be used with sfml's enum
 
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
@@ -64,6 +92,28 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 
 				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 					ui[ID].action();
+			}
+		}
+
+		if(_env->hasComponents<UserInterface, Label>(ID))
+		{
+			auto ui = _env->get<UserInterface>();
+			auto labels = _env->get<Label>();
+			if(ui[ID].state.test(UserInterface::FOCUS))
+			{
+				sf:string str = labels[ID].label.getString();
+
+				if(ui[ID].state.test(UserInterface::KEY))
+				{ 
+					if(input_manager.key!=0)
+					{
+						if(input_manager.key==sf::Keyboard::Key::BackSpace)
+							str = str.substr(0, str.size()-1);
+						else
+							str += input_manager.key;
+						labels[ID].label.setString(str);
+					}
+				}
 			}
 		}
 	}

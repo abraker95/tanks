@@ -23,6 +23,7 @@ class InputControls_Mgr
 
 		int numKeys;
 		std::bitset<sf::Keyboard::KeyCount> keyPressState, keyClickState;
+		char key;  // for use of getting ascii input characters
 };
 
 extern InputControls_Mgr input_manager;

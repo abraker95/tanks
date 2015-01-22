@@ -25,12 +25,21 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 	// if the game got restarted, get the new tank ID's
 	if(_env->getEvents<NewGameEvent>().size()>0)
 	{
+		unsigned tank1ID = _env->getID("tank1"),
+				 tank2ID = _env->getID("tank2"),
+				 txtFld1ID = _env->getID("Player1Name_TextInput"),
+				 txtFld2ID = _env->getID("Player2Name_TextInput");
+
+		_env->get<Label>()[tank1ID].label.setString(_env->get<Label>()[txtFld1ID].label.getString());
+		_env->get<Label>()[tank2ID].label.setString(_env->get<Label>()[txtFld2ID].label.getString());
+
+		/* TODO: Refactor for net code
 		for(unsigned i = 0; i<numTanks; i++)
 		{
 			tankIDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
-			_env->get<Label>()[tankIDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
+			_env->get<Label>()[tankIDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks		
 			scoreIDs[i] = _env->getID("tank"+std::to_string(i+1)+"Score");
-		}
+		}*/
 	}
 
 	for(unsigned i = 0; i<numTanks; i++)
@@ -112,6 +121,7 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 
 				labels[ID].label.setPosition(tankPos.x-shiftCorrX+130, tankPos.y+shiftCorrY-100);
 				labels[ID].label.setColor(sf::Color(51, 103, 205, MIN((ms-5000.0)*5*fadeTime, 255)));
+				/// \ TODO: Apply name changes when changed in the settings
 				_HUDScene.draw(labels[ID].label);
 
 				sf::Text score;

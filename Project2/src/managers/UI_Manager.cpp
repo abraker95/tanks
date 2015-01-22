@@ -74,17 +74,30 @@ unsigned UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _labl
 	return pane;
 }
 
-unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, Label* _input, std::string _name, MENU _subMenu)
+unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu)
 {
 	unsigned int textField = _env->createEntity
 	(
 		_name,
 		new Transform(_pos),
 		new GUIObj(GUIObj::TEXTFIELD, nullptr),
-		_input,
+		new Label(""),
 		Component(sf::RectangleShape, "", new sf::RectangleShape()),
 		new UserInterface(std::bitset<UIstates>(1<<UserInterface::KEY |1<<UserInterface::CLICK | 1<<UserInterface::FOCUS), _subMenu)
 	);
+
+	auto labels = _env->get<Label>();
+		if(!labels[textField].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
+		labels[textField].label.setFont(labels[textField].font);
+
+		sf::Text text = labels[textField].label;
+		sf::FloatRect textSize = text.getLocalBounds();
+
+		int charSize = 24;
+		labels[textField].label.setCharacterSize(charSize);
+		labels[textField].label.setPosition(sf::Vector2f(_pos.x, _pos.y));
+		labels[textField].label.setColor(sf::Color::Black);
+		labels[textField].label.setString("Player");
 
 	return textField;
 }
@@ -187,14 +200,19 @@ void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win)
 
 void UI_Manager::CreateChangeNameSubMenu(Environment* _env)
 {	
-	unsigned tank1ID = _env->getID("tank1"),
-			 tank2ID = _env->getID("tank2");
-	
-	CreateTextField(_env, Vec2f(200.f, 220.f), &_env->get<Label>()[tank1ID], "Player1Name_TextInput", UI_Manager::CHANGENAME_MENU);
-	CreateTextField(_env, Vec2f(600.f, 220.f), &_env->get<Label>()[tank1ID], "Player2Name_TextInput", UI_Manager::CHANGENAME_MENU);
+	CreateTextField(_env, Vec2f(200.f, 220.f), "Player1Name_TextInput", UI_Manager::CHANGENAME_MENU);
+	CreateTextField(_env, Vec2f(600.f, 220.f), "Player2Name_TextInput", UI_Manager::CHANGENAME_MENU);
 
 	std::function<void*()> Done = [_env, this]()->void*
 	{
+		unsigned tank1ID = _env->getID("tank1"),
+				 tank2ID = _env->getID("tank2"),
+				 txtFld1ID = _env->getID("Player1Name_TextInput"),
+				 txtFld2ID = _env->getID("Player2Name_TextInput");
+
+		_env->get<Label>()[tank1ID].label.setString(_env->get<Label>()[txtFld1ID].label.getString());
+		_env->get<Label>()[tank2ID].label.setString(_env->get<Label>()[txtFld2ID].label.getString());
+
 		currMenu = OPTIONS_MENU;
 		return nullptr;
 	};
