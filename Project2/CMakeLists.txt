@@ -41,8 +41,8 @@ foreach(manager
 	map_loader
 	InputControls_Mgr
 	UI_Manager
-	CPU_Manager
 	HUD_Manager
+	font_manager
 )
 	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
 endforeach(manager)

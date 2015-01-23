@@ -15,7 +15,6 @@ Application::Application(): mainEnv(128)
 	entity_manager.NewGame(&mainEnv, &texture_manager);
 
 	UI_manager.CreateMenu(&mainEnv, window); // needs to go after entity manager
-	cpu_manager.createCPUMgr(&mainEnv, window);
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -33,7 +32,7 @@ Application::Application(): mainEnv(128)
 // [FACTORY CONSTRUCTS]
 	ui_system = new UISystem();
 	input_system = new InputSystem();
-	render_system = new RenderSystem(window);
+	render_system = new RenderSystem(window, &font_manager);
 	expiring_system = new ExpiringSystem();
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
@@ -57,6 +56,9 @@ Application::~Application()
 
 int Application::run()
 {
+	sf::Clock clock;
+	sf::Time elapsed;
+
 	while(window->isOpen())
 	{
 		sf::Event event;
@@ -66,7 +68,7 @@ int Application::run()
 				window->close();
 		}
 
-		sf::Time elapsed = cpu_manager.update();
+		elapsed = clock.restart();
 		update(elapsed.asSeconds());
 	}
 
@@ -75,12 +77,14 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	mainEnv.updateWrapper(input_system, &entity_manager, &texture_manager, &cpu_manager, &UI_manager);
+	const auto& monitoring_results = mainEnv.resetMonitoring(dt);
+
+	mainEnv.updateWrapper(input_system, &entity_manager, &texture_manager, &UI_manager);
 	mainEnv.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
 	mainEnv.updateWrapper(expiring_system, dt);
 	mainEnv.updateWrapper(physics_system, dt);
 	mainEnv.updateWrapper(damage_system);
 	mainEnv.updateWrapper(score_system);
 	mainEnv.updateWrapper(view_system, window, dt);
-	mainEnv.updateWrapper(render_system, hud_system, window, &cpu_manager);
+	mainEnv.updateWrapper(render_system, hud_system, window, monitoring_results);
 }

@@ -2,7 +2,7 @@
 #include <functional>
 #include "core/environment.h"
 
-class UISystem
+class UISystem : public System
 {
 	public:
 		UISystem();

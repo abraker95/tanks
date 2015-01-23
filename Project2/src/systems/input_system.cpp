@@ -10,7 +10,7 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr, UI_Manager* _UImgr)
+void InputSystem::update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr)
 {
 	auto tank_controls = _env->get<TankControls>();
 	auto velocity = _env->get<Velocity>();

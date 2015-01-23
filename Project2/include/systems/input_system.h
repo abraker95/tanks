@@ -3,11 +3,11 @@
 #include "core/environment.h"
 #include "Managers.h"
 
-class InputSystem
+class InputSystem : public System
 {
 	public:
 		InputSystem();
 		~InputSystem();
 
-		void update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, CPUManager* _cpuMgr, UI_Manager* _UImgr);
+		void update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr);
 };

@@ -4,17 +4,23 @@
 #include "utils.h"
 #include "events.h"
 
-RenderSystem::RenderSystem(sf::RenderWindow* _win)
+RenderSystem::RenderSystem(sf::RenderWindow* _win, FontManager* font_manager)
 {
 	GameScene.create(_win->getSize().x, _win->getSize().y);
 	UIScene.create(_win->getSize().x, _win->getSize().y);
 	shader = nullptr;
+
+	debug_infos.setFont(font_manager->load("res/Arial.ttf"));
+	debug_infos.setCharacterSize(14);
+	debug_infos.setColor(sf::Color(sf::Color::Blue));
+	debug_infos.setStyle(sf::Text::Style::Bold);
+	debug_infos.setPosition(sf::Vector2f(_win->getSize().x - 400, 10));
 }
 
 RenderSystem::~RenderSystem()
 {}
 
-void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWindow* _win, CPUManager* _cpuMgr)
+void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWindow* _win, const std::string& monitoring_results)
 {
 	auto sprites = _env->get<Sprite>();
 	auto trans = _env->get<Transform>();
@@ -187,22 +193,8 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 		}
 	}
 
-
-	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
-	{
-		if(_env->hasComponents<Transform, Label>(ID))
-		{
-			if(_env->getEntityName(ID)=="CPU")
-			{
-				if(*_env->get<StdComponent<bool>>()[ID].data)
-				{
-					auto labels = _env->get<Label>();
-					UIScene.draw(labels[ID].label);
-				}
-			}
-			
-		}
-	}
+	debug_infos.setString(monitoring_results);
+	UIScene.draw(debug_infos);
 
 	_win->draw(sf::Sprite(GameScene.getTexture()), shader);						     GameScene.clear(sf::Color(0, 0, 0, 0)); GameScene.display();
 	_win->draw(sf::Sprite(UIScene.getTexture()), sf::RenderStates(sf::BlendAlpha));  UIScene.clear(sf::Color(0, 0, 0, 0));   UIScene.display();

@@ -1,7 +1,7 @@
 #pragma once
 #include "core/environment.h"
 
-class ScoreSystem
+class ScoreSystem : public System
 {
 	public:
 		ScoreSystem();

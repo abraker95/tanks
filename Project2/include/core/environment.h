@@ -1,7 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <bitset>
@@ -14,6 +13,7 @@
 
 #define MAX_COMPONENTS 64
 #define MAX_EVENTS 64
+#define MAX_SYSTEMS 64
 
 typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
@@ -25,6 +25,8 @@ class Environment;
 class EventBase;
 template<typename T> class Event;
 template<typename T> class EventIterator;
+
+class System;
 
 class ComponentBase
 {
@@ -112,6 +114,13 @@ class Event : public EventBase
 		
 };
 
+class System
+{
+public:
+	float sum = 0.f;
+	int num_it = 0;
+};
+
 // the Environment class holds the entities' informations
 // and a table of pointers to the components arrays
 // this system can only have *one* array for a component type
@@ -124,8 +133,6 @@ public:
 		entity_mask.resize(num_entities);
 		components_pointer.resize(num_entities);
 		entityName.resize(num_entities);
-
-		cpuData = nullptr;
 	}
 
 	virtual ~Environment() 
@@ -291,24 +298,65 @@ public:
 		return static_cast<T*>(events_queue[Event<T>::bitpos()][index]);
 	}
 
+	const std::string& resetMonitoring(float elapsed)
+	{
+		static float sum_elapsed = 0.f;
+		static int num_it = 0;
+
+		sum_elapsed += elapsed;
+		num_it++;
+
+		if(refresh_avg <= 0.f)
+		{
+			refresh_avg = refresh_avg_cooldown;
+			monitoring_results = next_monitoring_results;
+		}
+		refresh_avg -= elapsed;
+
+		if(refresh_avg <= 0.f)
+		{
+			next_monitoring_results = "";
+			float avg_elapsed = sum_elapsed/(float)num_it;
+			next_monitoring_results += "Elapsed time : ";
+			next_monitoring_results += std::to_string((int)avg_elapsed);
+			next_monitoring_results += " us\t\t\t";
+			next_monitoring_results += std::to_string((int)(1.f/avg_elapsed));
+			next_monitoring_results += " FPS\n\n";
+
+			sum_elapsed = 0.f;
+			num_it = 0;
+		}	
+
+		return monitoring_results;
+	}
+
 	// wrapper function
 	template<typename T, typename... Args>
 	void updateWrapper(T* sys, Args&&... args)
 	{
-		/* Note(Sherushe): you can do all the monitoring here */
-		/* You can get the name of the system like this: */
-		/* std::cout<<"executing "<<typeid(T).name()<<std::endl */
+		static sf::Clock clock;
+
 		current_system = reinterpret_cast<void*>(sys);
 		clearEvents(current_system);
 
-		sf::Clock clock;
+		clock.restart();
 		sys->update(this, args...);
-		sf::Time elapsed = clock.restart();
-		
-		if(cpuData != nullptr)
-			cpuData->setString(cpuData->getString()+"\n["+std::string(typeid(T).name())+"]\t\t      Elapsed time : "+std::to_string((long)elapsed.asMicroseconds())+" us");
+		sf::Time elapsed = clock.getElapsedTime();
 
-		//PRINT_DEBUG(cout<<"["<<typeid(T).name()<<"]\t\t      Elapsed time : "<<elapsed.asMicroseconds()<<" us"<<endl, HI_DEBUG, GFXSYS);
+		sys->sum += elapsed.asMicroseconds();
+		sys->num_it++;
+
+		if(refresh_avg <= 0.f)
+		{
+			next_monitoring_results += "[";
+			next_monitoring_results += typeid(T).name();
+			next_monitoring_results += "]\t\t\tElapsed time : ";
+			next_monitoring_results += std::to_string((int)(sys->sum/(float)sys->num_it));
+			next_monitoring_results += " us\n";
+
+			sys->sum = 0.f;
+			sys->num_it = 0;
+		}
 	}
 
 	void clearEvents(void* emitter)
@@ -334,12 +382,14 @@ public:
 		}
 	}
 
+/*
 public:
 
 	// Note(ABraker): I hope this solution is good enough. Only 
 	// application can touch managers, and this is the only 
 	// workaround I can think of.
 	sf::Text* cpuData;
+*/
 
 private:
 	unsigned requestID()
@@ -366,6 +416,10 @@ private:
 	std::vector<std::string> entityName;
 	std::vector<std::array<ComponentBase*, MAX_COMPONENTS>> components_pointer;
 	std::array<std::vector<EventBase*>, MAX_EVENTS> events_queue;
+
+	std::string monitoring_results, next_monitoring_results;
+	float refresh_avg = 0.f;
+	const float refresh_avg_cooldown = 0.1f;
 
 	void* current_system;
 };

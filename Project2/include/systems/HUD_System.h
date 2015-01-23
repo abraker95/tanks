@@ -1,7 +1,8 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include "core/environment.h"
 
-class HUDSystem
+class HUDSystem : public System
 {
 	public:
 		HUDSystem(Environment* _env);

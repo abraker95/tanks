@@ -2,7 +2,7 @@
 #include "core/environment.h"
 #include "math/vector.h"
 
-class PhysicsSystem
+class PhysicsSystem : public System
 {
 public:
 	PhysicsSystem();

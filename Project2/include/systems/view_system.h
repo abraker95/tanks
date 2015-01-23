@@ -4,7 +4,7 @@
 #include <vector>
 #include "core/environment.h"
 
-class ViewSystem
+class ViewSystem : public System
 {
 public:
 	void update(Environment* _env, sf::RenderWindow* window, float dt);
