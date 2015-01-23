@@ -28,18 +28,17 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 	auto vertex_array = _env->get<VertexArray>();
 	auto view_controller = _env->get<ViewController>();
 
-	auto WindowMode = _env->getEvents<WindowModeEvent>();
-	if(WindowMode.size()>0)
-		fullscreen = *WindowMode[0].fullscreen;
-	
-	if(prevFullscreen != fullscreen)
-	{
-		GameScene.create(_win->getSize().x, _win->getSize().y);
-		UIScene.create(_win->getSize().x, _win->getSize().y);    
-	}
-	prevFullscreen = fullscreen;
-	_env->emit(new WindowModeEvent(&fullscreen));
+	auto resize_event = _env->getEvents<ResizeEvent>();
 
+	if(resize_event.size() > 0)
+	{
+		GameScene.create(resize_event[0].width, resize_event[0].height);
+		UIScene.create(resize_event[0].width, resize_event[0].height);
+	}
+
+	/*
+		Note(Sherushe): All events should be polled in the main loop (application.cpp)
+	
 	sf::Event event;
 	while(_win->pollEvent(event))
 	{
@@ -49,6 +48,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 			/// Help with UI resizing here
 		}
 	}	
+	*/
 
 	for(unsigned viewID = 0; viewID<_env->maxEntities(); viewID++)
 	{

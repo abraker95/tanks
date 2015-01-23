@@ -10,8 +10,17 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr)
+void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr)
 {
+	static sf::Event event;
+	while(win->pollEvent(event))
+	{
+		if(event.type == sf::Event::Closed)
+			win->close();
+		if(event.type == sf::Event::Resized)
+			_env->emit(new ResizeEvent(event.size.width, event.size.height));
+	}
+
 	auto tank_controls = _env->get<TankControls>();
 	auto velocity = _env->get<Velocity>();
 

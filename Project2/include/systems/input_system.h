@@ -9,5 +9,5 @@ class InputSystem : public System
 		InputSystem();
 		~InputSystem();
 
-		void update(Environment* _env, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr);
+		void update(Environment* _env, sf::RenderWindow* win, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr);
 };

@@ -15,6 +15,7 @@ public:
 
 private:
 	sf::RenderWindow* window;
+	bool fullscreen;
 
 	// Environments
 	Environment mainEnv;

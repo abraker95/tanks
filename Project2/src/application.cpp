@@ -8,13 +8,14 @@ Application::Application(): mainEnv(128)
 {
 // [CORE DECLARATIONS]
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
+	fullscreen = false;
 	//window->setFramerateLimit(60);
 	
 	// [ENTITY CREATION]
 	map_loader.createMap(&mainEnv, &texture_manager, "maps/dev1.map");
 	entity_manager.NewGame(&mainEnv, &texture_manager);
 
-	UI_manager.CreateMenu(&mainEnv, window); // needs to go after entity manager
+	UI_manager.CreateMenu(&mainEnv, window, fullscreen); // needs to go after entity manager
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -61,13 +62,6 @@ int Application::run()
 
 	while(window->isOpen())
 	{
-		sf::Event event;
-		while(window->pollEvent(event))
-		{
-			if(event.type == sf::Event::Closed)
-				window->close();
-		}
-
 		elapsed = clock.restart();
 		update(elapsed.asSeconds());
 	}
@@ -79,7 +73,7 @@ void Application::update(float dt)
 {
 	const auto& monitoring_results = mainEnv.resetMonitoring(dt);
 
-	mainEnv.updateWrapper(input_system, &entity_manager, &texture_manager, &UI_manager);
+	mainEnv.updateWrapper(input_system, window, &entity_manager, &texture_manager, &UI_manager);
 	mainEnv.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
 	mainEnv.updateWrapper(expiring_system, dt);
 	mainEnv.updateWrapper(physics_system, dt);

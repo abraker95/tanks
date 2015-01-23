@@ -9,14 +9,14 @@ UI_Manager::UI_Manager()
 UI_Manager::~UI_Manager()
 {}
 
-unsigned UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, MENU _subMenu)
+unsigned UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _label, std::string _name, MENU _subMenu)
 {
 	unsigned int button = _env->createEntity
 	(
 		_name,
 		new Transform(_pos),
 		new GUIObj(GUIObj::BUTTON, _action),
-		new Label(_lable),
+		new Label(_label),
 		new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
 		new StdComponent<MENU>(new MENU(_subMenu)),
 		new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), _subMenu, _action)
@@ -41,14 +41,14 @@ unsigned UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<v
 	return button;
 }
 
-unsigned UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu)
+unsigned UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _label, std::string _name, MENU _subMenu)
 {
 	unsigned int pane = _env->createEntity
 	(
 		_name,
 		new Transform(_pos),
 		new GUIObj(GUIObj::PANE, nullptr),
-		new Label(_lable),
+		new Label(_label),
 		new StdComponent<sf::RectangleShape>(new sf::RectangleShape()),
 		new UserInterface(std::bitset<UIstates>(NULL), _subMenu)
 	);
@@ -102,10 +102,10 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 	return textField;
 }
 
-void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
+void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen)
 {
 	CreateMainSubMenu(_env);
-	CreateOptionsSubMenu(_env, _win);
+	CreateOptionsSubMenu(_env, _win, fullscreen);
 	CreateAboutSubMenu(_env);
 	CreateGameOverSubMenu(_env);
 	CreateVoidSubMenu(_env);
@@ -162,25 +162,27 @@ void UI_Manager::CreateMainSubMenu(Environment* _env)
 	CreateButton(_env, Vec2f(100.f, 340.f), About, "About", "About_Button", UI_Manager::MAIN_MENU);
 }
 
-void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win)
+void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen)
 {
-	std::function<void*()> ToggleFullscreen = [_env, _win]()->void*
+	std::function<void*()> ToggleFullscreen = [_env, _win, &fullscreen]()->void*
 	{
-		auto WindowMode = _env->getEvents<WindowModeEvent>();
+		if(!fullscreen)
+			_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
+		else
+			_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
+		
+		fullscreen = !fullscreen;
 
-		if(WindowMode.size() > 0)
-		{
-			if(*WindowMode[0].fullscreen==false)
-				_win->create(sf::VideoMode::getDesktopMode(), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Fullscreen);
-			else
-				_win->create(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)", sf::Style::Resize);
+		// Note(Sherushe): when a new window is created no sf::Event::Resize is sent
+		// so a ResizeEvent is sent from here instead of the input system
+		_env->emit(new ResizeEvent(_win->getSize().x, _win->getSize().y));
 
-			//_win->setFramerateLimit(60);
-			*WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
-			//_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
-		}
+		//_win->setFramerateLimit(60);
+		// *WindowMode[0].fullscreen = !*WindowMode[0].fullscreen;
+		//_env->emit(new WindowModeEvent(WindowMode[0].fullscreen));
 		return nullptr;
 	};
+
 	CreateButton(_env, Vec2f(600.f, 220.f), ToggleFullscreen, "Fullscreen / Windowed", "fullWin_Button", UI_Manager::OPTIONS_MENU);
 
 	std::function<void*()> changeName = [_env, this]()->void*
