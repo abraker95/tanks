@@ -3,7 +3,7 @@
 #include "core/environment.h"
 #include "events.h"
 
-class DamageSystem
+class DamageSystem : public System
 {
 	public:		
 		void update(Environment* env);

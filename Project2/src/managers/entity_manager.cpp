@@ -66,9 +66,9 @@ unsigned EntityManager::spawnBullet(std::string _name,
 		return 0;
 	
 	float start_x = 
-		transform[tank_id].pos.x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_box[tank_id].size.x/2.f;
+		transform[tank_id].pos.x + cosf(transform[tank_id].rot * PI/180.f + PI/2.f) * bounding_box[tank_id].size.x/2.5f;
 	float start_y = 
-		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_box[tank_id].size.x/2.f;
+		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_box[tank_id].size.x/2.5f;
 	
 	sf::Texture* texture = tex_man->load("res/Bullet_0.png");
 	Vec2f origin;

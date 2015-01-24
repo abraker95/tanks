@@ -5,6 +5,12 @@
 
 void ViewSystem::update(Environment* _env, sf::RenderWindow* window, float dt)
 {
+	auto resize_event = _env->getEvents<ResizeEvent>();
+	if(resize_event.size() > 0)
+	{
+		sf::FloatRect viewableArea(0, 0, resize_event[0].width, resize_event[0].height);
+		window->setView(sf::View(viewableArea));
+	}
 	auto view_controller = _env->get<ViewController>();
 
 	for(unsigned i = 0; i < _env->maxEntities(); i++)

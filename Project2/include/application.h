@@ -15,6 +15,7 @@ public:
 
 private:
 	sf::RenderWindow* window;
+	bool fullscreen;
 
 	// Environments
 	Environment mainEnv;
@@ -31,11 +32,10 @@ private:
 	ScoreSystem* score_system;
 	NetworkSystem* net_system;
 	
-
 	// Managers
 	EntityManager entity_manager;
 	TextureManager texture_manager;
 	MapLoader map_loader;
 	UI_Manager UI_manager;
-	CPUManager cpu_manager;
+	FontManager font_manager;
 };

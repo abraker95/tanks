@@ -30,3 +30,9 @@ struct NewGameEvent: public Event<NewGameEvent>
 	NewGameEvent(bool _resetScores): resetScores(_resetScores) {}
 	bool resetScores;
 };
+
+struct ResizeEvent : public Event<ResizeEvent>
+{
+	ResizeEvent(int width, int height) : width(width), height(height) {}
+	int width, height;
+};

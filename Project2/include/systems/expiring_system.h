@@ -2,7 +2,7 @@
 #include "core/environment.h"
 #include "components/expires.h"
 
-class ExpiringSystem
+class ExpiringSystem : public System
 {
 public:
 	ExpiringSystem();

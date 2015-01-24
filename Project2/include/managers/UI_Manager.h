@@ -24,7 +24,7 @@ class UI_Manager
 		UI_Manager();
 		virtual ~UI_Manager();
 
-		void CreateMenu(Environment* _env, sf::RenderWindow* _win);
+		void CreateMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen);
 		bool isVisible(UserInterface* _UI);
 		void ShowGameOver();
 
@@ -37,7 +37,7 @@ class UI_Manager
 		unsigned CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu);
 
 		void CreateMainSubMenu(Environment* _env);
-		void CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win);
+		void CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen);
 		void CreateAboutSubMenu(Environment* _env);
 		void CreateGameOverSubMenu(Environment* _env);
 		void CreateChangeNameSubMenu(Environment* _env);
