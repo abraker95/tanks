@@ -1,7 +1,7 @@
 #pragma once
 #include "core/environment.h"
 
-class NetworkSystem
+class NetworkSystem: public System
 {
 public:
 	NetworkSystem();

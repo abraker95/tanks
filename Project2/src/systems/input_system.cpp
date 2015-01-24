@@ -59,15 +59,18 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager
 	// Ascii Character update
 	bool supported = BTWN(sf::Keyboard::Key::A, input_manager.key, sf::Keyboard::Key::Z)||
 					 BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9)||
-					 input_manager.key==sf::Keyboard::Key::Space||input_manager.key==sf::Keyboard::Key::BackSpace;
+					 input_manager.key==sf::Keyboard::Key::Space||input_manager.key==sf::Keyboard::Key::BackSpace ||
+					 input_manager.key==sf::Keyboard::Key::Period;
 
 	if(input_manager.keyPressState.test(sf::Keyboard::Key::RShift)||input_manager.keyPressState.test(sf::Keyboard::Key::LShift))
 	{ 
 		if(BTWN(sf::Keyboard::Key::A, input_manager.key, sf::Keyboard::Key::Z))
 			input_manager.key += 65; // capital letter
 		else if(BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9))   
+			input_manager.key = 0;  // input_manager.key += 6;  // symbols  /// \TODO (abraker): Nope, no support for symbols until I feel like mapping them
+		else if(input_manager.key==sf::Keyboard::Key::Period)
 			input_manager.key = 0;
-			// input_manager.key += 6;  // symbols  /// \TODO (abraker): Nope, no support for symbols until I feel like mapping them
+			
 	}
 	else
 	{
@@ -75,8 +78,11 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager
 			input_manager.key += 97; // lower letter
 		else if(BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9))
 			input_manager.key += 22;  // numbers
+		else if(input_manager.key==sf::Keyboard::Key::Period)
+			input_manager.key = 46;
+		else if(input_manager.key==sf::Keyboard::Key::Space) 
+			input_manager.key = 32;
 	}
-	if(input_manager.key==sf::Keyboard::Key::Space) input_manager.key = 32;
 	if(!supported) input_manager.key = 0;
 	/// \NOTE: keep backspace as for now is to be used with sfml's enum
 
@@ -108,6 +114,8 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager
 		{
 			auto ui = _env->get<UserInterface>();
 			auto labels = _env->get<Label>();
+			auto maxChar = _env->get<StdComponent<unsigned>>();
+
 			if(ui[ID].state.test(UserInterface::FOCUS))
 			{
 				std::string str = labels[ID].label.getString();
@@ -118,7 +126,7 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager
 					{
 						if(input_manager.key==sf::Keyboard::Key::BackSpace)
 							str = str.substr(0, str.size()-1);
-						else
+						else if(str.size() < *maxChar[ID].data)
 							str += input_manager.key;
 						labels[ID].label.setString(str);
 					}

@@ -34,7 +34,7 @@ class UI_Manager
 		
 		unsigned CreateButton(Environment* _env, Vec2f _pos, std::function<void*()> _action, std::string _lable, std::string _name, MENU _subMenu);
 		unsigned CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu);
-		unsigned CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu);
+		unsigned CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu, unsigned _maxChar = 64);
 
 		void CreateMainSubMenu(Environment* _env);
 		void CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen);

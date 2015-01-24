@@ -38,7 +38,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 
 	/*
 		Note(Sherushe): All events should be polled in the main loop (application.cpp)
-	
+	    Note(abraker): Ok... :(
 	sf::Event event;
 	while(_win->pollEvent(event))
 	{
@@ -164,7 +164,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 
 					const float margin = 50;
 					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
-						labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
+													  labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
 
 					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
 					button[ID].data->setOutlineColor(sf::Color(50, 50, 100, 255));
@@ -180,7 +180,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 					auto trans = _env->get<Transform>();
 
 					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
-												  UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width, labels[ID].label.getLocalBounds().height)));
+												  UIScene.mapCoordsToPixel(sf::Vector2f(MAX(labels[ID].label.getLocalBounds().width, 200), labels[ID].font.getLineSpacing(labels[ID].label.getCharacterSize()))));
 					Vec2i pos = sf::Mouse::getPosition(*_win);
 					if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
 						ui[ID].cursorOnThis = true;
@@ -188,6 +188,22 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 						ui[ID].cursorOnThis = false;
 
 					UIScene.draw(labels[ID].label);
+
+					sf::RectangleShape textbox;
+						textbox.setPosition(sf::Vector2f(dim.left, dim.top));
+						textbox.setSize(sf::Vector2f(dim.width, dim.height));
+						textbox.setFillColor(sf::Color(173, 214, 255, 50));
+					UIScene.draw(textbox);
+
+					if(ui[ID].state.test(UserInterface::FOCUS))
+					{
+						sf::RectangleShape textCursor;
+						textCursor.setPosition(sf::Vector2f(dim.left+labels[ID].label.getLocalBounds().width+3, dim.top));
+							textCursor.setSize(sf::Vector2f(2, dim.height));
+							textCursor.setFillColor(sf::Color(0, 0, 0, 255));
+						UIScene.draw(textCursor);
+					}
+					
 				}
 			}
 		}

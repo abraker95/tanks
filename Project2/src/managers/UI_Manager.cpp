@@ -74,7 +74,7 @@ unsigned UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _labe
 	return pane;
 }
 
-unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu)
+unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu, unsigned _maxChar)
 {
 	unsigned int textField = _env->createEntity
 	(
@@ -83,6 +83,7 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 		new GUIObj(GUIObj::TEXTFIELD, nullptr),
 		new Label(""),
 		Component(sf::RectangleShape, "", new sf::RectangleShape()),
+		Component(unsigned, "", new unsigned(_maxChar)),
 		new UserInterface(std::bitset<UIstates>(1<<UserInterface::KEY |1<<UserInterface::CLICK | 1<<UserInterface::FOCUS), _subMenu)
 	);
 
@@ -97,7 +98,6 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 		labels[textField].label.setCharacterSize(charSize);
 		labels[textField].label.setPosition(sf::Vector2f(_pos.x, _pos.y));
 		labels[textField].label.setColor(sf::Color::Black);
-		labels[textField].label.setString("Player");    /// \TODO: Create a text cursor/indicator of current typing position and get rid of this
 
 	return textField;
 }
@@ -210,8 +210,11 @@ void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win,
 
 void UI_Manager::CreateChangeNameSubMenu(Environment* _env)
 {	
-	CreateTextField(_env, Vec2f(200.f, 220.f), "Player1Name_TextInput", UI_Manager::CHANGENAME_MENU);
-	CreateTextField(_env, Vec2f(600.f, 220.f), "Player2Name_TextInput", UI_Manager::CHANGENAME_MENU);
+	CreatePane(_env, Vec2f(100.f, 200.f), "Player 1", "IP Text", UI_Manager::CHANGENAME_MENU);
+	CreatePane(_env, Vec2f(100.f, 280.f), "Player 2", "IP Text", UI_Manager::CHANGENAME_MENU);
+
+	CreateTextField(_env, Vec2f(250.f, 213.f), "Player1Name_TextInput", UI_Manager::CHANGENAME_MENU);
+	CreateTextField(_env, Vec2f(250.f, 293.f), "Player2Name_TextInput", UI_Manager::CHANGENAME_MENU);
 
 	std::function<void*()> Done = [_env, this]()->void*
 	{
@@ -220,8 +223,8 @@ void UI_Manager::CreateChangeNameSubMenu(Environment* _env)
 				 txtFld1ID = _env->getID("Player1Name_TextInput"),
 				 txtFld2ID = _env->getID("Player2Name_TextInput");
 
-		_env->get<Label>()[tank1ID].label.setString(_env->get<Label>()[txtFld1ID].label.getString());
-		_env->get<Label>()[tank2ID].label.setString(_env->get<Label>()[txtFld2ID].label.getString());
+		if(tank1ID != -1) _env->get<Label>()[tank1ID].label.setString(_env->get<Label>()[txtFld1ID].label.getString());
+		if(tank2ID != -1) _env->get<Label>()[tank2ID].label.setString(_env->get<Label>()[txtFld2ID].label.getString());
 
 		currMenu = OPTIONS_MENU;
 		return nullptr;
@@ -248,11 +251,14 @@ void UI_Manager::CreateNetSubMenu(Environment* _env)
 {
 	std::string IPinfo = "IP Address:                                ";
 	CreatePane(_env, Vec2f(200.f, 200.f), IPinfo, "IP Text", NET_MENU);
-	CreateTextField(_env, Vec2f(360.f, 213.f), "IP_TextInput", UI_Manager::NET_MENU);
+	CreateTextField(_env, Vec2f(360.f, 213.f), "IP_TextInput", UI_Manager::NET_MENU, 15);
 
 	std::function<void*()> connect = [_env, this]()->void*
 	{
 		/// \TODO: Connect to IP Address code
+
+		std::string IPAddress = _env->get<Label>()[_env->getID("IP_TextInput")].label.getString();
+		cout<<"IP address to connect to: "<<IPAddress<<endl;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(200.f, 320.f), connect, "Connect", "Connect_Button", UI_Manager::NET_MENU);
