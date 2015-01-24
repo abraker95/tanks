@@ -97,7 +97,7 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 		labels[textField].label.setCharacterSize(charSize);
 		labels[textField].label.setPosition(sf::Vector2f(_pos.x, _pos.y));
 		labels[textField].label.setColor(sf::Color::Black);
-		labels[textField].label.setString("Player");
+		labels[textField].label.setString("Player");    /// \TODO: Create a text cursor/indicator of current typing position and get rid of this
 
 	return textField;
 }
@@ -110,6 +110,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win)
 	CreateGameOverSubMenu(_env);
 	CreateVoidSubMenu(_env);
 	CreateChangeNameSubMenu(_env);
+	CreateNetSubMenu(_env);
 
 	currMenu = MAIN_MENU;
 }
@@ -190,12 +191,19 @@ void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win)
 	};
 	CreateButton(_env, Vec2f(200.f, 220.f), changeName, "Player Names", "PlayerNames_Button", UI_Manager::OPTIONS_MENU);
 
+	std::function<void*()> netMenu = [_env, this]()->void*
+	{
+		currMenu = NET_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(200.f, 420.f), netMenu, "Online", "Net_Button", UI_Manager::OPTIONS_MENU);
+
 	std::function<void*()> optionsBack = [_env, this]()->void*
 	{
 		currMenu = MAIN_MENU;
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(200.f, 420.f), optionsBack, "Back", "optionsBack_Button", UI_Manager::OPTIONS_MENU);
+	CreateButton(_env, Vec2f(600.f, 420.f), optionsBack, "Back", "optionsBack_Button", UI_Manager::OPTIONS_MENU);
 }
 
 void UI_Manager::CreateChangeNameSubMenu(Environment* _env)
@@ -232,6 +240,34 @@ void UI_Manager::CreateAboutSubMenu(Environment* _env)
 		" Tank Game \n"\
 		" Created by: ABraker and Sherushe";
 	CreatePane(_env, Vec2f(300.f, 200.f), aboutInfo, "About Text", ABOUT_MENU);
+}
+
+void UI_Manager::CreateNetSubMenu(Environment* _env)
+{
+	std::string IPinfo = "IP Address:                                ";
+	CreatePane(_env, Vec2f(200.f, 200.f), IPinfo, "IP Text", NET_MENU);
+	CreateTextField(_env, Vec2f(360.f, 213.f), "IP_TextInput", UI_Manager::NET_MENU);
+
+	std::function<void*()> connect = [_env, this]()->void*
+	{
+		/// \TODO: Connect to IP Address code
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(200.f, 320.f), connect, "Connect", "Connect_Button", UI_Manager::NET_MENU);
+
+	std::function<void*()> host = [_env, this]()->void*
+	{
+		/// \TODO: Host, displaying ip address in the net menu
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(650.f, 320.f), host, "Create Server", "Host_Button", UI_Manager::NET_MENU);
+
+	std::function<void*()> netBack = [_env, this]()->void*
+	{
+		currMenu = OPTIONS_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(450.f, 520.f), netBack, "Back", "NetBack_Button", UI_Manager::NET_MENU);
 }
 
 void UI_Manager::CreateGameOverSubMenu(Environment* _env)

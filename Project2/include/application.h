@@ -29,6 +29,7 @@ private:
 	DamageSystem* damage_system;
 	HUDSystem* hud_system;
 	ScoreSystem* score_system;
+	NetworkSystem* net_system;
 	
 
 	// Managers

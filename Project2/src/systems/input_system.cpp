@@ -35,7 +35,7 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 	input_manager.keyPressState.reset();  input_manager.keyClickState.reset();
 	input_manager.key = -1;
 
-	for(unsigned short j = 0; j<sf::Keyboard::KeyCount; j++)
+	for(char j = 0; j<sf::Keyboard::KeyCount; j++)
 	{
 		if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key(j))))
 		{
@@ -47,6 +47,7 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 		}
 	}
 
+	// Ascii Character update
 	bool supported = BTWN(sf::Keyboard::Key::A, input_manager.key, sf::Keyboard::Key::Z)||
 					 BTWN(sf::Keyboard::Key::Num0, input_manager.key, sf::Keyboard::Key::Num9)||
 					 input_manager.key==sf::Keyboard::Key::Space||input_manager.key==sf::Keyboard::Key::BackSpace;
@@ -70,6 +71,9 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 	if(!supported) input_manager.key = 0;
 	/// \NOTE: keep backspace as for now is to be used with sfml's enum
 
+
+	// Inputs for entities
+	bool updateGameEntities = false;
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
 		if(_env->getEntityName(ID)=="CPU")
@@ -77,11 +81,7 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 			if(input_manager.keyClickState[sf::Keyboard::F2])
 				*_env->get<StdComponent<bool>>()[ID].data = !*_env->get<StdComponent<bool>>()[ID].data;
 		}
-	}
 
-	bool updateGameEntities = false;
-	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
-	{
 		if(_env->hasComponents<UserInterface, GUIObj>(ID))
 		{
 			auto GUIobjs = _env->get<GUIObj>();
@@ -101,7 +101,7 @@ void InputSystem::update(Environment* _env, EntityManager* entity_manager, Textu
 			auto labels = _env->get<Label>();
 			if(ui[ID].state.test(UserInterface::FOCUS))
 			{
-				sf:string str = labels[ID].label.getString();
+				std::string str = labels[ID].label.getString();
 
 				if(ui[ID].state.test(UserInterface::KEY))
 				{ 

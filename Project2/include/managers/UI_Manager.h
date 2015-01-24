@@ -14,6 +14,7 @@ class UI_Manager
 		NO_MENU = 0,
 		MAIN_MENU,
 		OPTIONS_MENU,
+		NET_MENU,
 		ABOUT_MENU,
 		CHANGENAME_MENU,
 		GAME_OVER
@@ -41,5 +42,6 @@ class UI_Manager
 		void CreateGameOverSubMenu(Environment* _env);
 		void CreateChangeNameSubMenu(Environment* _env);
 		void CreateVoidSubMenu(Environment* _env);
+		void CreateNetSubMenu(Environment* _env);
 };
 
