@@ -97,7 +97,6 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 		"Player X just didn't have the guns!"
 		"Player X swallowed a bullet!"
 		"And then Player X took a bullet to the wheel"
-		"OMG! You killed Player X! What's wrong with you?"
 		"Player X left this cruel world!"
 		*/
 		/*
@@ -107,7 +106,6 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 		"Player X and Player Y quit on life!"
 		"Player X took Player Y down with it!"
 		"Player X and Player Y got tied to the wrong game!"
-		"At least nobody won nor lost..."
 		*/
 
 		cout<<"GameOver"<<endl;
