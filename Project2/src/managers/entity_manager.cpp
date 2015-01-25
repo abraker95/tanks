@@ -1,10 +1,12 @@
 #define PI 3.14159f
 #include "math/vector.h"
 #include "managers/entity_manager.h"
+#include "events.h"
 #include "Components.h"
 
 EntityManager::EntityManager()
 {
+	numLivingTanks = 0;
 }
 
 EntityManager::~EntityManager()
@@ -12,13 +14,13 @@ EntityManager::~EntityManager()
 }
 
 unsigned EntityManager::spawnTankPlayer(std::string _name,
-	Environment* _gameEnv, TextureManager* tex_man, 
-	float x, float y, 
-	std::array<sf::Keyboard::Key, 5> keys)
+	Environment* _gameEnv, TextureManager* texture_manager,
+	ScoreManager* score_manager, std::array<sf::Keyboard::Key, 5> keys)
 {
 	auto sprite = _gameEnv->get<Sprite>();
+	auto transform = _gameEnv->get<Sprite>();
 
-	sf::Texture* texture = tex_man->load("res/Tank_0.png");
+	sf::Texture* texture = texture_manager->load("res/Tank_0.png");
 	Vec2f origin;
 
 	Vec2u size = texture->getSize();
@@ -29,7 +31,7 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	}
 
 	unsigned new_tank = _gameEnv->createEntity(_name,
-		new Transform(Vec2f(x, y), 0.f),
+		new Transform(Vec2f(0.f, 0.f), 0.f),
 		new Velocity(0.f, 0.f),
 		new Texture(texture),
 		new TankControls(keys),
@@ -38,6 +40,8 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		new Gun(),
 		new Sprite(),
 		new Solid(),
+		new Player(score_manager->newPlayer()),
+		new Explosible(),
 		new Label("")
 	);
 
@@ -50,8 +54,29 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	label[new_tank].label.setCharacterSize(18);
 
 	sprite[new_tank].sprite.setOrigin(origin.x, origin.y);
-	IDs.push_back(new_tank);
+	numLivingTanks++;
+
+	auto player = _gameEnv->get<Player>();
+	placeOnSpawn(_gameEnv, new_tank, player[new_tank].player_id);
+
 	return new_tank;
+}
+
+void EntityManager::killPlayer(Environment* env, unsigned id)
+{
+	env->disableComponents<TankControls, Solid, Texture>(id);
+	numLivingTanks--;
+}
+
+void EntityManager::revivePlayer(Environment* env, unsigned id)
+{
+	env->enableComponents<TankControls, Solid, Texture>(id);
+	numLivingTanks++;
+}
+
+int EntityManager::getNumLivingTanks()
+{
+	return numLivingTanks;
 }
 
 unsigned EntityManager::spawnBullet(std::string _name,
@@ -92,7 +117,6 @@ unsigned EntityManager::spawnBullet(std::string _name,
 	);
 
 	sprite[new_bullet].sprite.setOrigin(origin.x, origin.y);
-	IDs.push_back(new_bullet);
 	return new_bullet;
 }
 
@@ -106,18 +130,17 @@ unsigned EntityManager::createCamera(std::string _name,
 		new ViewController(borders, viewport, 400.f, 1200.f, 0.4f, focusedObjects)
 	);
 
-	IDs.push_back(new_view);
 	return new_view;
 }
 
-void EntityManager::NewGame(Environment* _gameEnv, TextureManager* _textmgr)
+void EntityManager::NewGame(Environment* _gameEnv, TextureManager* texture_manager, ScoreManager* score_manager)
 {
 	// double-braces init because of std::array
 	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = spawnTankPlayer("tank1", _gameEnv, _textmgr, 200.f, 300.f, p1_keys);
+	unsigned tank1 = spawnTankPlayer("tank1", _gameEnv, texture_manager, score_manager, p1_keys);
 
 	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
-	unsigned tank2 = spawnTankPlayer("tank2", _gameEnv, _textmgr, 400.f, 300.f, p2_keys);
+	unsigned tank2 = spawnTankPlayer("tank2", _gameEnv, texture_manager, score_manager, p2_keys);
 
 	// camera
 	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
@@ -125,28 +148,39 @@ void EntityManager::NewGame(Environment* _gameEnv, TextureManager* _textmgr)
 	createCamera("mainCamera", _gameEnv, borders, viewport, {tank1, tank2});
 }
 
-void EntityManager::EndGame(Environment* _gameEnv, bool _newScore)
+void EntityManager::ResetGame(Environment* env)
 {
-	_gameEnv->destroyEntity(_gameEnv->getID("mainCamera"));
+	auto health = env->get<Health>();
+	auto player = env->get<Player>();
 
-	if(_newScore)
+	for(unsigned id=0;id<env->maxEntities();id++)
 	{
-		for(unsigned player = 1; player<=2; player++)
+		if(env->hasComponents<Player>(id))
 		{
-			unsigned ID = _gameEnv->getID("tank"+to_string(player)+"Score");
-			_gameEnv->destroyEntity(ID);
-		}
-	}
+			if(!health[id].hasHealth())
+			{
+				revivePlayer(env, id);
+				env->emit(new CreateEvent(id));
+			}
 
-	for(unsigned player = 1; player<=2; player++)
-	{
-		unsigned ID = _gameEnv->getID("tank"+to_string(player));
-		_gameEnv->destroyEntity(ID);
+			health[id].resetHealth();	
+			placeOnSpawn(env, id, player[id].player_id);
+		}
 	}
 }
 
-void EntityManager::ResetGame(Environment* _gameEnv, TextureManager* _textmgr, bool _newScore)
+void EntityManager::placeOnSpawn(Environment* env, unsigned tank_id, unsigned player_id)
 {
-	EndGame(_gameEnv, _newScore);
-	NewGame(_gameEnv, _textmgr);
+	auto spawnLocation = env->get<SpawnLocation>();
+	auto transform = env->get<Transform>();
+
+	for(unsigned spawn_id = 0;spawn_id < env->maxEntities();spawn_id++)
+	{
+		if(env->hasComponents<SpawnLocation>(spawn_id) && spawnLocation[spawn_id].player_id == (int)player_id)
+		{
+			transform[tank_id].pos = transform[spawn_id].pos;
+			transform[tank_id].rot = 0.f;
+			break;
+		}
+	}
 }

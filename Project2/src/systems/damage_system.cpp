@@ -3,17 +3,17 @@
 #include "Components.h"
 #include "events.h"
 
-void DamageSystem::update(Environment* _env)
+void DamageSystem::update(Environment* _env, Managers* managers)
 {
 	auto collisions = _env->getEvents<CollisionEvent>();
 
 	for(unsigned i=0;i<collisions.size();i++)
 	{
-		handleProjectiles(_env, collisions[i]);
+		handleProjectiles(_env, collisions[i], managers);
 	}
 }
 
-void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& collision)
+void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& collision, Managers* managers)
 {
 	auto projectile = _env->get<Projectile>();
 	auto health = _env->get<Health>();
@@ -42,6 +42,8 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 				if(_env->hasComponents<Health>(target_id))
 				{
 					int damage = projectile[projectile_id].damage;
+					int shooting_entity = projectile[projectile_id].shooting_entity;
+
 					health[target_id].addHealth(-damage);
 
 					if(health[target_id].hasHealth())
@@ -53,12 +55,27 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 					{
 						std::cout<<" *BOOM*"<<std::endl;
 						
-						unsigned targetScoreID = _env->getID(_env->getEntityName(target_id)+"Score"),
-								 destroyerScoreID = _env->getID(_env->getEntityName(projectile[projectile_id].shooting_entity)+"Score");
-
 						_env->emit(new DestroyEvent(target_id));
-						_env->emit(new ScoreEvent(destroyerScoreID, targetScoreID));
-						_env->destroyEntity(target_id);
+
+						if(_env->hasComponents<Player>(target_id))
+						{
+							// if it's a player, only make it disappear
+							// the tank is destroyed but not the player itself
+							managers->entity_manager.killPlayer(_env, target_id);
+							managers->score_manager.addLoss(target_id);
+
+							// if only 1 player left
+							if(managers->entity_manager.getNumLivingTanks() == 1)
+							{
+								managers->score_manager.addWin(shooting_entity);
+								_env->emit(new GameOverEvent(shooting_entity));
+							}
+						}
+
+						else
+						{
+							_env->destroyEntity(target_id);
+						}
 					}
 				}
 				

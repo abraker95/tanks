@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
 #include "Systems.h"
-#include "Managers.h"
+#include "managers/managers.h"
 
 class Application
 {
@@ -33,9 +33,5 @@ private:
 	NetworkSystem* net_system;
 	
 	// Managers
-	EntityManager entity_manager;
-	TextureManager texture_manager;
-	MapLoader map_loader;
-	UI_Manager UI_manager;
-	FontManager font_manager;
+	Managers managers;
 };

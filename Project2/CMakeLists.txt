@@ -31,6 +31,10 @@ foreach(component
 	bounding_box
 	KeyControls
 	Score
+	player
+	explosible	
+	spawn_location
+	name
 )
 	list(APPEND component_files include/components/${component}.h src/components/${component}.cpp)
 endforeach(component)
@@ -43,6 +47,7 @@ foreach(manager
 	UI_Manager
 	HUD_Manager
 	font_manager
+	score_manager
 )
 	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
 endforeach(manager)
@@ -57,6 +62,7 @@ foreach(system
 	damage_system
 	HUD_System
 	score_system
+	network_system
 )
 	list(APPEND system_files include/systems/${system}.h src/systems/${system}.cpp)
 endforeach(system)

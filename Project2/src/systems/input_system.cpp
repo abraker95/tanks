@@ -10,7 +10,7 @@ InputSystem::InputSystem() {}
 
 InputSystem::~InputSystem() {}
 
-void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager* entity_manager, TextureManager* texture_manager, UI_Manager* _UImgr)
+void InputSystem::update(Environment* _env, sf::RenderWindow* win, Managers* managers)
 {
 	static sf::Event event;
 	while(win->pollEvent(event))
@@ -103,7 +103,7 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager
 			if(GUIobjs[ID].type==GUIObj::VOID)
 			{
 				auto ui = _env->get<UserInterface>();
-				updateGameEntities = _UImgr->isVisible(&ui[ID]);
+				updateGameEntities = managers->UI_manager.isVisible(&ui[ID]);
 
 				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 					ui[ID].action();
@@ -169,7 +169,7 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, EntityManager
 						if(gun[ID].fireClock.getElapsedTime().asSeconds()>gun[ID].fireCooldown)
 						{
 							gun[ID].fireClock.restart();
-							entity_manager->spawnBullet("", _env, texture_manager, ID);
+							managers->entity_manager.spawnBullet("", _env, &managers->texture_manager, ID);
 						}
 					}
 				}

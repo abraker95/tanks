@@ -13,6 +13,13 @@ struct DestroyEvent : public Event<DestroyEvent>
 	unsigned entity;
 };
 
+struct CreateEvent : public Event<CreateEvent>
+{
+	CreateEvent(unsigned _entity) : entity(_entity) {}
+	unsigned entity;
+};
+
+
 struct ScoreEvent: public Event<ScoreEvent>
 {
 	ScoreEvent(unsigned _winner, unsigned _losser): winner(_winner), losser(_losser) {}
@@ -35,4 +42,10 @@ struct ResizeEvent : public Event<ResizeEvent>
 {
 	ResizeEvent(int width, int height) : width(width), height(height) {}
 	int width, height;
+};
+
+struct GameOverEvent: public Event<GameOverEvent>
+{
+	GameOverEvent(int winner) : winner(winner) {}
+	int winner;
 };

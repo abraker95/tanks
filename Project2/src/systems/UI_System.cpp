@@ -1,5 +1,4 @@
 #include "Components.h"
-#include "managers.h"
 #include "systems/UI_System.h"
 #include "events.h"
 
@@ -8,14 +7,14 @@ UISystem::UISystem() {}
 UISystem::~UISystem() {}
 
 
-void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr)
+void UISystem::update(Environment* _env, Managers* managers)
 {
 	auto ui = _env->get<UserInterface>();
 
-	if(*_uiMgr->visible == true)
+	if(*managers->UI_manager.visible == true)
 	{
-		if(_uiMgr->currMenu==UI_Manager::NO_MENU) *_uiMgr->visible = false;
-		else									  *_uiMgr->visible = true;
+		if(managers->UI_manager.currMenu==UI_Manager::NO_MENU) *managers->UI_manager.visible = false;
+		else									  *managers->UI_manager.visible = true;
 		
 		for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 		{
@@ -24,7 +23,7 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 			if(_env->hasComponents<UserInterface>(ID))
 			{
 				ui[ID].show = false;
-				if(_uiMgr->isVisible(&ui[ID]))
+				if(managers->UI_manager.isVisible(&ui[ID]))
 				{
 					ui[ID].show = true;
 
@@ -80,14 +79,14 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 			}
 		}
 	}
-	else if(*_uiMgr->visible == false)
+	else if(*managers->UI_manager.visible == false)
 	{
-		if(_uiMgr->currMenu == UI_Manager::NO_MENU) *_uiMgr->visible = false;
-		else					   				    *_uiMgr->visible = true;
+		if(managers->UI_manager.currMenu == UI_Manager::NO_MENU) *managers->UI_manager.visible = false;
+		else					   				    *managers->UI_manager.visible = true;
 	}
 
-	auto scoreEvent = _env->getEvents<ScoreEvent>();
-	if(scoreEvent.size()>0)
+	auto gameOverEvent = _env->getEvents<GameOverEvent>();
+	if(gameOverEvent.size()>0)
 	{
 		// display Win/Loss message
 		/* Messages chossen at random:
@@ -109,10 +108,10 @@ void UISystem::update(Environment* _env, UI_Manager* _uiMgr, EntityManager* _ent
 		*/
 
 		cout<<"GameOver"<<endl;
-		_uiMgr->ShowGameOver();
+		managers->UI_manager.ShowGameOver();
 	}
 
 	auto newGameEvent = _env->getEvents<NewGameEvent>();
 	if(newGameEvent.size()>0)
-		_entMgr->ResetGame(_env, _texMgr, newGameEvent[0].resetScores);
+		managers->entity_manager.ResetGame(_env);
 }
