@@ -72,11 +72,15 @@
   <ItemGroup>
     <ClInclude Include="include\Components.h" />
     <ClInclude Include="include\components\bounding_box.h" />
+    <ClInclude Include="include\components\explosible.h" />
     <ClInclude Include="include\components\GUIObj.h" />
     <ClInclude Include="include\components\Label.h" />
     <ClInclude Include="include\components\map_desc.h" />
+    <ClInclude Include="include\components\name.h" />
+    <ClInclude Include="include\components\player.h" />
     <ClInclude Include="include\components\Score.h" />
     <ClInclude Include="include\components\solid.h" />
+    <ClInclude Include="include\components\spawn_location.h" />
     <ClInclude Include="include\components\sprite.h" />
     <ClInclude Include="include\components\texture.h" />
     <ClInclude Include="include\components\tilemap.h" />
@@ -87,7 +91,9 @@
     <ClInclude Include="include\managers\entity_manager.h" />
     <ClInclude Include="include\managers\font_manager.h" />
     <ClInclude Include="include\managers\InputControls_Mgr.h" />
+    <ClInclude Include="include\managers\managers.h" />
     <ClInclude Include="include\managers\map_loader.h" />
+    <ClInclude Include="include\managers\score_manager.h" />
     <ClInclude Include="include\managers\texture_manager.h" />
     <ClInclude Include="include\managers\UI_Manager.h" />
     <ClInclude Include="include\math\vector.h" />
@@ -121,13 +127,17 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\components\bounding_box.cpp" />
     <ClCompile Include="src\components\expires.cpp" />
+    <ClCompile Include="src\components\explosible.cpp" />
     <ClCompile Include="src\components\GUIObj.cpp" />
     <ClCompile Include="src\components\gun.cpp" />
     <ClCompile Include="src\components\health.cpp" />
     <ClCompile Include="src\components\Label.cpp" />
+    <ClCompile Include="src\components\name.cpp" />
+    <ClCompile Include="src\components\player.cpp" />
     <ClCompile Include="src\components\projectile.cpp" />
     <ClCompile Include="src\components\Score.cpp" />
     <ClCompile Include="src\components\solid.cpp" />
+    <ClCompile Include="src\components\spawn_location.cpp" />
     <ClCompile Include="src\components\sprite.cpp" />
     <ClCompile Include="src\components\tank_controls.cpp" />
     <ClCompile Include="src\components\texture.cpp" />
@@ -142,6 +152,7 @@
     <ClCompile Include="src\managers\font_manager.cpp" />
     <ClCompile Include="src\managers\InputControls_Mgr.cpp" />
     <ClCompile Include="src\managers\map_loader.cpp" />
+    <ClCompile Include="src\managers\score_manager.cpp" />
     <ClCompile Include="src\managers\texture_manager.cpp" />
     <ClCompile Include="src\managers\UI_Manager.cpp" />
     <ClCompile Include="src\systems\damage_system.cpp" />
