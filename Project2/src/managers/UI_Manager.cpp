@@ -104,6 +104,7 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 
 void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen)
 {
+	CreateTitleScreen(_env);
 	CreateMainSubMenu(_env);
 	CreateOptionsSubMenu(_env, _win, fullscreen);
 	CreateAboutSubMenu(_env);
@@ -112,7 +113,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win, bool& ful
 	CreateChangeNameSubMenu(_env);
 	CreateNetSubMenu(_env);
 
-	currMenu = MAIN_MENU;
+	currMenu = TITLE_SCREEN;
 }
 
 void UI_Manager::ShowGameOver()
@@ -126,16 +127,39 @@ bool UI_Manager::isVisible(UserInterface* _UI)
 	return (_UI->subMenu==currMenu);
 }
 
-
-void UI_Manager::CreateMainSubMenu(Environment* _env)
+void UI_Manager::CreateTitleScreen(Environment* _env)
 {
+	auto NewGame = [_env, this]()->void*
+	{
+		unsigned tank1ID = _env->getID("tank1"),
+				 tank2ID = _env->getID("tank2");
+
+		if(tank1ID!=-1) _env->get<Label>()[tank1ID].label.setString("Player 1");
+		if(tank2ID!=-1) _env->get<Label>()[tank2ID].label.setString("Player 2");
+
+		_env->emit(new NewGameEvent(true));
+		currMenu = NO_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(100.f, 340.f), NewGame, "New Game", "New_Game_Button", UI_Manager::TITLE_SCREEN);
+
+	std::function<void*()> About = [_env, this]()->void*
+	{
+		currMenu = ABOUT_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(650.f, 340.f), About, "About", "About_Button", UI_Manager::TITLE_SCREEN);
+
 	std::function<void*()> quitAction = [this]()->void*
 	{
 		exit(0);
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(600.f, 340.f), quitAction, "Quit", "Quit_Button", UI_Manager::MAIN_MENU);
+	CreateButton(_env, Vec2f(400.f, 520.f), quitAction, "Quit", "Quit_Button", UI_Manager::TITLE_SCREEN);
+}
 
+void UI_Manager::CreateMainSubMenu(Environment* _env)
+{
 	auto NewGame = [_env, this]()->void*
 	{
 		_env->emit(new NewGameEvent(true));
@@ -153,14 +177,16 @@ void UI_Manager::CreateMainSubMenu(Environment* _env)
 		currMenu = OPTIONS_MENU;
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(600.f, 220.f), Options, "Options", "Options_Button", UI_Manager::MAIN_MENU);
+	CreateButton(_env, Vec2f(650.f, 220.f), Options, "Options", "Options_Button", UI_Manager::MAIN_MENU);
 
-	std::function<void*()> About = [_env, this]()->void*
+	std::function<void*()> quitAction = [this]()->void*
 	{
-		currMenu = ABOUT_MENU;
+
+		currMenu = TITLE_SCREEN;
 		return nullptr;
 	};
-	CreateButton(_env, Vec2f(100.f, 340.f), About, "About", "About_Button", UI_Manager::MAIN_MENU);
+	CreateButton(_env, Vec2f(400.f, 520.f), quitAction, "Quit to Title", "Quit_Button", UI_Manager::MAIN_MENU);
+
 }
 
 void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen)
@@ -236,7 +262,7 @@ void UI_Manager::CreateAboutSubMenu(Environment* _env)
 {
 	std::function<void*()> aboutBack = [_env, this]()->void*
 	{
-		currMenu = MAIN_MENU;
+		currMenu = TITLE_SCREEN;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(450.f, 620.f), aboutBack, "Back", "aboutBack_Button", UI_Manager::ABOUT_MENU);

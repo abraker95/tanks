@@ -14,7 +14,6 @@ Application::Application(): mainEnv(128)
 	// [ENTITY CREATION]
 	managers.map_loader.createMap(&mainEnv, &managers.texture_manager, "maps/dev1.map");
 	managers.entity_manager.NewGame(&mainEnv, &managers.texture_manager, &managers.score_manager);
-
 	managers.UI_manager.CreateMenu(&mainEnv, window, fullscreen); // needs to go after entity manager
 
 	/*main_env.createEntity(

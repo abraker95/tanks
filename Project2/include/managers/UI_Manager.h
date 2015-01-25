@@ -12,12 +12,14 @@ class UI_Manager
 	enum MENU
 	{
 		NO_MENU = 0,
+		TITLE_SCREEN,
 		MAIN_MENU,
 		OPTIONS_MENU,
 		NET_MENU,
 		ABOUT_MENU,
 		CHANGENAME_MENU,
-		GAME_OVER
+		GAME_OVER,
+		NUM_UI_SCREENS  // number of UI screens (title, submenus, etc)
 	};
 
 	public:
@@ -36,12 +38,13 @@ class UI_Manager
 		unsigned CreatePane(Environment* _env, Vec2f _pos, std::string _lable, std::string _name, MENU _subMenu);
 		unsigned CreateTextField(Environment* _env, Vec2f _pos, std::string _name, MENU _subMenu, unsigned _maxChar = 64);
 
+		void CreateTitleScreen(Environment* _env);
 		void CreateMainSubMenu(Environment* _env);
 		void CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen);
 		void CreateAboutSubMenu(Environment* _env);
 		void CreateGameOverSubMenu(Environment* _env);
 		void CreateChangeNameSubMenu(Environment* _env);
 		void CreateVoidSubMenu(Environment* _env);
-		void CreateNetSubMenu(Environment* _env);
+		void CreateNetSubMenu(Environment* _env);	
 };
 
