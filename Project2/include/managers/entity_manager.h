@@ -3,6 +3,7 @@
 #include <array>
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
+#include "math/vector.h"
 #include "managers/texture_manager.h"
 #include "managers/score_manager.h"
 
@@ -29,6 +30,8 @@ class EntityManager
 			Environment* _gameEnv,
 			sf::FloatRect& borders, sf::FloatRect& viewport, 
 			std::vector<unsigned> focusedObjects);
+
+		void spawnExplosion(Environment* env, TextureManager* tex_man, Vec2f pos);
 
 		//void NewGame(Environment* _gameEnv, TextureManager* texture_manager, ScoreManager* score_manager);
 		//void EndGame(Environment* _gameEnv, bool _newScore);

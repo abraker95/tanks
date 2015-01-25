@@ -1,11 +1,15 @@
 #include "application.h"
 #include <array>
+#include <ctime>
 #include "Components.h"
 #include "events.h"
 #include "utils.h"
 
 Application::Application(): mainEnv(128)
 {
+	// init prng
+	srand((unsigned int)time(NULL));
+
 // [CORE DECLARATIONS]
 	window = new sf::RenderWindow(sf::VideoMode(1024, 720), "https://github.com/Sherushe/tanks.git (pre-alpha branch)");
 	fullscreen = false;

@@ -64,6 +64,7 @@ void PhysicsSystem::update(Environment* _env, float dt)
 
 			transform[i].pos += vel * dt;
 			transform[i].rot += velocity[i].vrot * dt;
+			transform[i].scale += velocity[i].vscale * dt;
 		}
 	}
 }

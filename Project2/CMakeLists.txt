@@ -48,6 +48,7 @@ foreach(manager
 	HUD_Manager
 	font_manager
 	score_manager
+	game_manager
 )
 	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
 endforeach(manager)

@@ -73,6 +73,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* ma
 						sf::Sprite& sprite = sprites[spriteID].sprite;
 						sprite.setPosition(trans[spriteID].pos.x, trans[spriteID].pos.y);
 						sprite.setRotation(trans[spriteID].rot);
+						sprite.setScale(trans[spriteID].scale, trans[spriteID].scale);
 						sprite.setTexture(*textures[spriteID].texture);
 						GameScene.draw(sprite);
 					}

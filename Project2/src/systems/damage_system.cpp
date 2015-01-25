@@ -18,6 +18,7 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 	auto projectile = _env->get<Projectile>();
 	auto health = _env->get<Health>();
 	auto player = _env->get<Player>();
+	auto transform = _env->get<Transform>();
 
 	unsigned projectile_id = 0;
 	unsigned target_id = 0;
@@ -55,8 +56,15 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 					else
 					{
 						std::cout<<" *BOOM*"<<std::endl;
+
+						// if explosible, spawn explosion
+						if(_env->hasComponents<Explosible, Transform>(target_id))
+						{
+							managers->entity_manager.spawnExplosion(_env, &managers->texture_manager, transform[target_id].pos);
+						}
 						
 						_env->emit(new DestroyEvent(target_id));
+
 
 						if(_env->hasComponents<Player>(target_id))
 						{
@@ -77,6 +85,7 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 						{
 							_env->destroyEntity(target_id);
 						}
+
 					}
 				}
 				

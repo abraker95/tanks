@@ -135,6 +135,8 @@ sf::VertexArray* MapLoader::buildVA(
 							new Texture(tileset),
 							new BoundingBox(Vec2f(tileWidth, tileHeight)),
 							new Sprite(),
+							new Explosible(),
+							new Health(20, 20),
 							new Solid()
 						);
 

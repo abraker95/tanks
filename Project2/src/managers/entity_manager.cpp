@@ -1,4 +1,5 @@
 #define PI 3.14159f
+#include <ctime>
 #include "math/vector.h"
 #include "managers/entity_manager.h"
 #include "events.h"
@@ -146,5 +147,53 @@ void EntityManager::placeOnSpawn(Environment* env, unsigned tank_id, unsigned pl
 			transform[tank_id].rot = 0.f;
 			break;
 		}
+	}
+}
+
+void EntityManager::spawnExplosion(Environment* env, TextureManager* tex_man, Vec2f pos)
+{
+	auto sprite = env->get<Sprite>();
+
+	sf::Texture* explosion_center = tex_man->load("res/explosion_center.png");
+	sf::Texture* smoke = tex_man->load("res/smoke.png");
+
+	Vec2f origin;
+
+	Vec2u size = explosion_center->getSize();
+
+	if(explosion_center)
+	{
+		origin.x = (float)size.x/2.f; 
+		origin.y = (float)size.y/2.f;
+	}
+
+	unsigned explosion_center_id = env->createEntity("",
+		new Transform(pos, 0.f, 2.f),
+		new Texture(explosion_center),
+		new Expires(0.2f),
+		new Velocity(0.f, 0.f, 8.f),
+		new Sprite()
+	);
+
+	sprite[explosion_center_id].sprite.setOrigin(origin.x, origin.y);
+
+	size = smoke->getSize();
+	if(smoke)
+	{
+		origin.x = (float)size.x/2.f; 
+		origin.y = (float)size.y/2.f;
+	}
+
+	for(int i=0;i<10;i++)
+	{
+		unsigned smoke_id = env->createEntity("",
+			new Transform(pos, (float)(rand()%360), 4.f),
+			new Texture(smoke),
+			new Expires(0.4f),
+			new Sprite(),
+			new Velocity(300.f, (float)(rand()%360), -10.f)
+		);
+
+		sprite[smoke_id].sprite.setOrigin(origin.x, origin.y);
 	}
 }
