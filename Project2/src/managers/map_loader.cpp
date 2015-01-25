@@ -124,20 +124,43 @@ sf::VertexArray* MapLoader::buildVA(
 				// 2nd layer
 				if(l == 1 && tileType != 0)
 				{
-					auto sprites = _env->get<Sprite>();
+					// wall type
+					if(tileType == 2)
+					{
+						auto sprites = _env->get<Sprite>();
 
-					unsigned new_wall = _env->createEntity("",
-						new Transform(Vec2f(
-							((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
-						new Texture(tileset),
-						new BoundingBox(Vec2f(tileWidth, tileHeight)),
-						new Sprite(),
-						new Solid()
-					);
+						unsigned new_wall = _env->createEntity("",
+							new Transform(Vec2f(
+								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
+							new Texture(tileset),
+							new BoundingBox(Vec2f(tileWidth, tileHeight)),
+							new Sprite(),
+							new Solid()
+						);
 
-					sprites[new_wall].sprite.setOrigin((float)tileWidth/2.f, (float)tileHeight/2.f);
-					sprites[new_wall].sprite.setTextureRect(
-						sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight));
+						sprites[new_wall].sprite.setOrigin((float)tileWidth/2.f, (float)tileHeight/2.f);
+						sprites[new_wall].sprite.setTextureRect(
+							sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight));
+					}
+					
+					// spawn player 1
+					else if(tileType == 3)
+					{
+						_env->createEntity("",
+							new Transform(Vec2f(
+								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
+							new SpawnLocation(0)
+						);
+					}
+
+					else if(tileType == 4)
+					{
+						_env->createEntity("",
+							new Transform(Vec2f(
+								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
+							new SpawnLocation(1)
+						);
+					}
 				}
 			}
 		}

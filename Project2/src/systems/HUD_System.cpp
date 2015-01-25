@@ -12,7 +12,6 @@ HUDSystem::HUDSystem(Environment* _env)
 	{
 		tankIDs[i] = _env->getID("tank"+std::to_string(i+1)); /// \NOTE: The tanks must follow the naming convention
 		_env->get<Label>()[tankIDs[i]].label.setString("Player "+std::to_string(i+1)); /// \TODO: Make so that players can name Tanks			
-		scoreIDs[i] = _env->getID("tank"+std::to_string(i+1)+"Score");
 	}
 }
 
@@ -20,7 +19,7 @@ HUDSystem::HUDSystem(Environment* _env)
 HUDSystem::~HUDSystem()
 {}
 
-void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _HUDScene)
+void HUDSystem::update(Environment* _env, Managers* managers, sf::Window* _win, sf::RenderTexture& _HUDScene)
 {
 	// if the game got restarted, get the new tank ID's
 	if(_env->getEvents<NewGameEvent>().size()>0)
@@ -51,7 +50,7 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 		auto gun = _env->get<Gun>();
 		auto labels = _env->get<Label>();
 		auto tankControls = _env->get<TankControls>();
-		auto tankScore = _env->get<Score>();
+		auto player = _env->get<Player>();
 
 		if(ID!=0 && health[ID].getHealth()!= 0) // if it exists and not dead
 		{
@@ -128,8 +127,9 @@ void HUDSystem::update(Environment* _env, sf::Window* _win, sf::RenderTexture& _
 					score.setFont(labels[ID].font);
 					score.setColor(labels[ID].label.getColor());
 					score.setCharacterSize(labels[ID].label.getCharacterSize());
-				ID = scoreIDs[i];
-					score.setString("W: "+to_string(tankScore[ID].getWins())+"   L: "+to_string(tankScore[ID].getLosses()));
+				int win, loss;
+				managers->score_manager.getStatus(player[ID].player_id, win, loss);
+					score.setString("W: "+to_string(win)+"   L: "+to_string(loss));
 					score.setPosition(tankPos.x-shiftCorrX+130, tankPos.y+shiftCorrY-60);
 				_HUDScene.draw(score);
 			}

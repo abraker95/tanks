@@ -244,6 +244,33 @@ public:
 		removeComponents<R, Rs...>(id);
 	}
 
+	template<typename T>
+	void disableComponents(unsigned id)
+	{
+		entity_mask[id] &= ~getMask<T>();
+	}
+
+	template<typename T, typename R, typename... Rs>
+	void disableComponents(unsigned id)
+	{
+		disableComponents<T>(id);
+		disableComponents<R, Rs...>(id);
+	}
+
+	template<typename T>
+	void enableComponents(unsigned id)
+	{
+		entity_mask[id] |= getMask<T>();
+	}
+	
+	// allow copying multiple components for an entity at once
+	template<typename T, typename R, typename... Rs>
+	void enableComponents(unsigned id)
+	{
+		enableComponents<T>(id);
+		enableComponents<R, Rs...>(id);
+	}
+
 	// does an AND operation between the entity's mask and the requested components
 	// mask and checks if the entity has all the requested components
 	template<typename... T>

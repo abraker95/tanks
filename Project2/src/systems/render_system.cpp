@@ -20,7 +20,7 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win, FontManager* font_manager)
 RenderSystem::~RenderSystem()
 {}
 
-void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWindow* _win, const std::string& monitoring_results)
+void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* managers, sf::RenderWindow* _win, const std::string& monitoring_results)
 {
 	auto sprites = _env->get<Sprite>();
 	auto trans = _env->get<Transform>();
@@ -79,7 +79,7 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, sf::RenderWi
 			//_env->updateWrapper(_HUDSystem, GameScene);
 		}
 	}
-	_HUDSystem->update(_env, _win, GameScene);
+	_HUDSystem->update(_env, managers, _win, GameScene);
 
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{

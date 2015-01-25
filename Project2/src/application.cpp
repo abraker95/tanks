@@ -12,10 +12,10 @@ Application::Application(): mainEnv(128)
 	//window->setFramerateLimit(60);
 	
 	// [ENTITY CREATION]
-	map_loader.createMap(&mainEnv, &texture_manager, "maps/dev1.map");
-	entity_manager.NewGame(&mainEnv, &texture_manager);
+	managers.map_loader.createMap(&mainEnv, &managers.texture_manager, "maps/dev1.map");
+	managers.entity_manager.NewGame(&mainEnv, &managers.texture_manager, &managers.score_manager);
 
-	UI_manager.CreateMenu(&mainEnv, window, fullscreen); // needs to go after entity manager
+	managers.UI_manager.CreateMenu(&mainEnv, window, fullscreen); // needs to go after entity manager
 
 	/*main_env.createEntity(
 		new StdComponent<int>(new int(2)),
@@ -33,7 +33,7 @@ Application::Application(): mainEnv(128)
 // [FACTORY CONSTRUCTS]
 	ui_system = new UISystem();
 	input_system = new InputSystem();
-	render_system = new RenderSystem(window, &font_manager);
+	render_system = new RenderSystem(window, &managers.font_manager);
 	expiring_system = new ExpiringSystem();
 	physics_system = new PhysicsSystem();
 	view_system = new ViewSystem();
@@ -75,12 +75,12 @@ void Application::update(float dt)
 	mainEnv.updateWrapper(net_system);
 
 	const auto& monitoring_results = mainEnv.resetMonitoring(dt);
-	mainEnv.updateWrapper(input_system, window, &entity_manager, &texture_manager, &UI_manager);
-	mainEnv.updateWrapper(ui_system, &UI_manager, &entity_manager, &texture_manager);
+	mainEnv.updateWrapper(input_system, window, &managers);
+	mainEnv.updateWrapper(ui_system, &managers);
 	mainEnv.updateWrapper(expiring_system, dt);
 	mainEnv.updateWrapper(physics_system, dt);
-	mainEnv.updateWrapper(damage_system);
+	mainEnv.updateWrapper(damage_system, &managers);
 	mainEnv.updateWrapper(score_system);
 	mainEnv.updateWrapper(view_system, window, dt);
-	mainEnv.updateWrapper(render_system, hud_system, window, monitoring_results);
+	mainEnv.updateWrapper(render_system, hud_system, &managers, window, monitoring_results);
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "core/environment.h"
+#include "managers/managers.h"
 
 class HUDSystem : public System
 {
@@ -8,7 +9,7 @@ class HUDSystem : public System
 		HUDSystem(Environment* _env);
 		~HUDSystem();
 
-		void update(Environment* _env, sf::Window* _win, sf::RenderTexture& _HUDScene);
+		void update(Environment* _env, Managers* managers, sf::Window* _win, sf::RenderTexture& _HUDScene);
 
 	private:
 		sf::RectangleShape bar;

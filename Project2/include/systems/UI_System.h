@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include "core/environment.h"
+#include "managers/managers.h"
 
 class UISystem : public System
 {
@@ -8,5 +9,5 @@ class UISystem : public System
 		UISystem();
 		~UISystem();
 
-		void update(Environment* _mainEnv, UI_Manager* _uiMgr, EntityManager* _entMgr, TextureManager* _texMgr);
+		void update(Environment* _mainEnv, Managers* managers);
 };

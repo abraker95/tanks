@@ -1,6 +1,5 @@
 #include "systems/view_system.h"
-#include "components/transform.h"
-#include "components/ViewController.h"
+#include "Components.h"
 #include "events.h"
 
 void ViewSystem::update(Environment* _env, sf::RenderWindow* window, float dt)
@@ -29,6 +28,14 @@ void ViewSystem::update(Environment* _env, sf::RenderWindow* window, float dt)
 						k++;
 				}
 			}
+
+			auto created = _env->getEvents<CreateEvent>();
+			for(unsigned j=0;j<created.size();j++)
+			{
+				if(_env->hasComponents<Player>(created[j].entity))
+					focusedObjects.push_back(created[j].entity);
+			}
+
 
 			if(focusedObjects.size() == 0)
 			{
