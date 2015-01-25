@@ -163,6 +163,7 @@ public:
 	// set the componentmask to 0 and make the name blank
 	void destroyEntity(unsigned id)
 	{
+		PRINT_DEBUG(std::cout<<" Destroy Entity: "<<id<<"    Name: "<<getEntityName(id)<<std::endl, MED_DEBUG, ENVSYS);
 		deleteID(id);
 		entityName[id] = "";
 	}

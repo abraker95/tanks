@@ -90,6 +90,7 @@
     <ClInclude Include="include\Managers.h" />
     <ClInclude Include="include\managers\entity_manager.h" />
     <ClInclude Include="include\managers\font_manager.h" />
+    <ClInclude Include="include\managers\game_manager.h" />
     <ClInclude Include="include\managers\InputControls_Mgr.h" />
     <ClInclude Include="include\managers\managers.h" />
     <ClInclude Include="include\managers\map_loader.h" />
@@ -150,6 +151,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\managers\entity_manager.cpp" />
     <ClCompile Include="src\managers\font_manager.cpp" />
+    <ClCompile Include="src\managers\game_manager.cpp" />
     <ClCompile Include="src\managers\InputControls_Mgr.cpp" />
     <ClCompile Include="src\managers\map_loader.cpp" />
     <ClCompile Include="src\managers\score_manager.cpp" />

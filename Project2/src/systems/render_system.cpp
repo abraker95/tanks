@@ -49,161 +49,179 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* ma
 		}
 	}	
 	*/
-
-	for(unsigned viewID = 0; viewID<_env->maxEntities(); viewID++)
+	if(managers->game_manager.getGameState()!=GameManager::GAMESTATE::ENDED)
 	{
-		if(_env->hasComponents<ViewController>(viewID))
+		for(unsigned viewID = 0; viewID<_env->maxEntities(); viewID++)
 		{
-			GameScene.setView(view_controller[viewID].view);
-			for(unsigned mapID = 0; mapID<_env->maxEntities(); mapID++)
+			if(_env->hasComponents<ViewController>(viewID))
 			{
-				if(_env->hasComponents<VertexArray, Texture, Tilemap>(mapID))
+				GameScene.setView(view_controller[viewID].view);
+				for(unsigned mapID = 0; mapID<_env->maxEntities(); mapID++)
 				{
-					GameScene.draw(*vertex_array[mapID].array, textures[mapID].texture);
-					break; // should only be one map
+					if(_env->hasComponents<VertexArray, Texture, Tilemap>(mapID))
+					{
+						GameScene.draw(*vertex_array[mapID].array, textures[mapID].texture);
+						break; // should only be one map
+					}
 				}
-			}
 
-			// temporary fix
-			for(unsigned spriteID = 0; spriteID<_env->maxEntities(); spriteID++)
-			{
-				if(_env->hasComponents<Transform, Sprite, Texture>(spriteID))
+				// temporary fix
+				for(unsigned spriteID = 0; spriteID<_env->maxEntities(); spriteID++)
 				{
-					sf::Sprite& sprite = sprites[spriteID].sprite;
-					sprite.setPosition(trans[spriteID].pos.x, trans[spriteID].pos.y);
-					sprite.setRotation(trans[spriteID].rot);
-					sprite.setTexture(*textures[spriteID].texture);
-					GameScene.draw(sprite);
+					if(_env->hasComponents<Transform, Sprite, Texture>(spriteID))
+					{
+						sf::Sprite& sprite = sprites[spriteID].sprite;
+						sprite.setPosition(trans[spriteID].pos.x, trans[spriteID].pos.y);
+						sprite.setRotation(trans[spriteID].rot);
+						sprite.setTexture(*textures[spriteID].texture);
+						GameScene.draw(sprite);
+					}
 				}
+				//_env->updateWrapper(_HUDSystem, GameScene);
 			}
-			//_env->updateWrapper(_HUDSystem, GameScene);
 		}
+		_HUDSystem->update(_env, managers, _win, GameScene);
 	}
-	_HUDSystem->update(_env, managers, _win, GameScene);
+
+	// if the game is on the Title Screen, draw title backround
+	if(managers->game_manager.getGameState()==GameManager::GAMESTATE::ENDED)
+	{
+		// let there be a plain backround for now				
+		GameScene.clear(sf::Color(173, 214, 255, 255));
+	}
+
 
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
 		auto GUIobjs = _env->get<GUIObj>();
 		auto visible = _env->get<StdComponent<bool>>();  /// \TODO: keep track of this when creating other stdcomponent bools
-		// blur the contents behind the menu
-		if(sf::Shader::isAvailable())
-		{
-			if(_env->getEntityName(ID)=="ESC UI") /// \NOTE: If there is a memory error within this scope, check getEntityName for bugs
-			{
-				auto blur = _env->get<StdComponent<sf::Shader>>();
 
-				if(GUIobjs[ID].type==GUIObj::VOID)
+		if(managers->game_manager.getGameState()==GameManager::GAMESTATE::PAUSED)
+		{
+			// blur the contents behind the menu
+			if(sf::Shader::isAvailable())
+			{
+				if(_env->getEntityName(ID)=="ESC UI")
 				{
-					if(*visible[ID].data && visible[ID].name=="visible")
+					auto blur = _env->get<StdComponent<sf::Shader>>();
+
+					if(GUIobjs[ID].type==GUIObj::VOID)
 					{
-						blur[ID].data->setParameter("tex0", GameScene.getTexture());
-						shader = blur[ID].data;
+						if(*visible[ID].data && visible[ID].name=="visible")
+						{
+							blur[ID].data->setParameter("tex0", GameScene.getTexture());
+							shader = blur[ID].data;
+						}
 					}
-					else shader = nullptr;
 				}
 			}
 		}
+		else if(managers->game_manager.getGameState()==GameManager::GAMESTATE::PLAYING)
+			shader = nullptr;
 
-		/// \TODO: have the button's dimentions update when window size changes
-		if(_env->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(ID))
+		if(managers->game_manager.getGameState()!=GameManager::GAMESTATE::PLAYING)
 		{
-			auto ui = _env->get<UserInterface>();
-
-			if(ui[ID].show)
+			/// \TODO: have the button's dimentions update when window size changes
+			if(_env->hasComponents<Transform, UserInterface, Label, StdComponent<sf::RectangleShape>>(ID))
 			{
-				if(GUIobjs[ID].type==GUIObj::BUTTON)
+				auto ui = _env->get<UserInterface>();
+
+				if(ui[ID].show)
 				{
-					auto labels = _env->get<Label>();
-					auto button = _env->get<StdComponent<sf::RectangleShape>>();
-
-					const float margin = 50;
-					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
-												  UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin)));
-								
-					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
-					button[ID].data->setFillColor(sf::Color(50, 50, 100, 255));
-					UIScene.draw(*button[ID].data);
-
-					Vec2i pos = sf::Mouse::getPosition(*_win);
-					//dim.left += 1024-_win->getSize().x;
-					//dim.top += 720-_win->getSize().y;
-					//cout<<"dim.left: "<<dim.left<<endl;
-					
-					//	PRINT_DEBUG(std::cout<<" X pos view: "<<trans[i].x<<" X pos screen: "<<pos.x<<std::endl, HI_DEBUG, GFXSYS);
-					//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
-					//	PRINT_DEBUG(std::cout<<" Y range: "<<trans[i].y<<" "<<sf::Mouse::getPosition().y-window->getPosition().y<<" "<<bounds.height+trans[i].y<<std::endl<<endl, HI_DEBUG, GFXSYS);
-
-					/// \TODO: Make this apply to all GUI objects by putting this into a more general scope. This requires GUI entities to have a dim component
-					if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
-						ui[ID].cursorOnThis = true;
-					else
-						ui[ID].cursorOnThis = false;
-					
-					if(ui[ID].state.test(UserInterface::PRESS))
+					if(GUIobjs[ID].type==GUIObj::BUTTON)
 					{
-						button[ID].data->setFillColor(sf::Color(50, 50, 50, 50)); /// \NOTE: Fill color is overlayed ontop of the existing fill
+						auto labels = _env->get<Label>();
+						auto button = _env->get<StdComponent<sf::RectangleShape>>();
+
+						const float margin = 50;
+						sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
+							UIScene.mapCoordsToPixel(sf::Vector2f(labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin)));
+
+						button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
+						button[ID].data->setFillColor(sf::Color(50, 50, 100, 255));
 						UIScene.draw(*button[ID].data);
+
+						Vec2i pos = sf::Mouse::getPosition(*_win);
+						//dim.left += 1024-_win->getSize().x;
+						//dim.top += 720-_win->getSize().y;
+						//cout<<"dim.left: "<<dim.left<<endl;
+
+						//	PRINT_DEBUG(std::cout<<" X pos view: "<<trans[i].x<<" X pos screen: "<<pos.x<<std::endl, HI_DEBUG, GFXSYS);
+						//	PRINT_DEBUG(std::cout<<" X range: "<<trans[i].x<<" "<<pos.x-window->getPosition().x<<" "<<bounds.width+trans[i].x<<std::endl, HI_DEBUG, GFXSYS);
+						//	PRINT_DEBUG(std::cout<<" Y range: "<<trans[i].y<<" "<<sf::Mouse::getPosition().y-window->getPosition().y<<" "<<bounds.height+trans[i].y<<std::endl<<endl, HI_DEBUG, GFXSYS);
+
+						/// \TODO: Make this apply to all GUI objects by putting this into a more general scope. This requires GUI entities to have a dim component
+						if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
+							ui[ID].cursorOnThis = true;
+						else
+							ui[ID].cursorOnThis = false;
+
+						if(ui[ID].state.test(UserInterface::PRESS))
+						{
+							button[ID].data->setFillColor(sf::Color(50, 50, 50, 50)); /// \NOTE: Fill color is overlayed ontop of the existing fill
+							UIScene.draw(*button[ID].data);
+						}
+						else if(ui[ID].state.test(UserInterface::HIGHLIGHT))  // Just because the cursor is on the UI, doesn't mean it will always highlight. e.i.: Highlight is not enabled
+						{
+							button[ID].data->setFillColor(sf::Color(200, 200, 200, 50));
+							UIScene.draw(*button[ID].data);
+						}
+
+						if(ui[ID].state.test(UserInterface::DRAG))
+						{
+							trans[ID].pos = sf::Mouse::getPosition();
+						}
+
+						UIScene.draw(labels[ID].label);
 					}
-					else if(ui[ID].state.test(UserInterface::HIGHLIGHT))  // Just because the cursor is on the UI, doesn't mean it will always highlight. e.i.: Highlight is not enabled
+					else if(GUIobjs[ID].type==GUIObj::PANE)
 					{
-						button[ID].data->setFillColor(sf::Color(200, 200, 200, 50));
+						auto labels = _env->get<Label>();
+						auto button = _env->get<StdComponent<sf::RectangleShape>>();
+
+						const float margin = 50;
+						sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
+							labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
+
+						button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
+						button[ID].data->setOutlineColor(sf::Color(50, 50, 100, 255));
+						button[ID].data->setFillColor(sf::Color(0, 0, 0, 0));
+						button[ID].data->setOutlineThickness(2.0f);
+
 						UIScene.draw(*button[ID].data);
+						UIScene.draw(labels[ID].label);
 					}
-
-					if(ui[ID].state.test(UserInterface::DRAG))
+					else if(GUIobjs[ID].type==GUIObj::TEXTFIELD)
 					{
-						trans[ID].pos = sf::Mouse::getPosition();
-					}
+						auto labels = _env->get<Label>();
+						auto trans = _env->get<Transform>();
 
-					UIScene.draw(labels[ID].label);
-				}
-				else if(GUIobjs[ID].type==GUIObj::PANE)
-				{
-					auto labels = _env->get<Label>();
-					auto button = _env->get<StdComponent<sf::RectangleShape>>();
+						sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
+							UIScene.mapCoordsToPixel(sf::Vector2f(MAX(labels[ID].label.getLocalBounds().width, 200), labels[ID].font.getLineSpacing(labels[ID].label.getCharacterSize()))));
+						Vec2i pos = sf::Mouse::getPosition(*_win);
+						if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
+							ui[ID].cursorOnThis = true;
+						else
+							ui[ID].cursorOnThis = false;
 
-					const float margin = 50;
-					sf::FloatRect dim = sf::FloatRect(trans[ID].pos.x, trans[ID].pos.y,
-													  labels[ID].label.getLocalBounds().width+margin, labels[ID].label.getLocalBounds().height+margin);
+						UIScene.draw(labels[ID].label);
 
-					button[ID].data->setSize(sf::Vector2f(dim.width, dim.height));
-					button[ID].data->setOutlineColor(sf::Color(50, 50, 100, 255));
-					button[ID].data->setFillColor(sf::Color(0, 0, 0, 0));
-					button[ID].data->setOutlineThickness(2.0f);
-
-					UIScene.draw(*button[ID].data);
-					UIScene.draw(labels[ID].label);
-				}
-				else if(GUIobjs[ID].type==GUIObj::TEXTFIELD)
-				{
-					auto labels = _env->get<Label>();
-					auto trans = _env->get<Transform>();
-
-					sf::IntRect dim = sf::IntRect(UIScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
-												  UIScene.mapCoordsToPixel(sf::Vector2f(MAX(labels[ID].label.getLocalBounds().width, 200), labels[ID].font.getLineSpacing(labels[ID].label.getCharacterSize()))));
-					Vec2i pos = sf::Mouse::getPosition(*_win);
-					if(BTWN(dim.left, pos.x, dim.left+dim.width)&&BTWN(dim.top, pos.y, dim.top+dim.height))
-						ui[ID].cursorOnThis = true;
-					else
-						ui[ID].cursorOnThis = false;
-
-					UIScene.draw(labels[ID].label);
-
-					sf::RectangleShape textbox;
+						sf::RectangleShape textbox;
 						textbox.setPosition(sf::Vector2f(dim.left, dim.top));
 						textbox.setSize(sf::Vector2f(dim.width, dim.height));
 						textbox.setFillColor(sf::Color(173, 214, 255, 50));
-					UIScene.draw(textbox);
+						UIScene.draw(textbox);
 
-					if(ui[ID].state.test(UserInterface::FOCUS))
-					{
-						sf::RectangleShape textCursor;
-						textCursor.setPosition(sf::Vector2f(dim.left+labels[ID].label.getLocalBounds().width+3, dim.top));
+						if(ui[ID].state.test(UserInterface::FOCUS))
+						{
+							sf::RectangleShape textCursor;
+							textCursor.setPosition(sf::Vector2f(dim.left+labels[ID].label.getLocalBounds().width+3, dim.top));
 							textCursor.setSize(sf::Vector2f(2, dim.height));
 							textCursor.setFillColor(sf::Color(0, 0, 0, 255));
-						UIScene.draw(textCursor);
+							UIScene.draw(textCursor);
+						}
+
 					}
-					
 				}
 			}
 		}

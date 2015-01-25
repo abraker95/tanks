@@ -30,9 +30,9 @@ class EntityManager
 			sf::FloatRect& borders, sf::FloatRect& viewport, 
 			std::vector<unsigned> focusedObjects);
 
-		void NewGame(Environment* _gameEnv, TextureManager* texture_manager, ScoreManager* score_manager);
-		void EndGame(Environment* _gameEnv, bool _newScore);
-		void ResetGame(Environment* _gameEnv);
+		//void NewGame(Environment* _gameEnv, TextureManager* texture_manager, ScoreManager* score_manager);
+		//void EndGame(Environment* _gameEnv, bool _newScore);
+		//void ResetGame(Environment* _gameEnv);
 
 	private:
 		int numLivingTanks;

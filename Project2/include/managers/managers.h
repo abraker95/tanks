@@ -7,6 +7,7 @@
 #include "managers/UI_Manager.h"
 #include "managers/font_manager.h"
 #include "managers/score_manager.h"
+#include "managers/game_manager.h"
 
 struct Managers
 {
@@ -16,4 +17,5 @@ struct Managers
 	UI_Manager UI_manager;
 	FontManager font_manager;
 	ScoreManager score_manager;
+	GameManager game_manager;
 };

@@ -133,42 +133,6 @@ unsigned EntityManager::createCamera(std::string _name,
 	return new_view;
 }
 
-void EntityManager::NewGame(Environment* _gameEnv, TextureManager* texture_manager, ScoreManager* score_manager)
-{
-	// double-braces init because of std::array
-	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = spawnTankPlayer("tank1", _gameEnv, texture_manager, score_manager, p1_keys);
-
-	std::array<sf::Keyboard::Key, 5> p2_keys = {{sf::Keyboard::D, sf::Keyboard::A, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::F}};
-	unsigned tank2 = spawnTankPlayer("tank2", _gameEnv, texture_manager, score_manager, p2_keys);
-
-	// camera
-	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
-	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	createCamera("mainCamera", _gameEnv, borders, viewport, {tank1, tank2});
-}
-
-void EntityManager::ResetGame(Environment* env)
-{
-	auto health = env->get<Health>();
-	auto player = env->get<Player>();
-
-	for(unsigned id=0;id<env->maxEntities();id++)
-	{
-		if(env->hasComponents<Player>(id))
-		{
-			if(!health[id].hasHealth())
-			{
-				revivePlayer(env, id);
-				env->emit(new CreateEvent(id));
-			}
-
-			health[id].resetHealth();	
-			placeOnSpawn(env, id, player[id].player_id);
-		}
-	}
-}
-
 void EntityManager::placeOnSpawn(Environment* env, unsigned tank_id, unsigned player_id)
 {
 	auto spawnLocation = env->get<SpawnLocation>();

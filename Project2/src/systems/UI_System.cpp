@@ -82,7 +82,7 @@ void UISystem::update(Environment* _env, Managers* managers)
 	else if(*managers->UI_manager.visible == false)
 	{
 		if(managers->UI_manager.currMenu == UI_Manager::NO_MENU) *managers->UI_manager.visible = false;
-		else					   				    *managers->UI_manager.visible = true;
+		else					   				                 *managers->UI_manager.visible = true;
 	}
 
 	auto gameOverEvent = _env->getEvents<GameOverEvent>();
@@ -108,10 +108,11 @@ void UISystem::update(Environment* _env, Managers* managers)
 		*/
 
 		cout<<"GameOver"<<endl;
+		managers->game_manager.PauseGame();
 		managers->UI_manager.ShowGameOver();
 	}
 
-	auto newGameEvent = _env->getEvents<NewGameEvent>();
-	if(newGameEvent.size()>0)
-		managers->entity_manager.ResetGame(_env);
+	//auto newGameEvent = _env->getEvents<NewGameEvent>();
+	//if(newGameEvent.size()>0)
+	//	managers->entity_manager.ResetGame(_env);
 }

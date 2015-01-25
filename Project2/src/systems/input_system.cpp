@@ -24,8 +24,6 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, Managers* man
 	auto tank_controls = _env->get<TankControls>();
 	auto velocity = _env->get<Velocity>();
 
-/// \TODO: This is taking up too much CPU time. Think of another solution. Consider making it a bitfield.
-
 	// update the mouse state
 	std::bitset<3> prevMousePressState =  input_manager.mousePressState; // not a ref; copy
 	input_manager.mousePressState.reset();  input_manager.mouseClickState.reset();
@@ -86,9 +84,6 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, Managers* man
 	if(!supported) input_manager.key = 0;
 	/// \NOTE: keep backspace as for now is to be used with sfml's enum
 
-
-	// Inputs for entities
-	bool updateGameEntities = false;
 	for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 	{
 		if(_env->getEntityName(ID)=="CPU")
@@ -103,7 +98,6 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, Managers* man
 			if(GUIobjs[ID].type==GUIObj::VOID)
 			{
 				auto ui = _env->get<UserInterface>();
-				updateGameEntities = managers->UI_manager.isVisible(&ui[ID]);
 
 				if(input_manager.keyClickState.test(sf::Keyboard::Escape))
 					ui[ID].action();
@@ -135,7 +129,8 @@ void InputSystem::update(Environment* _env, sf::RenderWindow* win, Managers* man
 		}
 	}
 
-	if(updateGameEntities)
+	// Inputs for entities
+	if(managers->game_manager.getGameState() == GameManager::GAMESTATE::PLAYING)
 	{
 		for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 		{

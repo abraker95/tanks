@@ -11,23 +11,9 @@ Application::Application(): mainEnv(128)
 	fullscreen = false;
 	//window->setFramerateLimit(60);
 	
-	// [ENTITY CREATION]
+// [ENTITY CREATION]
 	managers.map_loader.createMap(&mainEnv, &managers.texture_manager, "maps/dev1.map");
-	managers.entity_manager.NewGame(&mainEnv, &managers.texture_manager, &managers.score_manager);
-	managers.UI_manager.CreateMenu(&mainEnv, window, fullscreen); // needs to go after entity manager
-
-	/*main_env.createEntity(
-		new StdComponent<int>(new int(2)),
-		new StdComponent<int>(new int(4))
-		);*/
-
-	// Testing Radio Button
-	/*main_env.createEntity(
-		Transform(500.f, 30.f, 0.f),
-		MouseControls(),
-		GUIObj(GUIObj::RADIO, []()->void* { ; return nullptr; }),
-		TextureHandle("Button.png")
-		);*/
+	managers.UI_manager.CreateMenu(&mainEnv, window, &managers, fullscreen); // needs to go after entity manager
 
 // [FACTORY CONSTRUCTS]
 	ui_system = new UISystem();
@@ -71,7 +57,7 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	mainEnv.updateWrapper(net_system);
+	mainEnv.updateWrapper(net_system, &managers);
 
 	const auto& monitoring_results = mainEnv.resetMonitoring(dt);
 	mainEnv.updateWrapper(input_system, window, &managers);

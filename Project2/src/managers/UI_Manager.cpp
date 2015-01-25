@@ -1,6 +1,7 @@
 #include "managers/UI_Manager.h"
 #include "Components.h"
 #include "events.h"
+#include "managers/managers.h"
 
 UI_Manager::UI_Manager()
 {}
@@ -22,6 +23,7 @@ unsigned UI_Manager::CreateButton(Environment* _env, Vec2f _pos, std::function<v
 		new UserInterface(std::bitset<UIstates>(1<<UserInterface::HIGHLIGHT|1<<UserInterface::CLICK|1<<UserInterface::PRESS), _subMenu, _action)
 	);
 
+	/// \TODO: make use of the font manager
 	auto labels = _env->get<Label>();
 		if(!labels[button].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 		labels[button].label.setFont(labels[button].font);
@@ -53,6 +55,7 @@ unsigned UI_Manager::CreatePane(Environment* _env, Vec2f _pos, std::string _labe
 		new UserInterface(std::bitset<UIstates>(NULL), _subMenu)
 	);
 
+	/// \TODO: make use of the font manager
 	auto labels = _env->get<Label>();
 		if(!labels[pane].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 		labels[pane].label.setFont(labels[pane].font);
@@ -87,6 +90,7 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 		new UserInterface(std::bitset<UIstates>(1<<UserInterface::KEY |1<<UserInterface::CLICK | 1<<UserInterface::FOCUS), _subMenu)
 	);
 
+	/// \TODO: make use of the font manager
 	auto labels = _env->get<Label>();
 		if(!labels[textField].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
 		labels[textField].label.setFont(labels[textField].font);
@@ -102,16 +106,17 @@ unsigned UI_Manager::CreateTextField(Environment* _env, Vec2f _pos, std::string 
 	return textField;
 }
 
-void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen)
+void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win, Managers* _mgrs, bool& fullscreen)
 {
-	CreateTitleScreen(_env);
-	CreateMainSubMenu(_env);
+	CreateTitleScreen(_env, _mgrs);
+	CreateMainSubMenu(_env, _mgrs);
 	CreateOptionsSubMenu(_env, _win, fullscreen);
 	CreateAboutSubMenu(_env);
-	CreateGameOverSubMenu(_env);
-	CreateVoidSubMenu(_env);
+	CreateGameOverSubMenu(_env, _mgrs);
+	CreateVoidSubMenu(_env, _mgrs);
 	CreateChangeNameSubMenu(_env);
 	CreateNetSubMenu(_env);
+	CreateNewGameSubMenu(_env, _mgrs);
 
 	currMenu = TITLE_SCREEN;
 }
@@ -127,18 +132,11 @@ bool UI_Manager::isVisible(UserInterface* _UI)
 	return (_UI->subMenu==currMenu);
 }
 
-void UI_Manager::CreateTitleScreen(Environment* _env)
+void UI_Manager::CreateTitleScreen(Environment* _env, Managers* _mgrs)
 {
 	auto NewGame = [_env, this]()->void*
 	{
-		unsigned tank1ID = _env->getID("tank1"),
-				 tank2ID = _env->getID("tank2");
-
-		if(tank1ID!=-1) _env->get<Label>()[tank1ID].label.setString("Player 1");
-		if(tank2ID!=-1) _env->get<Label>()[tank2ID].label.setString("Player 2");
-
-		_env->emit(new NewGameEvent(true));
-		currMenu = NO_MENU;
+		currMenu = NEWGAME_MENU;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(100.f, 340.f), NewGame, "New Game", "New_Game_Button", UI_Manager::TITLE_SCREEN);
@@ -158,11 +156,11 @@ void UI_Manager::CreateTitleScreen(Environment* _env)
 	CreateButton(_env, Vec2f(400.f, 520.f), quitAction, "Quit", "Quit_Button", UI_Manager::TITLE_SCREEN);
 }
 
-void UI_Manager::CreateMainSubMenu(Environment* _env)
+void UI_Manager::CreateMainSubMenu(Environment* _env, Managers* _mgrs)
 {
-	auto NewGame = [_env, this]()->void*
+	auto NewGame = [_env, _mgrs, this]()->void*
 	{
-		_env->emit(new NewGameEvent(true));
+		_mgrs->game_manager.ResetGame(_env, _mgrs);
 		currMenu = NO_MENU;
 		return nullptr;
 	};
@@ -179,14 +177,38 @@ void UI_Manager::CreateMainSubMenu(Environment* _env)
 	};
 	CreateButton(_env, Vec2f(650.f, 220.f), Options, "Options", "Options_Button", UI_Manager::MAIN_MENU);
 
-	std::function<void*()> quitAction = [this]()->void*
+	std::function<void*()> quitAction = [_env, _mgrs, this]()->void*
 	{
-
+		_mgrs->game_manager.EndGame(_env, _mgrs);
 		currMenu = TITLE_SCREEN;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(400.f, 520.f), quitAction, "Quit to Title", "Quit_Button", UI_Manager::MAIN_MENU);
+}
 
+void UI_Manager::CreateNewGameSubMenu(Environment* _env, Managers* _mgrs)
+{
+	auto NewGame = [_env, _mgrs, this]()->void*
+	{
+		_mgrs->game_manager.NewLocalGame(_env, _mgrs);
+		currMenu = NO_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(100.f, 220.f), NewGame, "New Local Game", "New_Game_Button", UI_Manager::NEWGAME_MENU);
+
+	std::function<void*()> netMenu = [_env, this]()->void*
+	{
+		currMenu = NET_MENU;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(650.f, 220.f), netMenu, "Online", "Net_Button", UI_Manager::NEWGAME_MENU);
+
+	std::function<void*()> back = [_env, this]()->void*
+	{
+		currMenu = TITLE_SCREEN;
+		return nullptr;
+	};
+	CreateButton(_env, Vec2f(400.f, 520.f), back, "back", "Back_Button", UI_Manager::NEWGAME_MENU);
 }
 
 void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win, bool& fullscreen)
@@ -218,13 +240,6 @@ void UI_Manager::CreateOptionsSubMenu(Environment* _env, sf::RenderWindow* _win,
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(200.f, 220.f), changeName, "Player Names", "PlayerNames_Button", UI_Manager::OPTIONS_MENU);
-
-	std::function<void*()> netMenu = [_env, this]()->void*
-	{
-		currMenu = NET_MENU;
-		return nullptr;
-	};
-	CreateButton(_env, Vec2f(200.f, 420.f), netMenu, "Online", "Net_Button", UI_Manager::OPTIONS_MENU);
 
 	std::function<void*()> optionsBack = [_env, this]()->void*
 	{
@@ -298,36 +313,38 @@ void UI_Manager::CreateNetSubMenu(Environment* _env)
 
 	std::function<void*()> netBack = [_env, this]()->void*
 	{
-		currMenu = OPTIONS_MENU;
+		currMenu = NEWGAME_MENU;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(450.f, 520.f), netBack, "Back", "NetBack_Button", UI_Manager::NET_MENU);
 }
 
-void UI_Manager::CreateGameOverSubMenu(Environment* _env)
+void UI_Manager::CreateGameOverSubMenu(Environment* _env, Managers* _mgrs)
 {
 	std::string GameOverMsg = " Game Over! ";
 	CreatePane(_env, Vec2f(300.f, 200.f), GameOverMsg, "Game Over Text", UI_Manager::GAME_OVER);
 
-	auto PlayAgain = [_env, this]()->void*
+	auto PlayAgain = [_env, _mgrs, this]()->void*
 	{
-		_env->emit(new NewGameEvent(false));
+	//	_env->emit(new NewGameEvent(false));
+		_mgrs->game_manager.ResetGame(_env, _mgrs);
 		currMenu = UI_Manager::NO_MENU;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(200.f, 420.f), PlayAgain, "Play Again", "Play_Again_Button", UI_Manager::GAME_OVER);
 
-	auto EndGame = [_env, this]()->void*
+	auto EndGame = [_env, _mgrs, this]()->void*
 	{
-		currMenu = UI_Manager::MAIN_MENU;
+		_mgrs->game_manager.EndGame(_env, _mgrs);
+		currMenu = UI_Manager::TITLE_SCREEN;
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(400.f, 420.f), EndGame, "End Game", "End_Game_Button", UI_Manager::GAME_OVER);
 }
 
-void UI_Manager::CreateVoidSubMenu(Environment* _env)
+void UI_Manager::CreateVoidSubMenu(Environment* _env, Managers* _mgrs)
 {
-	std::function<void*()> ESC = [_env, this]()->void*
+	std::function<void*()> ESC = [_env, _mgrs, this]()->void*
 	{
 		auto UI = _env->get<UserInterface>();
 
@@ -336,6 +353,9 @@ void UI_Manager::CreateVoidSubMenu(Environment* _env)
 		else if(currMenu==MAIN_MENU)		currMenu = NO_MENU;
 		else if(currMenu==NO_MENU)			currMenu = MAIN_MENU;
 		else if(currMenu==CHANGENAME_MENU)  currMenu = OPTIONS_MENU;
+
+		if(currMenu == NO_MENU)	    _mgrs->game_manager.ResumeGame();
+		else						_mgrs->game_manager.PauseGame();
 
 		return nullptr;
 	};

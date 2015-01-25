@@ -6,7 +6,6 @@ int ScoreManager::newPlayer()
 	return list_score.size() - 1;
 }
 
-
 void ScoreManager::addWin(int index)
 {
 	list_score[index].first++;
