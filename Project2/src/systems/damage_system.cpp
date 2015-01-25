@@ -17,6 +17,7 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 {
 	auto projectile = _env->get<Projectile>();
 	auto health = _env->get<Health>();
+	auto player = _env->get<Player>();
 
 	unsigned projectile_id = 0;
 	unsigned target_id = 0;
@@ -62,12 +63,12 @@ void DamageSystem::handleProjectiles(Environment* _env, const CollisionEvent& co
 							// if it's a player, only make it disappear
 							// the tank is destroyed but not the player itself
 							managers->entity_manager.killPlayer(_env, target_id);
-							managers->score_manager.addLoss(target_id);
+							managers->score_manager.addLoss(player[target_id].player_id);
 
 							// if only 1 player left
 							if(managers->entity_manager.getNumLivingTanks() == 1)
 							{
-								managers->score_manager.addWin(shooting_entity);
+								managers->score_manager.addWin(player[shooting_entity].player_id);
 								_env->emit(new GameOverEvent(shooting_entity));
 							}
 						}
