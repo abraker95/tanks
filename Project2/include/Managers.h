@@ -7,3 +7,4 @@
 #include "managers/UI_Manager.h"
 #include "managers/font_manager.h"
 #include "managers/score_manager.h"
+#include "managers/net_manager.h"

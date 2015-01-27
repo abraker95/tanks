@@ -24,6 +24,9 @@ class GameManager
 		void PauseGame();
 		void ResumeGame();
 
+		void playerJoin(Environment* _env, Managers* _mgrs);
+		void playerLeave(Environment* _env, int _player);
+
 		GAMESTATE getGameState() const;
 		bool isOnline() const;
 		unsigned getPlayer(int _player) const;

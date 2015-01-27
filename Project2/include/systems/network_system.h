@@ -9,13 +9,5 @@ class NetworkSystem: public System
 		~NetworkSystem();
 
 		void update(Environment* _mainEnv, Managers* _mgrs);
-
-		unsigned checkForIncomingPlayers();
-		/// getPlayerInfo();
-		/// sendPlayerInfo();
-
-	private:
-		unsigned hostIP;
-		vector<unsigned> clientIP;
 };
 

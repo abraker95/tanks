@@ -49,6 +49,6 @@ class UI_Manager
 		void CreateGameOverSubMenu(Environment* _env, Managers* _mgrs);
 		void CreateChangeNameSubMenu(Environment* _env);
 		void CreateVoidSubMenu(Environment* _env, Managers* _mgrs);
-		void CreateNetSubMenu(Environment* _env);	
+		void CreateNetSubMenu(Environment* _env, Managers* _mgrs);
 };
 

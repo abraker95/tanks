@@ -55,6 +55,20 @@ void GameManager::NewNetGame(Environment* _env, Managers* _mgrs)
 	gameState = PLAYING;
 }
 
+void GameManager::playerJoin(Environment* _env, Managers* _mgrs)
+{
+	std::array<sf::Keyboard::Key, 5> keys = {{sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown}};
+	unsigned tank = _mgrs->entity_manager.spawnTankPlayer("tank"+to_string(getNumPlayers()+1), _env, &_mgrs->texture_manager, &_mgrs->score_manager, keys);
+	_env->get<Label>()[tank].label.setString("Player "+to_string(getNumPlayers()+1));
+	players.push_back(tank);
+}
+
+void GameManager::playerLeave(Environment* _env, int _player)
+{
+	_env->destroyEntity(_env->getID("tank"+to_string(_player)));
+	players.erase(players.begin()+_player);
+}
+
 void GameManager::PauseGame()
 {
 	if(gameState!=GAMESTATE::ENDED)
@@ -97,6 +111,7 @@ void GameManager::EndGame(Environment* _env, bool _newScore)
 	_env->destroyEntity(_env->getID("mainCamera"));
 
 	players.clear();
+	if(gameMode==1) gameMode = 0;
 	gameState = ENDED;
 }
 

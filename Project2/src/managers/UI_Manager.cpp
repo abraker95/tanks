@@ -115,7 +115,7 @@ void UI_Manager::CreateMenu(Environment* _env, sf::RenderWindow* _win, Managers*
 	CreateGameOverSubMenu(_env, _mgrs);
 	CreateVoidSubMenu(_env, _mgrs);
 	CreateChangeNameSubMenu(_env);
-	CreateNetSubMenu(_env);
+	CreateNetSubMenu(_env, _mgrs);
 	CreateNewGameSubMenu(_env, _mgrs);
 
 	currMenu = TITLE_SCREEN;
@@ -179,6 +179,8 @@ void UI_Manager::CreateMainSubMenu(Environment* _env, Managers* _mgrs)
 
 	std::function<void*()> quitAction = [_env, _mgrs, this]()->void*
 	{
+		if(_mgrs->game_manager.isOnline())
+			_mgrs->net_manager.closeConnection();
 		_mgrs->game_manager.EndGame(_env, _mgrs);
 		currMenu = TITLE_SCREEN;
 		return nullptr;
@@ -288,25 +290,42 @@ void UI_Manager::CreateAboutSubMenu(Environment* _env)
 	CreatePane(_env, Vec2f(300.f, 200.f), aboutInfo, "About Text", ABOUT_MENU);
 }
 
-void UI_Manager::CreateNetSubMenu(Environment* _env)
+void UI_Manager::CreateNetSubMenu(Environment* _env, Managers* _mgrs)
 {
 	std::string IPinfo = "IP Address:                                ";
 	CreatePane(_env, Vec2f(200.f, 200.f), IPinfo, "IP Text", NET_MENU);
 	CreateTextField(_env, Vec2f(360.f, 213.f), "IP_TextInput", UI_Manager::NET_MENU, 15);
 
-	std::function<void*()> connect = [_env, this]()->void*
+	std::function<void*()> connect = [_env, _mgrs, this]()->void*
 	{
 		/// \TODO: Connect to IP Address code
 
 		std::string IPAddress = _env->get<Label>()[_env->getID("IP_TextInput")].label.getString();
 		cout<<"IP address to connect to: "<<IPAddress<<endl;
+		_mgrs->net_manager.InitOnlineMode(NetManager::CLIENT);
+
+		if(_mgrs->net_manager.connectToHost(IPAddress))
+		{
+			_mgrs->game_manager.NewNetGame(_env, _mgrs);
+			currMenu = UI_Manager::NO_MENU;
+		}
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(200.f, 320.f), connect, "Connect", "Connect_Button", UI_Manager::NET_MENU);
 
-	std::function<void*()> host = [_env, this]()->void*
+	std::function<void*()> host = [_env, _mgrs, this]()->void*
 	{
-		/// \TODO: Host, displaying ip address in the net menu
+		/// \TODO: If hosting a net game, close it first
+		std::string IPAddress = _mgrs->net_manager.getHostIP();
+		cout<<"Host IP address: "<<IPAddress<<endl;
+		if(_mgrs->net_manager.InitOnlineMode(NetManager::HOST))
+		{
+			_mgrs->game_manager.NewNetGame(_env, _mgrs);
+			currMenu = UI_Manager::NO_MENU;
+		}	
+		else
+			cout<<"Error making a net game."<<endl;
+		
 		return nullptr;
 	};
 	CreateButton(_env, Vec2f(650.f, 320.f), host, "Create Server", "Host_Button", UI_Manager::NET_MENU);

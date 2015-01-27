@@ -12,19 +12,18 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 {
 	if(_mgrs->game_manager.isOnline())
 	{
-		if(checkForIncomingPlayers())
+		if(_mgrs->net_manager.isHost())
 		{
-			/// increase amount of tanks by 1
+			if(_mgrs->net_manager.checkForIncomingPlayers(_mgrs))
+			{
+				_mgrs->game_manager.playerJoin(_env, _mgrs);
+			}
 		}
 
-		// getPlayerInfo();
-		// sendPlayerInfo();
+		if(_mgrs->game_manager.getNumPlayers()>1)
+		{
+			_mgrs->net_manager.sendPlayerInfo(_env);
+			_mgrs->net_manager.getPlayerInfo(_env);
+		}
 	}
-}
-
-unsigned NetworkSystem::checkForIncomingPlayers()
-{
-	/// if there are incoming players, get IP addresses and add them to client IP list
-	/// if there are no incoming players, return 0 (0.0.0.0)
-	return 0;
 }
