@@ -7,8 +7,9 @@
 #include "managers/UI_Manager.h"
 #include "managers/font_manager.h"
 #include "managers/score_manager.h"
-#include "managers/game_manager.h"
 #include "managers/net_manager.h"
+#include "managers/sprite_batch.h"
+#include "managers/game_manager.h"
 
 struct Managers
 {
@@ -20,4 +21,5 @@ struct Managers
 	ScoreManager score_manager;
 	GameManager game_manager;
 	NetManager net_manager;
+	SpriteBatch sprite_batch;
 };

@@ -4,8 +4,9 @@
 #include "managers/managers.h"
 
 GameManager::GameManager()
-{}
-
+{
+	gameState = ENDED;
+}
 
 GameManager::~GameManager()
 {}

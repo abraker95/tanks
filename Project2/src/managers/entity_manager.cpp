@@ -18,18 +18,10 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	Environment* _gameEnv, TextureManager* texture_manager,
 	ScoreManager* score_manager, std::array<sf::Keyboard::Key, 5> keys)
 {
-	auto sprite = _gameEnv->get<Sprite>();
 	auto transform = _gameEnv->get<Sprite>();
 
 	sf::Texture* texture = texture_manager->load("res/Tank_0.png");
-	Vec2f origin;
-
 	Vec2u size = texture->getSize();
-	if(texture)
-	{
-		origin.x = (float)size.x/2.f; 
-		origin.y = (float)size.y/2.f;
-	}
 
 	unsigned new_tank = _gameEnv->createEntity(_name,
 		new Transform(Vec2f(0.f, 0.f), 0.f),
@@ -39,7 +31,6 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 		new BoundingBox(Vec2f((float)size.x, (float)size.y)),
 		new Health(100, 100),
 		new Gun(),
-		new Sprite(),
 		new Solid(),
 		new Player(score_manager->newPlayer()),
 		new Explosible(),
@@ -54,7 +45,6 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	label[new_tank].label.setFont(label[new_tank].font);
 	label[new_tank].label.setCharacterSize(18);
 
-	sprite[new_tank].sprite.setOrigin(origin.x, origin.y);
 	numLivingTanks++;
 
 	auto player = _gameEnv->get<Player>();
@@ -86,7 +76,6 @@ unsigned EntityManager::spawnBullet(std::string _name,
 {
 	auto transform = _gameEnv->get<Transform>();
 	auto bounding_box = _gameEnv->get<BoundingBox>();
-	auto sprite = _gameEnv->get<Sprite>();
 
 	if(!_gameEnv->hasComponents<Transform, BoundingBox>(tank_id))
 		return 0;
@@ -97,14 +86,7 @@ unsigned EntityManager::spawnBullet(std::string _name,
 		transform[tank_id].pos.y + sinf(transform[tank_id].rot * PI/180.f + PI/2.f)  * bounding_box[tank_id].size.x/2.5f;
 	
 	sf::Texture* texture = tex_man->load("res/Bullet_0.png");
-	Vec2f origin;
-
 	Vec2u size = texture->getSize();
-	if(texture)
-	{
-		origin.x = (float)size.x/2.f; 
-		origin.y = (float)size.y/2.f;
-	}
 
 	unsigned new_bullet = _gameEnv->createEntity(_name,
 		new Transform(Vec2f(start_x, start_y), transform[tank_id].rot),
@@ -113,11 +95,9 @@ unsigned EntityManager::spawnBullet(std::string _name,
 		new Expires(5.f),
 		new Projectile(20, tank_id),
 		new BoundingBox(Vec2f((float)size.x, (float)size.y)),
-		new Solid(),
-		new Sprite()
+		new Solid()
 	);
 
-	sprite[new_bullet].sprite.setOrigin(origin.x, origin.y);
 	return new_bullet;
 }
 
@@ -152,48 +132,23 @@ void EntityManager::placeOnSpawn(Environment* env, unsigned tank_id, unsigned pl
 
 void EntityManager::spawnExplosion(Environment* env, TextureManager* tex_man, Vec2f pos)
 {
-	auto sprite = env->get<Sprite>();
-
 	sf::Texture* explosion_center = tex_man->load("res/explosion_center.png");
 	sf::Texture* smoke = tex_man->load("res/smoke.png");
 
-	Vec2f origin;
-
-	Vec2u size = explosion_center->getSize();
-
-	if(explosion_center)
-	{
-		origin.x = (float)size.x/2.f; 
-		origin.y = (float)size.y/2.f;
-	}
-
-	unsigned explosion_center_id = env->createEntity("",
+	env->createEntity("",
 		new Transform(pos, 0.f, 2.f),
 		new Texture(explosion_center),
 		new Expires(0.2f),
-		new Velocity(0.f, 0.f, 8.f),
-		new Sprite()
+		new Velocity(0.f, 0.f, 8.f)
 	);
-
-	sprite[explosion_center_id].sprite.setOrigin(origin.x, origin.y);
-
-	size = smoke->getSize();
-	if(smoke)
-	{
-		origin.x = (float)size.x/2.f; 
-		origin.y = (float)size.y/2.f;
-	}
 
 	for(int i=0;i<10;i++)
 	{
-		unsigned smoke_id = env->createEntity("",
+		env->createEntity("",
 			new Transform(pos, (float)(rand()%360), 4.f),
 			new Texture(smoke),
 			new Expires(0.4f),
-			new Sprite(),
 			new Velocity(300.f, (float)(rand()%360), -10.f)
 		);
-
-		sprite[smoke_id].sprite.setOrigin(origin.x, origin.y);
 	}
 }

@@ -58,6 +58,7 @@ bool NetManager::connectToHost(std::string _IP)
 
 bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 {
+	/*
 	/// if there are incoming players, get IP addresses and add them to client IP list
 	/// if there are no incoming players, return 0 (0.0.0.0)
 	if(listener.accept(client)==sf::Socket::Status::Done)
@@ -71,6 +72,7 @@ bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 
 		return true;
 	}
+	*/
 	return false;
 }
 

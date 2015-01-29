@@ -27,6 +27,7 @@ void HUDSystem::update(Environment* _env, Managers* managers, sf::Window* _win, 
 			auto labels = _env->get<Label>();
 			auto tankControls = _env->get<TankControls>();
 			auto player = _env->get<Player>();
+			auto texture = _env->get<Texture>();
 
 			if(ID!=0 && health[ID].getHealth()!=0) // if it exists and not dead
 			{
@@ -38,7 +39,7 @@ void HUDSystem::update(Environment* _env, Managers* managers, sf::Window* _win, 
 
 				// Healthbar
 				barHeight = health[ID].getHealth()*(maxBarHeight/health[ID].getMaxHealth()); // barHeight = Min(val*(maxHeight/maxVal), maxHeight)
-				bar.setPosition(trans[ID].pos.x+sprites[ID].sprite.getLocalBounds().width/2+20, trans[ID].pos.y+sprites[ID].sprite.getLocalBounds().height/2+5-barHeight);
+				bar.setPosition(trans[ID].pos.x + texture[ID].rect.width/2 + 20, trans[ID].pos.y + texture[ID].rect.height/2 - barHeight + 5);
 				bar.setSize(sf::Vector2f(barThickness, barHeight));
 				if(BTWN(maxBarHeight*0/4, bar.getSize().y, maxBarHeight*1/4)) barColor = sf::Color(sf::Color(255, 0, 0, 255));  // red 
 				else if(BTWN(maxBarHeight*1/4, bar.getSize().y, maxBarHeight*2/4)) barColor = sf::Color(sf::Color(255, 102, 0, 255));  // orange
@@ -50,7 +51,7 @@ void HUDSystem::update(Environment* _env, Managers* managers, sf::Window* _win, 
 
 				// Cooldown bar
 				barHeight = MIN(gun[ID].fireClock.getElapsedTime().asMilliseconds()*(maxBarHeight/(gun[ID].fireCooldown*1000)), maxBarHeight);
-				bar.setPosition(trans[ID].pos.x+sprites[ID].sprite.getLocalBounds().width/2+30, trans[ID].pos.y+sprites[ID].sprite.getLocalBounds().height/2+5-barHeight);
+				bar.setPosition(trans[ID].pos.x+texture[ID].rect.width/2 + 30, trans[ID].pos.y+texture[ID].rect.height/2-barHeight + 5);
 				bar.setSize(sf::Vector2f(barThickness, barHeight));
 				bar.setFillColor(sf::Color(101, 153, 255, 255)); // light-blueish
 
@@ -62,8 +63,8 @@ void HUDSystem::update(Environment* _env, Managers* managers, sf::Window* _win, 
 				int ms = clock.getElapsedTime().asMilliseconds();
 				float fadeTime = 255.0/showTime;
 
-				sf::Vector2i tankPos = _HUDScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x-sprites[ID].sprite.getGlobalBounds().width/2, trans[ID].pos.y-sprites[ID].sprite.getGlobalBounds().height/2)),
-					tankSizePos = _HUDScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x+sprites[ID].sprite.getGlobalBounds().width/2, trans[ID].pos.y+sprites[ID].sprite.getGlobalBounds().height/2));
+				sf::Vector2i tankPos = _HUDScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y)),
+					tankSizePos = _HUDScene.mapCoordsToPixel(sf::Vector2f(trans[ID].pos.x, trans[ID].pos.y));
 				sf::View prevView = _HUDScene.getView();
 				_HUDScene.setView(_HUDScene.getDefaultView()); // reset view for the stats
 

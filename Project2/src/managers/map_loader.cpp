@@ -127,22 +127,15 @@ sf::VertexArray* MapLoader::buildVA(
 					// wall type
 					if(tileType == 2)
 					{
-						auto sprites = _env->get<Sprite>();
-
 						unsigned new_wall = _env->createEntity("",
 							new Transform(Vec2f(
 								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
-							new Texture(tileset),
+							new Texture(tileset, sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight)),
 							new BoundingBox(Vec2f(tileWidth, tileHeight)),
-							new Sprite(),
 							new Explosible(),
 							new Health(20, 20),
 							new Solid()
 						);
-
-						sprites[new_wall].sprite.setOrigin((float)tileWidth/2.f, (float)tileHeight/2.f);
-						sprites[new_wall].sprite.setTextureRect(
-							sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight));
 					}
 					
 					// spawn player 1
