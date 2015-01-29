@@ -21,6 +21,8 @@ class NetManager
 		bool isHost() const;
 		void closeConnection();
 
+		void ExchangeGreeting(Managers* _mgrs);
+
 	private:
 		const unsigned short port = 3333;
 		bool mode; // 0 = client, 1 = host

@@ -63,15 +63,20 @@ bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 	if(listener.accept(client)==sf::Socket::Status::Done)
 	{
 		cout<<"Accepted Connection!"<<endl;
-
-		// first packet sent tells how many players there are in the game.
-		sf::Packet packet;
-		packet<<_mgrs->game_manager.getNumPlayers();
-		client.send(packet);
-
 		return true;
 	}
 	return false;
+}
+
+void NetManager::ExchangeGreeting(Managers* _mgrs)
+{
+	// first packet sent tells how many players there are in the game.
+	sf::Packet packet;
+	packet<<_mgrs->game_manager.getNumPlayers();
+	client.send(packet);
+
+	packet.clear();
+
 }
 
 std::string NetManager::getHostIP()
