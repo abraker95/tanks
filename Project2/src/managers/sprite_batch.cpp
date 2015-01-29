@@ -54,7 +54,7 @@ void SpriteBatch::add(const Vec2f& pos, const float angle, const float scale, co
 
 void SpriteBatch::flush()
 {
-	if(render_target)
+	if(render_target && vertex_count != 0)
 	{
 		render_target->draw(&vertex_array[0], vertex_count, sf::Quads, states);
 		vertex_count = 0;
