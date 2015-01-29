@@ -49,6 +49,8 @@ foreach(manager
 	font_manager
 	score_manager
 	game_manager
+	net_manager
+	sprite_batch
 )
 	list(APPEND manager_files include/managers/${manager}.h src/managers/${manager}.cpp)
 endforeach(manager)

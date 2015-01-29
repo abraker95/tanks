@@ -13,7 +13,12 @@ class RenderSystem : public System
 
 		void update(Environment* _env, HUDSystem* _HUDSystem, Managers* managers, sf::RenderWindow* _win, const std::string& monitoring_results);
 
+
 	private:
+		// functions for code clarity
+		void drawMap(Environment* env, sf::RenderTexture& target_texture);
+		void drawGameEntities(Environment* env, sf::RenderTarget& render_target, SpriteBatch& sprite_batch);
+
 		sf::Shader* shader;
 		sf::RenderTexture GameScene, UIScene;
 		sf::Text debug_infos;

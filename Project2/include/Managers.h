@@ -8,3 +8,4 @@
 #include "managers/font_manager.h"
 #include "managers/score_manager.h"
 #include "managers/net_manager.h"
+#include "managers/sprite_batch.h"

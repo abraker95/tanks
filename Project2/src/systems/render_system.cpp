@@ -25,7 +25,6 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* ma
 	auto sprites = _env->get<Sprite>();
 	auto trans = _env->get<Transform>();
 	auto textures = _env->get<Texture>();
-	auto vertex_array = _env->get<VertexArray>();
 	auto view_controller = _env->get<ViewController>();
 
 	auto resize_event = _env->getEvents<ResizeEvent>();
@@ -36,19 +35,6 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* ma
 		UIScene.create(resize_event[0].width, resize_event[0].height);
 	}
 
-	/*
-		Note(Sherushe): All events should be polled in the main loop (application.cpp)
-	    Note(abraker): Ok... :(
-	sf::Event event;
-	while(_win->pollEvent(event))
-	{
-		if(event.type==sf::Event::Resized)
-		{
-			cout<<"resize"<<endl;
-			/// Help with UI resizing here
-		}
-	}	
-	*/
 	if(managers->game_manager.getGameState()!=GameManager::GAMESTATE::ENDED)
 	{
 		for(unsigned viewID = 0; viewID<_env->maxEntities(); viewID++)
@@ -56,28 +42,10 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* ma
 			if(_env->hasComponents<ViewController>(viewID))
 			{
 				GameScene.setView(view_controller[viewID].view);
-				for(unsigned mapID = 0; mapID<_env->maxEntities(); mapID++)
-				{
-					if(_env->hasComponents<VertexArray, Texture, Tilemap>(mapID))
-					{
-						GameScene.draw(*vertex_array[mapID].array, textures[mapID].texture);
-						break; // should only be one map
-					}
-				}
+				
+				drawMap(_env, GameScene);
+				drawGameEntities(_env, GameScene, managers->sprite_batch);
 
-				// temporary fix
-				for(unsigned spriteID = 0; spriteID<_env->maxEntities(); spriteID++)
-				{
-					if(_env->hasComponents<Transform, Sprite, Texture>(spriteID))
-					{
-						sf::Sprite& sprite = sprites[spriteID].sprite;
-						sprite.setPosition(trans[spriteID].pos.x, trans[spriteID].pos.y);
-						sprite.setRotation(trans[spriteID].rot);
-						sprite.setScale(trans[spriteID].scale, trans[spriteID].scale);
-						sprite.setTexture(*textures[spriteID].texture);
-						GameScene.draw(sprite);
-					}
-				}
 				//_env->updateWrapper(_HUDSystem, GameScene);
 			}
 		}
@@ -234,4 +202,38 @@ void RenderSystem::update(Environment* _env, HUDSystem* _HUDSystem, Managers* ma
 	_win->draw(sf::Sprite(GameScene.getTexture()), shader);						     GameScene.clear(sf::Color(0, 0, 0, 0)); GameScene.display();
 	_win->draw(sf::Sprite(UIScene.getTexture()), sf::RenderStates(sf::BlendAlpha));  UIScene.clear(sf::Color(0, 0, 0, 0));   UIScene.display();
 	_win->display();
+}
+
+void RenderSystem::drawMap(Environment* env, sf::RenderTexture& target_texture)
+{
+	auto vertex_array = env->get<VertexArray>();
+	auto textures = env->get<Texture>();
+
+	for(unsigned mapID = 0; mapID<env->maxEntities(); mapID++)
+	{
+		if(env->hasComponents<VertexArray, Texture, Tilemap>(mapID))
+		{
+			target_texture.draw(*vertex_array[mapID].array, textures[mapID].texture);
+			break; // should only be one map
+		}
+	}
+}
+
+void RenderSystem::drawGameEntities(Environment* env, sf::RenderTarget& render_target, SpriteBatch& sprite_batch)
+{
+	auto transform = env->get<Transform>();
+	auto texture = env->get<Texture>();
+	auto sprites = env->get<Sprite>();
+
+	sprite_batch.setRenderTarget(&render_target);
+
+	for(unsigned spriteID = 0; spriteID<env->maxEntities(); spriteID++)
+	{
+		if(env->hasComponents<Transform, Texture>(spriteID))
+		{
+			sprite_batch.add(transform[spriteID], texture[spriteID]);
+		}
+	}
+
+	sprite_batch.flush();
 }
