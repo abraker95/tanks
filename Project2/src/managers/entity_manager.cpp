@@ -119,14 +119,23 @@ void EntityManager::placeOnSpawn(Environment* env, unsigned tank_id, unsigned pl
 	auto spawnLocation = env->get<SpawnLocation>();
 	auto transform = env->get<Transform>();
 
+	// get all the free spawn locations
+	std::vector<unsigned> free_spawns;
 	for(unsigned spawn_id = 0;spawn_id < env->maxEntities();spawn_id++)
 	{
-		if(env->hasComponents<SpawnLocation>(spawn_id) && spawnLocation[spawn_id].player_id == (int)player_id)
+		if(env->hasComponents<SpawnLocation>(spawn_id) && spawnLocation[spawn_id].occupied == false)
 		{
-			transform[tank_id].pos = transform[spawn_id].pos;
-			transform[tank_id].rot = 0.f;
-			break;
+			free_spawns.push_back(spawn_id);
 		}
+	}
+
+	if(free_spawns.size() > 0)
+	{
+		// pick a random spawn
+		int spawn_choice = (rand() % (int)free_spawns.size());
+		spawnLocation[free_spawns[spawn_choice]].occupied = true;
+		transform[tank_id].pos = transform[free_spawns[spawn_choice]].pos;
+		transform[tank_id].rot = 0.f;
 	}
 }
 

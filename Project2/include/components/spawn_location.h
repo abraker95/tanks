@@ -4,7 +4,7 @@
 class SpawnLocation : public Component<SpawnLocation>
 {
 public:
-	SpawnLocation(int player_id);
+	SpawnLocation();
 
-	int player_id;
+	bool occupied;
 };
