@@ -144,16 +144,7 @@ sf::VertexArray* MapLoader::buildVA(
 						_env->createEntity("",
 							new Transform(Vec2f(
 								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
-							new SpawnLocation(0)
-						);
-					}
-
-					else if(tileType == 4)
-					{
-						_env->createEntity("",
-							new Transform(Vec2f(
-								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
-							new SpawnLocation(1)
+							new SpawnLocation()
 						);
 					}
 				}
