@@ -15,70 +15,53 @@ bool NetManager::InitOnlineMode(bool _mode)
 	if(mode==HOST)
 	{
 		listener.setBlocking(false);
-		client.setBlocking(false);
-
 		if(listener.listen(port)!=sf::Socket::Status::Done)
 		{
+			cout<<"[NET MGR] Unable to bind to port "<<port<<endl;
 			return false;
 		}
-			
+		cout<<"[NET MGR] Binded to port "<<port<<endl;
+
+		clients.clear();
+		clients.push_back(std::pair<sf::TcpSocket*, int>(&sf::TcpSocket(), 0));
+		clients.at(0).first->setBlocking(false);
+		clients.at(0).second = 0;
 	}
 	else
 	{
-		client.setBlocking(true);
-		listener.setBlocking(true);
+		client.setBlocking(false);
+		listener.setBlocking(false);
 	}
 
 	return true;
 }
 
-bool NetManager::connectToHost(std::string _IP)
+unsigned NetManager::connectToHost(std::string _IP)
 {
-	if(client.connect(_IP, port, sf::Time(sf::seconds(5))) != sf::Socket::Done)  // give a 5 second timout
+	if(client.connect(_IP, port, sf::Time(sf::seconds(5))) == sf::Socket::Done)  // give a 5 second timout
 	{
-		cout<<"Error connecting to host"<<endl;
-		return false;
+		cout<<"[NET MGR] Connected to: "<<_IP<<endl;
+		return 0;
 	}
 	else
 	{
-		cout<<"Connected to: "<<_IP<<endl;
-
-		sf::Packet packet;
-		int numPlayers;
-
-		client.receive(packet);
-		if(packet>>numPlayers)
-		{
-			cout<<"NumPlayers: "<<numPlayers<<endl;
-		}
-		return true;
+		cout<<"[NET MGR] Error connecting to host"<<endl;
+		return 1;
 	}
 		
 }
 
 bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 {
-	/*
-	/// if there are incoming players, get IP addresses and add them to client IP list
-	/// if there are no incoming players, return 0 (0.0.0.0)
-	if(listener.accept(client)==sf::Socket::Status::Done)
+	// if there is an incoming player, accept him and create a new socket for more players
+	if(listener.accept(*clients.at(clients.size()-1).first)==sf::Socket::Status::Done)
 	{
-		cout<<"Accepted Connection!"<<endl;
+		cout<<"[NET MGR] Accepted Connection!"<<endl;
+			clients.push_back(std::pair<sf::TcpSocket*, int>(&sf::TcpSocket(), 0));
+			clients.at(clients.size()-1).first->setBlocking(false);
 		return true;
 	}
-	*/
 	return false;
-}
-
-void NetManager::ExchangeGreeting(Managers* _mgrs)
-{
-	// first packet sent tells how many players there are in the game.
-	sf::Packet packet;
-	packet<<_mgrs->game_manager.getNumPlayers();
-	client.send(packet);
-
-	packet.clear();
-
 }
 
 std::string NetManager::getHostIP()
@@ -86,24 +69,53 @@ std::string NetManager::getHostIP()
 	return IP.getPublicAddress().toString();
 }
 
-void NetManager::getPlayerInfo(Environment* _env)
+NetManager::PLAYERDATA* NetManager::HostGetPlayerInfo()
 {
+	PLAYERDATA *data = new PLAYERDATA[clients.size()];
 	sf::Packet packet;
-	client.receive(packet);
-	float x, y;
 
-	if(!(packet>>x>>y))
-		cout<<"Error getting data packet"<<endl;
-	Vec2f tankPos(x, y);
+	for(int i = 0; i<clients.size(); i++)
+	{
+		client.receive(packet);
+		if(!(packet>>data[i].x>>data[i].y>>data[i].numPlayers))
+			clients.at(i).second++;
+
+		if(clients.at(i).second > 50) // 50 failed attempts to get client's data
+		{ /* game manger -> player leave,  client.erase() */ }
+	}
+
+	return data; // to be deleted by caller
 }
 
-void NetManager::sendPlayerInfo(Environment* _env)
+NetManager::PLAYERDATA NetManager::ClientGetPlayerInfo()
+{
+	PLAYERDATA data;
+	sf::Packet packet;
+		client.receive(packet);
+
+	if(!(packet>>data.x>>data.y>>data.numPlayers))
+		cout<<"[NET MGR] Error getting data packet"<<endl;
+	return data;
+}
+
+void NetManager::ClientSendPlayerInfo(PLAYERDATA _player)
 {
 	sf::Packet packet;
-	Vec2f tankPos = _env->getComponent<Transform>(_env->getID("tank1")).pos;
-	packet<<tankPos.x<<tankPos.y;
+	packet<<_player.x<<_player.y<<clients.size(); // clients will have 0 as their clients size
 
 	client.send(packet);
+}
+
+void NetManager::HostSendPlayerInfo(PLAYERDATA _players[])
+{
+	sf::Packet packet;
+
+	for(int i = 0; i<clients.size(); i++)
+	{
+		packet<<_players[i].x<<_players[i].y<<clients.size(); // clients will have 0 as their clients size
+		client.send(packet);
+		packet.clear();
+	}
 }
 
 bool NetManager::isHost() const
@@ -113,5 +125,7 @@ bool NetManager::isHost() const
 
 void NetManager::closeConnection()
 {
+	cout<<"[NET MGR] Closing connection"<<endl;
 	listener.close();
+	clients.clear();
 }

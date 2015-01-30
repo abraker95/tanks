@@ -60,12 +60,15 @@ void GameManager::playerJoin(Environment* _env, Managers* _mgrs)
 {
 	std::array<sf::Keyboard::Key, 5> keys = {{sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown}};
 	unsigned tank = _mgrs->entity_manager.spawnTankPlayer("tank"+to_string(getNumPlayers()+1), _env, &_mgrs->texture_manager, &_mgrs->score_manager, keys);
-	_env->get<Label>()[tank].label.setString("Player "+to_string(getNumPlayers()+1));
+		_env->get<Label>()[tank].label.setString("Player "+to_string(getNumPlayers()+1));
+		_env->getComponent<ViewController>(_env->getID("mainCamera")).focusedObjects.push_back(tank);
 	players.push_back(tank);
 }
 
 void GameManager::playerLeave(Environment* _env, int _player)
 {
+	auto focusedPlayers = _env->getComponent<ViewController>(_env->getID("mainCamera")).focusedObjects;
+		focusedPlayers.erase(focusedPlayers.begin()+players[_player]);
 	_env->destroyEntity(_env->getID("tank"+to_string(_player)));
 	players.erase(players.begin()+_player);
 }
@@ -121,11 +124,15 @@ bool GameManager::isOnline() const
 	return gameMode;
 }
 
+// returns player 1, player 2, player....   Player 1 is ALWAYS the local player
 unsigned GameManager::getPlayer(int _player) const
 {
-	if(_player-1 < players.size())
+	if(_player-1 < players.size() && _player > 0)
 		return players[_player-1];
+	else
+		cout<<"[GAME MGR] Unable to get player "<<_player<<endl;
 }
+
 unsigned GameManager::getNumPlayers()
 {
 	return players.size();

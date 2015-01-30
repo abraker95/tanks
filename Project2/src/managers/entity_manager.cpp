@@ -40,10 +40,11 @@ unsigned EntityManager::spawnTankPlayer(std::string _name,
 	if(_gameEnv->getID(_name+"Score") == 0) // only if the tank doesn't have a respective score
 		_gameEnv->createEntity(_name+"Score", new Score(0, 0));
 
+	/// \TODO: make use of the Font manager
 	auto label = _gameEnv->get<Label>();
 	if(!label[new_tank].font.loadFromFile("res/arial.ttf")) cout<<"ERROR: FONT NOT FOUND"<<endl;
-	label[new_tank].label.setFont(label[new_tank].font);
-	label[new_tank].label.setCharacterSize(18);
+		label[new_tank].label.setFont(label[new_tank].font);
+		label[new_tank].label.setCharacterSize(18);
 
 	numLivingTanks++;
 

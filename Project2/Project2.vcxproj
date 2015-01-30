@@ -95,6 +95,7 @@
     <ClInclude Include="include\managers\map_loader.h" />
     <ClInclude Include="include\managers\net_manager.h" />
     <ClInclude Include="include\managers\score_manager.h" />
+    <ClInclude Include="include\managers\sprite_batch.h" />
     <ClInclude Include="include\managers\texture_manager.h" />
     <ClInclude Include="include\managers\UI_Manager.h" />
     <ClInclude Include="include\math\vector.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\managers\map_loader.cpp" />
     <ClCompile Include="src\managers\net_manager.cpp" />
     <ClCompile Include="src\managers\score_manager.cpp" />
+    <ClCompile Include="src\managers\sprite_batch.cpp" />
     <ClCompile Include="src\managers\texture_manager.cpp" />
     <ClCompile Include="src\managers\UI_Manager.cpp" />
     <ClCompile Include="src\systems\damage_system.cpp" />
