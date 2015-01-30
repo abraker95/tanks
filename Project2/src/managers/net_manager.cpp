@@ -41,14 +41,13 @@ unsigned NetManager::connectToHost(std::string _IP)
 	if(client.connect(_IP, port, sf::Time(sf::seconds(5))) == sf::Socket::Done)  // give a 5 second timout
 	{
 		cout<<"[NET MGR] Connected to: "<<_IP<<endl;
-		return 0;
+		return 1;
 	}
 	else
 	{
 		cout<<"[NET MGR] Error connecting to host"<<endl;
-		return 1;
+		return 0;
 	}
-		
 }
 
 bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
