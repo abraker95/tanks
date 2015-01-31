@@ -23,7 +23,7 @@ bool NetManager::InitOnlineMode(bool _mode)
 		cout<<"[NET MGR] Binded to port "<<port<<endl;
 
 		clients.clear();
-		clients.push_back(std::pair<sf::TcpSocket*, int>(&sf::TcpSocket(), 0));
+		clients.push_back(std::pair<sf::TcpSocket*, int>(new sf::TcpSocket, 0));
 		clients.at(0).first->setBlocking(false);
 		clients.at(0).second = 0;
 	}
@@ -56,7 +56,7 @@ bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 	if(listener.accept(*clients.at(clients.size()-1).first)==sf::Socket::Status::Done)
 	{
 		cout<<"[NET MGR] Accepted Connection!"<<endl;
-			clients.push_back(std::pair<sf::TcpSocket*, int>(&sf::TcpSocket(), 0));
+			clients.push_back(std::pair<sf::TcpSocket*, int>(new sf::TcpSocket, 0));
 			clients.at(clients.size()-1).first->setBlocking(false);
 		return true;
 	}
