@@ -22,13 +22,14 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 			{
 				cout<<"A player joined the game!"<<endl;
 				_mgrs->game_manager.playerJoin(_env, _mgrs);
-
+				
 				/// \TODO: Broadcast new player to clients
 			}
 			
 			players = _mgrs->game_manager.getNumPlayers();
-			NetManager::PLAYERDATA* HostDataOut = new NetManager::PLAYERDATA[players], *HostDataIN; // not need to init, but needed to destroy
-			HostDataIN = _mgrs->net_manager.HostGetPlayerInfo();  // get info from all the clients
+			NetManager::PLAYERDATA* HostDataOut = new NetManager::PLAYERDATA[players], *HostDataIN = new NetManager::PLAYERDATA[players];
+			_mgrs->net_manager.HostGetPlayerInfo(HostDataIN);  // get info from all the clients
+
 			for(int i = 1; i<=players; i++)
 			{
 				// gather all players' info
@@ -54,7 +55,7 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 			players = _mgrs->game_manager.getNumPlayers();
 			for(int i = 2; i<=players; i++)
 			{
-				data = _mgrs->net_manager.ClientGetPlayerInfo();
+				_mgrs->net_manager.ClientGetPlayerInfo(data);
 					trans[_mgrs->game_manager.getPlayer(i)].pos.x = data.x;
 					trans[_mgrs->game_manager.getPlayer(i)].pos.y = data.y;
 			}		

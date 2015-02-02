@@ -22,8 +22,8 @@ class NetManager
 		bool checkForIncomingPlayers(Managers* _mgrs);
 		unsigned connectToHost(std::string _IP);
 		
-		PLAYERDATA ClientGetPlayerInfo();
-		PLAYERDATA* HostGetPlayerInfo();
+		void ClientGetPlayerInfo(PLAYERDATA& _data);
+		void HostGetPlayerInfo(PLAYERDATA* _data);
 		void ClientSendPlayerInfo(PLAYERDATA player);
 		void HostSendPlayerInfo(PLAYERDATA players[]);
 
@@ -31,13 +31,23 @@ class NetManager
 		bool isHost() const;
 		void closeConnection();
 
-
 	private:
+		enum CLIENT
+		{
+			SOCKET,
+			LATENCY,
+			RESPONCE
+		};
+
 		const unsigned short port = 3333;
 		bool mode; // 0 = client, 1 = host
 		sf::IpAddress IP;
 		sf::TcpListener listener;
-		sf::TcpSocket client;			    // used for client side
-		std::vector<std::pair<sf::TcpSocket*, int>> clients; // used for host side
+		std::tuple<sf::TcpSocket*, int, bool> client;				// used for client side
+		std::vector<std::tuple<sf::TcpSocket*, int, bool>> clients; // used for host side
+
+		void LatencyUpdate(std::tuple<sf::TcpSocket*, int, bool>& _client);
+		bool ClientResponds(sf::TcpSocket* _socket);
+		void Ping(sf::TcpSocket* _socket);
 };
 
