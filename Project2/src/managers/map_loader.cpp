@@ -13,8 +13,14 @@ MapLoader::~MapLoader()
 		delete arrays[i];
 }
 
+unsigned MapLoader::reloadMap(Environment* _env, TextureManager* tex_man)
+{
+	if(last_filename != "")
+		return loadMap(_env, tex_man, last_filename);
+	return 0;
+}
 
-unsigned MapLoader::createMap(Environment* _env, TextureManager* tex_man, std::string filename)
+unsigned MapLoader::loadMap(Environment* _env, TextureManager* tex_man, std::string filename)
 {
 	std::string tilesheet;
 	char tileWidth, tileHeight;
@@ -24,6 +30,7 @@ unsigned MapLoader::createMap(Environment* _env, TextureManager* tex_man, std::s
 	
 	if(!readMap(filename, tilesheet, tileWidth, tileHeight, tileCountX, tileCountY, numLayers, mapData))
 		return 0;
+	last_filename = filename;
 
 	sf::Texture* tileset = tex_man->load(tilesheet);
 
@@ -125,17 +132,22 @@ sf::VertexArray* MapLoader::buildVA(
 				if(l == 1 && tileType != 0)
 				{
 					// wall type
-					if(tileType == 2)
+					if(tileType == 2 || tileType == 4)
 					{
 						unsigned new_wall = _env->createEntity("",
 							new Transform(Vec2f(
 								((float)i + 0.5f) * (float)tileWidth, (((float)j + 0.5f) * (float)tileWidth))),
 							new Texture(tileset, sf::IntRect(tu * tileWidth, tv * tileHeight,(tu + 1) * tileWidth, (tv + 1) * tileHeight)),
 							new BoundingBox(Vec2f(tileWidth, tileHeight)),
-							new Explosible(),
-							new Health(20, 20),
 							new Solid()
 						);
+
+						if(tileType == 2)
+						{
+							_env->addComponents(new_wall,
+								new Explosible(),
+								new Health(20, 20));
+						}
 					}
 					
 					// spawn player 1

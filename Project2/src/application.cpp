@@ -16,7 +16,6 @@ Application::Application(): mainEnv(128)
 	//window->setFramerateLimit(60);
 	
 // [ENTITY CREATION]
-	managers.map_loader.createMap(&mainEnv, &managers.texture_manager, "maps/dev1.map");
 	managers.UI_manager.CreateMenu(&mainEnv, window, &managers, fullscreen); // needs to go after entity manager
 
 // [FACTORY CONSTRUCTS]

@@ -14,7 +14,8 @@ class MapLoader
 		MapLoader();
 		~MapLoader();
 
-		unsigned createMap(Environment* env, TextureManager* tex_man, std::string filename);
+		unsigned loadMap(Environment* env, TextureManager* tex_man, std::string filename);
+		unsigned reloadMap(Environment* env, TextureManager* tex_man);
 
 	private:
 		sf::VertexArray* buildVA(
@@ -35,4 +36,5 @@ class MapLoader
 	
 		std::vector<sf::VertexArray*> arrays;
 		std::vector<unsigned int> IDs;
+		std::string last_filename;
 };

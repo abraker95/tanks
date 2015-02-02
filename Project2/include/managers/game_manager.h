@@ -17,6 +17,12 @@ class GameManager
 			PLAYING     // playing
 		};
 
+		enum GAMEMODE
+		{
+			LOCAL,
+			ONLINE
+		};
+
 		void NewLocalGame(Environment* _gameEnv, Managers* _mgrs);
 		void NewNetGame(Environment* _gameEnv, Managers* _mgrs);
 		void EndGame(Environment* _gameEnv, bool _newScore);
@@ -35,7 +41,7 @@ class GameManager
 	private:
 		std::vector<unsigned> players; // players playing the game (dead or not dead)
 		GAMESTATE gameState;
-		bool gameMode; // 0 = local, 1 = online
+		GAMEMODE gameMode; // local, online
 		
 };
 
