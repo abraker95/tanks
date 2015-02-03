@@ -303,16 +303,16 @@ void UI_Manager::CreateNetSubMenu(Environment* _env, Managers* _mgrs)
 		cout<<"IP address to connect to: "<<IPAddress<<endl;
 		
 		_mgrs->net_manager.InitOnlineMode(NetManager::CLIENT);
-		int players = _mgrs->net_manager.connectToHost(IPAddress);
+		int playerNum = _mgrs->net_manager.connectToHost(IPAddress);
 			
-		if(players != 0) // if host hasnt left before client joins
+		if(playerNum != 0) // if host hasnt left before client joins
 		{
 			_mgrs->game_manager.NewNetGame(_env, _mgrs);
-			for(int i = 0; i<players; i++)
-				_mgrs->game_manager.playerJoin(_env, _mgrs);
+		//	for(int i = 0; i<players; i++)
+				_mgrs->game_manager.playerJoin(_env, _mgrs, playerNum); // map the playerNum
 
 			unsigned tank1ID = _env->getID("tank1");
-				if(tank1ID!=-1) _env->get<Label>()[tank1ID].label.setString("Player "+to_string(players+1));
+				if(tank1ID!=-1) _env->get<Label>()[tank1ID].label.setString("Player "+to_string(playerNum));
 
 			currMenu = UI_Manager::NO_MENU;
 		}
