@@ -6,7 +6,7 @@
 #include "events.h"
 #include "utils.h"
 
-InputSystem::InputSystem() {}
+InputSystem::InputSystem() { runEvery = 5; }
 
 InputSystem::~InputSystem() {}
 

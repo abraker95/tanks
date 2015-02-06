@@ -30,17 +30,17 @@ class GameManager
 		void PauseGame();
 		void ResumeGame();
 
-		void playerJoin(Environment* _env, Managers* _mgrs, unsigned _playerNum);
+		void playerJoin(Environment* _env, Managers* _mgrs, unsigned _playerNum, bool _localPlayer);
 		void playerLeave(Environment* _env, unsigned _player);
 
 		GAMESTATE getGameState() const;
 		bool isOnline() const;
-		unsigned getPlayer(int _player) const;
-		unsigned getPlayerNum(int _player);
+		unsigned getPlayer(unsigned _player) const;
+		unsigned getPlayerNum(unsigned _player);
 		unsigned getNumPlayers();
 
 	private:
-		std::vector<std::pair<unsigned, unsigned>> players; // players playing the game (dead or not dead)
+		std::vector<std::pair<unsigned, unsigned>> players; // players playing the game (dead or not dead)   <tankInMem, playerNum>
 		GAMESTATE gameState;
 		GAMEMODE gameMode; // local, online
 		

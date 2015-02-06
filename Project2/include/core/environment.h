@@ -116,9 +116,18 @@ class Event : public EventBase
 
 class System
 {
-public:
-	float sum = 0.f;
-	int num_it = 0;
+	public:
+		float sum = 0.f;
+		int num_it = 0;
+
+		bool Run(sf::Clock _runTime) 
+		{ 
+			if(runEvery == 0) return true;
+			return (_runTime.getElapsedTime().asMilliseconds() % runEvery)==0; 
+		}
+
+	protected:
+		long runEvery = 0; // in ms
 };
 
 // the Environment class holds the entities' informations
@@ -360,21 +369,24 @@ public:
 
 	// wrapper function
 	template<typename T, typename... Args>
-	void updateWrapper(T* sys, Args&&... args)
+	void updateWrapper(T* sys, sf::Clock _runtime, Args&&... args)
 	{
 		static sf::Clock clock;
 
-		current_system = reinterpret_cast<void*>(sys);
-		clearEvents(current_system);
+		if(sys->Run(_runtime))
+		{
+			current_system = reinterpret_cast<void*>(sys);
+			clearEvents(current_system);
 
-		clock.restart();
-		sys->update(this, args...);
+			clock.restart();
+			sys->update(this, args...);	
+		}
+
 		sf::Time elapsed = clock.getElapsedTime();
-
 		sys->sum += elapsed.asMicroseconds();
 		sys->num_it++;
 
-		if(refresh_avg <= 0.f)
+		if(refresh_avg<=0.f)
 		{
 			next_monitoring_results += "[";
 			next_monitoring_results += typeid(T).name();

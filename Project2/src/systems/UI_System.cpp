@@ -13,8 +13,11 @@ void UISystem::update(Environment* _env, Managers* managers)
 
 	if(*managers->UI_manager.visible == true)
 	{
+		if((managers->game_manager.getGameState()==GameManager::GAMESTATE::ENDED) && (managers->UI_manager.currMenu==UI_Manager::NO_MENU))
+			managers->UI_manager.currMenu = UI_Manager::TITLE_SCREEN;
+
 		if(managers->UI_manager.currMenu==UI_Manager::NO_MENU) *managers->UI_manager.visible = false;
-		else									  *managers->UI_manager.visible = true;
+		else												   *managers->UI_manager.visible = true;
 		
 		for(unsigned ID = 0; ID<_env->maxEntities(); ID++)
 		{

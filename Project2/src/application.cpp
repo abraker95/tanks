@@ -29,6 +29,8 @@ Application::Application(): mainEnv(128)
 	hud_system = new HUDSystem(&mainEnv);
 	score_system = new ScoreSystem();
 	net_system = new NetworkSystem();
+
+	runTime.restart();
 }
 
 Application::~Application()
@@ -60,15 +62,14 @@ int Application::run()
 
 void Application::update(float dt)
 {
-	mainEnv.updateWrapper(net_system, &managers);
-
 	const auto& monitoring_results = mainEnv.resetMonitoring(dt);
-	mainEnv.updateWrapper(input_system, window, &managers);
-	mainEnv.updateWrapper(ui_system, &managers);
-	mainEnv.updateWrapper(expiring_system, dt);
-	mainEnv.updateWrapper(physics_system, dt);
-	mainEnv.updateWrapper(damage_system, &managers);
-	mainEnv.updateWrapper(score_system);
-	mainEnv.updateWrapper(view_system, window, dt);
-	mainEnv.updateWrapper(render_system, hud_system, &managers, window, monitoring_results);
+	mainEnv.updateWrapper(net_system, runTime, &managers);
+	mainEnv.updateWrapper(input_system, runTime, window, &managers);
+	mainEnv.updateWrapper(ui_system, runTime, &managers);
+	mainEnv.updateWrapper(expiring_system, runTime, dt);
+	mainEnv.updateWrapper(physics_system, runTime, dt);
+	mainEnv.updateWrapper(damage_system, runTime, &managers);
+	mainEnv.updateWrapper(score_system, runTime);
+	mainEnv.updateWrapper(view_system, runTime, window, dt);
+	mainEnv.updateWrapper(render_system, runTime, hud_system, &managers, window, monitoring_results);
 }

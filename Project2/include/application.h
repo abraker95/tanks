@@ -14,6 +14,7 @@ public:
 	void update(float dt);
 
 private:
+	sf::Clock runTime;
 	sf::RenderWindow* window;
 	bool fullscreen;
 

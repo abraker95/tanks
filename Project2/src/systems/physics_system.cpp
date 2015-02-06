@@ -5,9 +5,7 @@
 #include "systems/physics_system.h"
 #include "events.h"
 
-PhysicsSystem::PhysicsSystem()
-{
-}
+PhysicsSystem::PhysicsSystem() { runEvery = 0; /* use this for slow motion effects */}
 
 PhysicsSystem::~PhysicsSystem()
 {

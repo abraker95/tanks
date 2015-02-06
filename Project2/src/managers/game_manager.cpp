@@ -46,15 +46,15 @@ void GameManager::NewNetGame(Environment* _env, Managers* _mgrs)
 
 	// Create 1 tank only
 	// double-braces init because of std::array
-	std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
-	unsigned tank1 = _mgrs->entity_manager.spawnTankPlayer("tank1", _env, &_mgrs->texture_manager, &_mgrs->score_manager, p1_keys);
-	_env->get<Label>()[tank1].label.setString("Player 1");
-	players.push_back(std::pair<unsigned, unsigned>(tank1, 1));
+	//std::array<sf::Keyboard::Key, 5> p1_keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
+	//unsigned tank1 = _mgrs->entity_manager.spawnTankPlayer("tank1", _env, &_mgrs->texture_manager, &_mgrs->score_manager, p1_keys);
+	//_env->get<Label>()[tank1].label.setString("Player 1");
+	//players.push_back(std::pair<unsigned, unsigned>(tank1, 1));
 
 	// camera
 	sf::FloatRect borders = sf::FloatRect(0.f, 0.f, 64.f * 20.f, 64.f * 20.f);
 	sf::FloatRect viewport = sf::FloatRect(0.f, 0.f, 1.f, 1.f);
-	_mgrs->entity_manager.createCamera("mainCamera", _env, borders, viewport, {tank1});
+	_mgrs->entity_manager.createCamera("mainCamera", _env, borders, viewport, {});
 
 	gameMode = ONLINE;
 	gameState = PLAYING;
@@ -62,13 +62,20 @@ void GameManager::NewNetGame(Environment* _env, Managers* _mgrs)
 
 
 /// \TODO (abraker): Figure how I want to do this
-void GameManager::playerJoin(Environment* _env, Managers* _mgrs, unsigned _playerNum)
+void GameManager::playerJoin(Environment* _env, Managers* _mgrs, unsigned _playerNum, bool _localPlayer)
 {
-	std::array<sf::Keyboard::Key, 5> keys = {{sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown}};
-	unsigned tank = _mgrs->entity_manager.spawnTankPlayer("tank"+to_string(getNumPlayers()+1), _env, &_mgrs->texture_manager, &_mgrs->score_manager, keys);
+	std::array<sf::Keyboard::Key, 5> keys; 
+	if(_localPlayer)
+		keys = {{sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Space}};
+	else
+		keys = {{sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown, sf::Keyboard::Unknown}}; // unresponsive to key input
+	
+	unsigned tank = _mgrs->entity_manager.spawnTankPlayer("tank"+to_string(_playerNum), _env, &_mgrs->texture_manager, &_mgrs->score_manager, keys);
+		_env->get<Label>()[tank].label.setString("Player "+to_string(_playerNum));
+		_env->get<ViewController>()[_env->getID("mainCamera")].focusedObjects.push_back(tank);
 
-	_env->emit(new CreateEvent(tank));
 	players.push_back(std::pair<unsigned, unsigned>(tank, _playerNum));
+	_env->emit(new CreateEvent(tank));
 }
 
 void GameManager::playerLeave(Environment* _env, unsigned _player)
@@ -149,17 +156,18 @@ bool GameManager::isOnline() const
 }
 
 // returns player 1, player 2, player....   Player 1 is ALWAYS the local player
-unsigned GameManager::getPlayer(int _player) const
+unsigned GameManager::getPlayer(unsigned _player) const
 {
-	if(_player-1 < players.size() && _player > 0)
+	if(_player <= players.size() && _player > 0)
 		return players[_player-1].first;
 	else
 		cout<<"[GAME MGR] Unable to get player "<<_player<<endl;
+	return 0;
 }
 
-unsigned GameManager::getPlayerNum(int _player)
+unsigned GameManager::getPlayerNum(unsigned _player)
 {
-	if(_player-1 < players.size()&&_player > 0)
+	if(_player <= players.size() && _player > 0)
 		return players[_player-1].second;
 	else
 		cout<<"[GAME MGR] Unable to get player "<<_player<<endl;

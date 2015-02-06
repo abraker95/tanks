@@ -15,6 +15,8 @@ RenderSystem::RenderSystem(sf::RenderWindow* _win, FontManager* font_manager)
 	debug_infos.setColor(sf::Color(sf::Color::Blue));
 	debug_infos.setStyle(sf::Text::Style::Bold);
 	debug_infos.setPosition(sf::Vector2f(_win->getSize().x - 400, 10));
+
+	runEvery = 2; // 60 FPS or 16.6 ms
 }
 
 RenderSystem::~RenderSystem()
