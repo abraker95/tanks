@@ -81,8 +81,8 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 				if(clientPlayer!=0) // if host hasnt left before client joins
 				{
 					//_mgrs->game_manager.NewNetGame(_env, _mgrs);
-					for(int i = 1; i<clientPlayer; i++)
-						_mgrs->game_manager.playerJoin(_env, _mgrs, i, (i==clientPlayer)); // Create players and map the playerNums
+					for(int i = 0; i<clientPlayer; i++)
+						_mgrs->game_manager.playerJoin(_env, _mgrs, i, (i==clientPlayer-1)); // Create players and map the playerNums
 				}
 				else
 				{
