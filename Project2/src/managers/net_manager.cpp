@@ -73,7 +73,7 @@ unsigned NetManager::connectToHost(std::string _IP)
 {	
 	unsigned playerNum = 0;
 
-	if(std::get<SOCKET>(client)->connect(_IP, port, sf::Time(sf::seconds(1))) == sf::Socket::Done)  // give a 1 second timout
+	if(std::get<SOCKET>(client)->connect(_IP, port, sf::Time(sf::seconds(5))) == sf::Socket::Done)  // give a 1 second timout
 	{
 		cout<<"[NET MGR] Connected to: "<<_IP<<endl;
 		
@@ -135,7 +135,7 @@ bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 
 std::string NetManager::getHostIP()
 {
-	return IP.getPublicAddress().toString();
+	return IP.getLocalAddress().toString();
 }
 
 unsigned NetManager::ClientGetPlayerInfo(std::vector<PLAYERDATA>& _dataIn)
@@ -172,7 +172,10 @@ unsigned NetManager::ClientGetPlayerInfo(std::vector<PLAYERDATA>& _dataIn)
 		//connectToHost(IP.toString());
 	}
 	cout<<"Player Num: "<<numPlayers<<endl;
-	return numPlayers;
+	if(S == "S")
+		return numPlayers;
+	else
+		return 0;
 }
 
 void NetManager::ClientSendPlayerInfo(PLAYERDATA _dataOut)

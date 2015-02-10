@@ -74,9 +74,14 @@ void ViewSystem::update(Environment* _env, sf::RenderWindow* window, float dt)
 				prevViewSize, prevViewCenter, ratio == prev_ratio);
 			
 			// set the new view coordinates and size
+			/*
 			view_controller[i].view.setCenter(viewCenter);
 			view_controller[i].view.setSize(viewSize);
 			view_controller[i].prevRatio = ratio;
+			*/
+			view_controller[i].view.setCenter(sf::Vector2f(500.f, 500.f));
+			view_controller[i].view.setSize(sf::Vector2f(2048.f, 1440.f));
+
 		}
 	}
 }
