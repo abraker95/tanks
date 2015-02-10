@@ -31,7 +31,7 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 				cout<<"A player joined the game!"<<endl;
 				_mgrs->game_manager.playerJoin(_env, _mgrs, _mgrs->game_manager.getNumPlayers()+1, false);
 			}
-			
+	
 			_mgrs->net_manager.HostGetPlayerInfo(dataIn);  // get info from all the clients -> dataIn
 			for(int i = 0; i<numClients; i++)
 			{
@@ -58,13 +58,16 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 			{
 				if(_mgrs->net_manager.isClientConnected2Host())
 				{
-					for(int i = 0; i<numClients; i++) // update remote players' positions on the local screen
+					for(int i = 0; i<=numClients; i++) // update remote players' positions on the local screen
 					{
 						unsigned tank = _mgrs->game_manager.getPlayer(i+1);
 
-						if(dataIn[i].playerNum==_mgrs->game_manager.getPlayerNum(NetManager::LOCAL_PLAYER)) continue;
-						trans[tank].pos.x = dataIn[i].x;
-						trans[tank].pos.y = dataIn[i].y;
+						if(tank != 0 && i<dataIn.size())
+						{
+							if(dataIn[i].playerNum==_mgrs->game_manager.getPlayerNum(NetManager::LOCAL_PLAYER)) continue;
+							trans[tank].pos.x = dataIn[i].x;
+							trans[tank].pos.y = dataIn[i].y;
+						}
 					}
 
 					unsigned tank = _mgrs->game_manager.getPlayer(NetManager::LOCAL_PLAYER);
@@ -86,6 +89,7 @@ void NetworkSystem::update(Environment* _env, Managers* _mgrs)
 				}
 				else
 				{
+					cout<<"CLIENT CONNECTING"<<endl;
 					_mgrs->net_manager.connectToHost(_mgrs->net_manager.getHostIP()); // resend connect request because we are not getting info
 				}
 				if(_mgrs->net_manager.getClientLatency()>20)

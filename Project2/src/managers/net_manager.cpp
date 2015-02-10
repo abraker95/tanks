@@ -195,8 +195,8 @@ void NetManager::HostGetPlayerInfo(std::vector<PLAYERDATA>& _dataIn)
 	*/
 
 	sf::Packet packet;
-	_dataIn.resize(clients.size());
-	for(int i = 0; i<clients.size(); i++)
+
+	for(int i = 0; i<clients.size()-1; i++)
 	{
 		if(std::get<CONNECTED>(clients.at(i))) // get the info from client only if host established a connection with it
 		{
@@ -227,7 +227,7 @@ void NetManager::HostSendPlayerInfo(std::vector<PLAYERDATA>& _dataOut, Managers*
 		{
 			if(std::get<RESPONCE>(clients.at(i)))
 			{
-				packet<<"S"<<clients.size(); // Host packet header: "S" followed by number of players
+				packet<<"S"<<clients.size()-1; // Host packet header: "S" followed by number of players
 
 				for(int k = 0; k<_dataOut.size(); k++)  // send client i info about other client k
 					packet<<_dataOut[k].x<<_dataOut[k].y<<_dataOut[k].playerNum; // clients will have 0 as their clients size
