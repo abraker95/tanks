@@ -158,8 +158,8 @@ bool GameManager::isOnline() const
 // returns player 1, player 2, player....   Player 1 is ALWAYS the local player
 unsigned GameManager::getPlayer(unsigned _player) const
 {
-	if(_player <= players.size() && _player > 0)
-		return players[_player-1].first;
+	if(_player < players.size() && _player >= 0)
+		return players[_player].first;
 	else
 		cout<<"[GAME MGR] Unable to get player "<<_player<<endl;
 	return 0;
@@ -167,8 +167,8 @@ unsigned GameManager::getPlayer(unsigned _player) const
 
 unsigned GameManager::getPlayerNum(unsigned _player)
 {
-	if(_player <= players.size() && _player > 0)
-		return players[_player-1].second;
+	if(_player < players.size() && _player >= 0)
+		return players[_player].second;
 	else
 		cout<<"[GAME MGR] Unable to get player "<<_player<<endl;
 }

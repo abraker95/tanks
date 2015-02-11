@@ -17,7 +17,7 @@ void HUDSystem::update(Environment* _env, Managers* managers, sf::Window* _win, 
 {
 	if(managers->game_manager.getGameState() == GameManager::PLAYING)
 	{
-		for(unsigned i = 1; i<=managers->game_manager.getNumPlayers(); i++)
+		for(unsigned i = 0; i<managers->game_manager.getNumPlayers(); i++)
 		{
 			unsigned ID = managers->game_manager.getPlayer(i);
 			auto trans = _env->get<Transform>();

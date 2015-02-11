@@ -13,6 +13,7 @@ NetManager::~NetManager()
 bool NetManager::InitOnlineMode(bool _mode)
 {
 	mode = _mode;
+	LOCAL_PLAYER = 0;
 	clients.clear(); // clear regardless
 
 	if(mode == HOST)
@@ -104,33 +105,21 @@ unsigned NetManager::connectToHost(std::string _IP)
 bool NetManager::checkForIncomingPlayers(Managers* _mgrs)
 {
 	unsigned newClient = clients.size()-1;
-	//unsigned numPlayers = _mgrs->game_manager.getNumPlayers()+1; // the playerNum to send is the number of players if the player joins
 
 	if(listener.accept(*std::get<SOCKET>(clients.at(newClient))) == sf::Socket::Status::Done)
 	{
 		cout<<"[NET MGR] Accepted Connection!"<<endl;
-	//	unsigned playerNum = 0;
-		
-	/*	if(/*(std::get<LATENCY>(clients.at(newClient)) < 50) && !std::get<RESPONCE>(clients.at(newClient)))  // 50 tries to establish connection [server side]
-		{
-			
-		}*/
 
-		//if(std::get<RESPONCE>(clients.at(newClient))==true) // if there is a new client, create a new socket for another client for it to be ready
-	//	{
-		//	std::get<CONNECTED>(clients.at(newClient)) = true;
-			std::get<LATENCY>(clients.at(newClient)) = 1;
-			clients.push_back(std::tuple<sf::TcpSocket*, int, bool, bool>(new sf::TcpSocket(), 0, false, false));
-			std::get<SOCKET>(clients.at(clients.size()-1))->setBlocking(false);
-			return true;
-		}
-		else
-		{
-			//cout<<"[NET MGR] Client didn't respond in time."<<endl;
-			return false;
-		}
-	//}
-	//else return false; // no new connections
+		std::get<LATENCY>(clients.at(newClient)) = 1;
+		clients.push_back(std::tuple<sf::TcpSocket*, int, bool, bool>(new sf::TcpSocket(), 0, false, false));
+		std::get<SOCKET>(clients.at(clients.size()-1))->setBlocking(false);
+		return true;
+	}
+	else
+	{
+		//cout<<"[NET MGR] Client didn't respond in time."<<endl;
+		return false;
+	}
 }
 
 std::string NetManager::getHostIP()
@@ -167,11 +156,11 @@ unsigned NetManager::ClientGetPlayerInfo(std::vector<PLAYERDATA>& _dataIn)
 	}
 	else // if not connected, request initial packet info
 	{
-		std::get<RESPONCE>(client) = Ping(std::get<SOCKET>(client), playerNum); // playerNum to send to client
+		std::get<RESPONCE>(client) = Ping(std::get<SOCKET>(client), playerNum); // playerNum is ignored
 		if(std::get<RESPONCE>(client)) std::get<CONNECTED>(client) = true;
 		//connectToHost(IP.toString());
 	}
-	cout<<"Player Num: "<<numPlayers<<endl;
+	//cout<<"Player Num: "<<numPlayers<<endl;
 	if(S == "S")
 		return numPlayers;
 	else
@@ -206,12 +195,16 @@ void NetManager::HostGetPlayerInfo(std::vector<PLAYERDATA>& _dataIn)
 			std::get<SOCKET>(clients.at(i))->receive(packet);
 			std::get<RESPONCE>(clients.at(i)) = (packet>>_dataIn[i].x>>_dataIn[i].y>>_dataIn[i].playerNum); // clients dont send the number of players
 			LatencyUpdate(clients.at(i));
+			 
+			/// \TODO: Disconect client if not responding for too long
+			cout<<"Client size: "<<clients.size()<<"    Client: "<<i<<"  "<<_dataIn[i].x<<endl;
+			if(!std::get<RESPONCE>(clients.at(i))) cout<<"[NET MGR]: Client "<<i<<" is not responding"<<endl;
 		}
-		else // make up invalid info if not connected
+		else if(i < _dataIn.size()) // make up invalid info if not connected
 		{
 			_dataIn[i].x = -100;
 			_dataIn[i].y = -100;
-			_dataIn[i].playerNum = 0;
+			_dataIn[i].playerNum = LOCAL_PLAYER;
 		}
 	}
 }
@@ -241,7 +234,7 @@ void NetManager::HostSendPlayerInfo(std::vector<PLAYERDATA>& _dataOut, Managers*
 		}
 		else if(std::get<LATENCY>(clients.at(i))> 0) // if not connected, then send connection info. Client should have registered (not an empty socket)
 		{
-			unsigned playerNum = _mgrs->game_manager.getNumPlayers()+1; // the playerNum to send is the number of players if the player joins
+			unsigned playerNum = _mgrs->game_manager.getNumPlayers(); // the playerNum to send is the number of players if the player joins
 			std::get<RESPONCE>(clients.at(i)) = Ping(std::get<SOCKET>(clients.at(i)), playerNum); // playerNum to send to client
 			LatencyUpdate(clients.at(i));
 

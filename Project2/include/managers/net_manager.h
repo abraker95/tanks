@@ -17,7 +17,7 @@ class NetManager
 		};
 
 		static const bool CLIENT = 0, HOST = 1;
-		static const unsigned LOCAL_PLAYER = 1;
+		unsigned LOCAL_PLAYER = 0;
 
 		// both
 		bool InitOnlineMode(bool _mode);

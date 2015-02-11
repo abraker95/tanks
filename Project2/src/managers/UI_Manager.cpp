@@ -330,7 +330,7 @@ void UI_Manager::CreateNetSubMenu(Environment* _env, Managers* _mgrs)
 		if(_mgrs->net_manager.InitOnlineMode(NetManager::HOST))
 		{
 			_mgrs->game_manager.NewNetGame(_env, _mgrs);
-			_mgrs->game_manager.playerJoin(_env, _mgrs, 1, true); // Create host player
+			_mgrs->game_manager.playerJoin(_env, _mgrs, 0, true); // Create host player
 			currMenu = UI_Manager::NO_MENU;
 		}	
 		else
